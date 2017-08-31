@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <include layout="@layout/title_login" />
+    <com.hemaapp.hm_FrameWork.view.RoundedImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="30dp"
+        android:background="@mipmap/default_avatar"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="15dp" />
+
+    <com.zysapp.sjyyt.view.ClearEditText
+        android:id="@+id/login_username"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:paddingRight="25dp"
+        android:gravity="center_vertical"
+        android:hint="请填写手机号"
+        android:inputType="number"
+        android:paddingLeft="30dp"
+        android:textColorHint="#a8a8a8"
+        android:textSize="@dimen/textsize_7" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:src="@color/line"
+        android:paddingLeft="15dp"
+        android:layout_gravity="center_vertical"
+        android:layout_height="0.5dp" />
+
+    <com.zysapp.sjyyt.view.ClearEditText
+        android:id="@+id/login_password"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:gravity="center_vertical"
+        android:hint="请输入6-20位密码"
+        android:paddingRight="15dp"
+        android:inputType="textPassword"
+        android:paddingLeft="30dp"
+        android:textColorHint="#a8a8a8"
+        android:textSize="@dimen/textsize_7" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:src="@color/line"
+        android:paddingLeft="15dp"
+        android:layout_gravity="center_vertical"
+        android:layout_height="0.5dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="39dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/bt_login"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="登录"
+            android:enabled="false"
+            android:background="@drawable/bg_button_login"
+            android:textColor="@color/white"
+            style="?android:attr/borderlessButtonStyle"
+            android:textSize="@dimen/textsize_7" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_forgetpwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:text="@string/forget_password"
+        android:textColor="@color/name"
+        android:textSize="@dimen/textsize_6.5" />
+
+</LinearLayout>

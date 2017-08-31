@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">hm_sjyyt</string>
+    <string name="forget_password">忘记密码？</string>
+    <string name="agreement">《注册协议》</string>
+    <string name="agreecontract"><u>《法律声明》</u></string>
+    <string name="vipcontract"><u>《会员协议》</u></string>
+    <string name="score"><u>积分规则</u></string>
+    <string name="zhifubao1">支付宝客户端支付</string>
+    <string name="zhifubao2">推荐安装支付宝客户端的用户使用</string>
+    <string name="yinlian1">银联手机支付</string>
+    <string name="yinlian2">推荐银联储蓄用户使用</string>
+    <string name="wechat1">微信客户端支付</string>
+    <string name="wechat2">推荐安装微信客户端的用户使用</string>
+    <string name="video_file_name_format" translatable="false">"'VID'_yyyyMMdd_HHmmss"</string>
+    <string name="remove"><u>删除</u></string>
+    <string name="add"><u>添加</u></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
