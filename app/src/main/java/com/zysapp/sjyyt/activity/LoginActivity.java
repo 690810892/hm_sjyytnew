@@ -32,7 +32,7 @@ import xtom.frame.util.XtomSharedPreferencesUtil;
 import xtom.frame.util.XtomToastUtil;
 
 /**
- * 用户登录界面
+ * 用户登录界面----------------------------------------------------
  */
 public class LoginActivity extends BaseActivity {
 
