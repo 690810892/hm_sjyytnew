@@ -33,7 +33,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import xtom.frame.util.XtomDeviceUuidFactory;
-
+/*
+666666666666666666666666
+ */
 public class MainActivity extends BaseFragmentActivity {
 
     @BindView(R.id.start)
