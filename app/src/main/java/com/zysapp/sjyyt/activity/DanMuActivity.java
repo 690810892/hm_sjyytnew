@@ -8,7 +8,6 @@ import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.zysapp.sjyyt.BaseActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
-import com.zysapp.sjyyt.model.Song;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,7 +25,7 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 import xtom.frame.XtomActivityManager;
 
 /**
- *测试--------
+ *
  */
 public class DanMuActivity extends BaseActivity {
 
@@ -35,7 +34,7 @@ public class DanMuActivity extends BaseActivity {
     DanmakuView danmakuView;
     private boolean showDanmaku;
     private DanmakuContext danmakuContext;
-ArrayList<String >strings =new ArrayList<>();
+    ArrayList<String> strings = new ArrayList<>();
     private BaseDanmakuParser parser = new BaseDanmakuParser() {
         @Override
         protected IDanmakus parse() {
@@ -51,7 +50,8 @@ ArrayList<String >strings =new ArrayList<>();
         strings.add("张延山1111111111");
         strings.add("张延山2222222221");
         strings.add("张延山3333333333111");
-        strings.add("张延山18888888888811"); strings.add("张延山19999999999999911");
+        strings.add("张延山18888888888811");
+        strings.add("张延山19999999999999911");
         strings.add("张延山7777777777711");
         strings.add("张延山1144444444444444");
         strings.add("张延山113333333333333333111");
@@ -65,8 +65,8 @@ ArrayList<String >strings =new ArrayList<>();
                 showDanmaku = true;
                 danmakuView.start();
                 generateSomeDanmaku();
-                for (String d:strings){
-                    addDanmaku(d,false);
+                for (String d : strings) {
+                    addDanmaku(d, false);
                 }
             }
 
@@ -88,12 +88,12 @@ ArrayList<String >strings =new ArrayList<>();
         danmakuContext = DanmakuContext.create();
         danmakuView.prepare(parser, danmakuContext);
     }
+
     /**
      * 向弹幕View中添加一条弹幕
-     * @param content
-     *          弹幕的具体内容
-     * @param  withBorder
-     *          弹幕是否有边框
+     *
+     * @param content    弹幕的具体内容
+     * @param withBorder 弹幕是否有边框
      */
     private void addDanmaku(String content, boolean withBorder) {
         BaseDanmaku danmaku = danmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
@@ -115,7 +115,7 @@ ArrayList<String >strings =new ArrayList<>();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(showDanmaku) {
+                while (showDanmaku) {
                     int time = new Random().nextInt(300);
                     String content = "" + time + time;
                     addDanmaku(content, false);
