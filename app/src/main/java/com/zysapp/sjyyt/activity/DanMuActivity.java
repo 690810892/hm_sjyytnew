@@ -26,7 +26,7 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 import xtom.frame.XtomActivityManager;
 
 /**
- *
+ *测试
  */
 public class DanMuActivity extends BaseActivity {
 
