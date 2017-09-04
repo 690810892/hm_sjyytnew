@@ -33,6 +33,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import xtom.frame.util.XtomDeviceUuidFactory;
+
 /*
 666666666666666666666666
  */
@@ -42,6 +43,8 @@ public class MainActivity extends BaseFragmentActivity {
     TextView start;
     @BindView(R.id.danmu)
     TextView danmu;
+    @BindView(R.id.login)
+    TextView login;
     private UpGrade upGrade;
     private long time;// 用于判断二次点击返回键的时间间隔
 
@@ -111,7 +114,14 @@ public class MainActivity extends BaseFragmentActivity {
         danmu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent it=new Intent(mContext,DanMuActivity.class);
+                Intent it = new Intent(mContext, DanMuActivity.class);
+                startActivity(it);
+            }
+        });
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent it = new Intent(mContext, LoginActivity.class);
                 startActivity(it);
             }
         });

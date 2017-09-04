@@ -17,6 +17,15 @@ android {
         ]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        // your debug keystore
+        debug {
+            keyAlias 'hm_sjyyt'
+            keyPassword '123456Aa'
+            storePassword '123456Aa'
+            storeFile file("hm_sjyyt.jks")
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -49,4 +58,5 @@ dependencies {
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.github.ctiao:DanmakuFlameMaster:0.8.3'
     compile 'com.github.ctiao:ndkbitmap-armv7a:0.8.3'
+    compile project(':pickerview')
 }

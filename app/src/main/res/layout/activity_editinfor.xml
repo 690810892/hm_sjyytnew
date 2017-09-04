@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical" >
+    <include layout="@layout/title" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:orientation="vertical"
+                android:paddingBottom="50dp"
+                android:paddingTop="20dp" >
+
+                <com.hemaapp.hm_FrameWork.view.RoundedImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="0dp"
+                    android:background="@mipmap/default_avatar"
+                    android:scaleType="centerCrop" />
+                <TextView
+                    android:id="@+id/tv_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="点击添加头像"
+                    android:textColor="@color/hui"
+                    android:textSize="@dimen/textsize_7" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white" >
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_gravity="top"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@color/line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:text="昵称    "
+                        android:textColor="@color/hui"
+                        android:textSize="@dimen/textsize_7" />
+
+                    <com.zysapp.sjyyt.view.ClearEditText
+                        android:id="@+id/ev_nickname"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:background="@null"
+                        android:gravity="center_vertical"
+                        android:hint="填写你的昵称"
+                        android:text=""
+                        android:textColor="@color/word_black"
+                        android:textColorHint="#B0B0B0"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white" >
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_gravity="top"
+                    android:layout_marginLeft="15dp"
+                    android:background="@color/line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:text="性别    "
+                        android:textColor="@color/hui"
+                        android:textSize="@dimen/textsize_7" />
+
+                    <TextView
+                        android:id="@+id/tv_sex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="10dp"
+                        android:gravity="center_vertical"
+                        android:text="男"
+                        android:background="@null"
+                        android:textColor="@color/word_black"
+                        android:textSize="@dimen/textsize_7" />
+                    <TextView
+                        android:id="@+id/tv_sex_m"
+                        android:layout_width="50dp"
+                        android:layout_height="35dp"
+                        android:gravity="center"
+                        android:text="男"
+                        android:background="@drawable/bg_sex_p"
+                        android:textColor="@color/white"
+                        android:layout_marginRight="10dp"
+                        android:textSize="@dimen/textsize_7" />
+                    <TextView
+                        android:id="@+id/tv_sex_f"
+                        android:layout_width="50dp"
+                        android:layout_height="35dp"
+                        android:gravity="center"
+                        android:text="女"
+                        android:layout_marginRight="15dp"
+                        android:background="@drawable/bg_sex_n"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+            </FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/white" >
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_gravity="top"
+                    android:layout_marginLeft="15dp"
+                    android:background="@color/line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:text="所在地"
+                        android:textColor="@color/hui"
+                        android:textSize="@dimen/textsize_7" />
+
+                    <TextView
+                        android:id="@+id/tv_district"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:gravity="center_vertical"
+                        android:hint="选择所在地区"
+                        android:text=""
+                        android:drawableRight="@mipmap/arrow_right_n"
+                        android:textColor="@color/word_black"
+                        android:textColorHint="#B0B0B0"
+                        android:textSize="@dimen/textsize_7" />
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

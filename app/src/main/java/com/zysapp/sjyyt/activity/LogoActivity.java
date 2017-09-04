@@ -17,6 +17,7 @@ import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.zysapp.sjyyt.BaseActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
+import com.zysapp.sjyyt.BaseLocation;
 import com.zysapp.sjyyt.BaseNetWorker;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.User;
@@ -45,7 +46,7 @@ public class LogoActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		requestPermission();
 		infor = getApplicationContext().getSysInitInfo();
-//		BaseLocation.getInstance().startLocation();
+		BaseLocation.getInstance().startLocation();
 		init();
 	}
 	private void requestPermission() {

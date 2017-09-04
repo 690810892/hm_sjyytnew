@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">hm_sjyyt</string>
     <string name="forget_password">忘记密码？</string>
-    <string name="agreement">《注册协议》</string>
+    <string name="agreement"><u>用户协议</u></string>
     <string name="agreecontract"><u>《法律声明》</u></string>
     <string name="vipcontract"><u>《会员协议》</u></string>
     <string name="score"><u>积分规则</u></string>

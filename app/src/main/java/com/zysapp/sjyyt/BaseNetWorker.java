@@ -9,6 +9,8 @@ import com.hemaapp.hm_FrameWork.task.ExecuteNetTask;
 import com.zysapp.sjyyt.model.DistrictInfor;
 import com.zysapp.sjyyt.model.FileUploadResult;
 import com.zysapp.sjyyt.model.Image;
+import com.zysapp.sjyyt.model.JsonBean;
+import com.zysapp.sjyyt.model.PCD;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.Token;
 import com.zysapp.sjyyt.model.User;
@@ -189,21 +191,16 @@ public class BaseNetWorker extends HemaNetWorker {
     /**
      * 用户注册
      */
-    public void clientAdd(String temp_token, String username, String password, String nickname,String sex, String age,String birthday
-            , String country, String district_1_id, String district_2_id, String district_3_id) {
+    public void clientAdd(String temp_token, String username, String password, String nickname,String sex, String district_name,String avatar) {
         BaseHttpInformation information = BaseHttpInformation.CLIENT_ADD;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("temp_token", temp_token);// 临时令牌 可以有效防止机器人恶意注册（该值从验证随机码接口获取）
         params.put("username", username);// 用户注册名 本项目只允许邮箱注册 (客户端判断所填文本是否符合邮件格式)
         params.put("password", password);// 登陆密码
         params.put("nickname", nickname);// 用户昵称
-        params.put("age", age);
         params.put("sex", sex);// 用户性别
-        params.put("birthday", birthday);//
-        params.put("country", country);//
-        params.put("district_1_id", district_1_id);//
-        params.put("district_2_id", district_2_id);//
-        params.put("district_3_id", district_3_id);//
+        params.put("district_name", district_name);//
+        params.put("avatar", avatar);//
         ExecuteNetTask<Token> task = new ExecuteNetTask<>(information, params, Token.class);
         executeTask(task);
     }
@@ -212,16 +209,15 @@ public class BaseNetWorker extends HemaNetWorker {
      * 上传文件（图片，音频，视频）
      */
     public void fileUpload(String token, String keytype, String keyid,
-                           String temp_file,String flag) {
+                           String temp_file) {
         BaseHttpInformation information = BaseHttpInformation.FILE_UPLOAD;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("token", token);//
         params.put("keytype", keytype); //
         params.put("keyid", keyid); //
-        params.put("flag", flag); //
-//        params.put("duration", duration); //
-//        params.put("orderby", orderby); //
-//        params.put("content", content);// 内容描述 有的项目中，展示性图片需要附属一段文字说明信息。默认传"无"
+        params.put("duration", "0"); //
+        params.put("orderby", "1"); //
+        params.put("content", "无");// 内容描述 有的项目中，展示性图片需要附属一段文字说明信息。默认传"无"
         HashMap<String, String> files = new HashMap<String, String>();
         files.put("temp_file", temp_file); //FileUploadResult
 
@@ -421,6 +417,12 @@ public class BaseNetWorker extends HemaNetWorker {
         BaseHttpInformation information = BaseHttpInformation.CITY_LIST;
         HashMap<String, String> params = new HashMap<String, String>();
         ExecuteNetTask<DistrictInfor> task = new ExecuteNetTask<>(information, params, DistrictInfor.class);
+        executeTask(task);
+    }
+    public void districtList() {
+        BaseHttpInformation information = BaseHttpInformation.DISTRICT_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        ExecuteNetTask<PCD> task = new ExecuteNetTask<>(information, params, PCD.class);
         executeTask(task);
     }
 

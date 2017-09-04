@@ -20,7 +20,7 @@ public class BaseConfig {
 	/**
 	 * 后台服务接口根路径
 	 */
-	public static final String SYS_ROOT = "http://124.128.23.74:8008/group16/hm_cfjlr/";
+	public static final String SYS_ROOT = "http://139.196.72.199:8008/";
 	/**
 	 * 图片压缩的最大宽度
 	 */
@@ -49,10 +49,10 @@ public class BaseConfig {
 	 * 数据库版本号
 	 */
 	public static final int DATA_BASE_VERSION = 1;
-	//车服经理人
-//	MD5: 6A:AC:36:58:0B:1F:B4:AE:24:E9:9C:2B:73:C0:49:53
-//	SHA1: 05:65:20:70:EB:71:F2:AE:2E:FC:32:AC:77:FB:B8:34:02:2C:FA:33
-//	SHA256: E5:73:7B:43:D2:7D:B6:97:C0:B5:68:61:5A:4B:A4:FC:16:1B:5B:29:DD:C0:90:0B:A1:C2:9B:2B:4E:11:32:CF
+//	证书指纹:    手机音悦台
+//	MD5: 61:A2:93:E5:74:C9:1B:A5:8C:4C:9C:03:57:8C:A3:D0
+//	SHA1: B0:BF:96:BB:BB:DE:FB:48:65:C5:79:73:C8:85:5F:D7:05:AC:17:07
+//	SHA256: 56:55:77:F6:18:AA:A7:FE:22:41:BA:1C:61:6E:37:A1:53:A7:89:AA:ED:89:39:0A:A5:F0:52:96:21:D0:4D:6A
 //	签名算法名称: SHA256withRSA
 //	版本: 3
 

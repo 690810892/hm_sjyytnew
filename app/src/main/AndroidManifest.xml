@@ -79,7 +79,7 @@
         <!-- 高德地图ApiKey -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="dfcb7154a7bb1fd18acc502b99a443c1" />
+            android:value="05546b097ff8da86c59e8461dfc596cc" />
         <!-- shareSDK相关 -->
         <activity
             android:name="com.mob.tools.MobUIShell"
@@ -223,6 +223,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".DanMuActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Register2Activity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
         <service android:name="com.zysapp.sjyyt.service.PlayerService"/>
