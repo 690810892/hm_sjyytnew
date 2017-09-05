@@ -20,6 +20,7 @@ import com.zysapp.sjyyt.activity.MainActivity;
 import com.zysapp.sjyyt.activity.R;
 import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.player.MusicPlayer;
+import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.util.ImageTools;
 import com.zysapp.sjyyt.util.MusicIconLoader;
@@ -32,14 +33,14 @@ import de.greenrobot.event.EventBus;
 import xtom.frame.util.XtomToastUtil;
 
 public class PlayerService extends Service implements
-        MediaPlayer.OnCompletionListener{
+        MediaPlayer.OnCompletionListener {
     private PowerManager.WakeLock mWakeLock = null;//获取设备电源锁，防止锁屏后服务被停止
     private Notification notification;//通知栏
     private RemoteViews remoteViews;//通知栏布局
     private NotificationManager notificationManager;
     private MediaPlayer mPlayer;
-    private ArrayList<Song> mQueue=new ArrayList<>();
-    private int mQueueIndex=0;
+    private ArrayList<Song> mQueue = new ArrayList<>();
+    private int mQueueIndex = 0, playType = 0;
     private PlayerService.OnMusicEventListener mListener;
     // 单线程池
     private ExecutorService mProgressUpdatedListener = Executors
@@ -50,6 +51,7 @@ public class PlayerService extends Service implements
             return PlayerService.this;
         }
     }
+
     @Override
     public IBinder onBind(Intent intent) {
 //        throw new UnsupportedOperationException("Not yet implemented");
@@ -63,7 +65,7 @@ public class PlayerService extends Service implements
         acquireWakeLock();//获取设备电源锁
         // 开始更新进度的线程
         mProgressUpdatedListener.execute(mPublishProgressRunnable);
-        mPlayer=new MediaPlayer();
+        mPlayer = new MediaPlayer();
         mPlayer.setOnCompletionListener(this);
         PendingIntent pendingIntent = PendingIntent
                 .getActivity(PlayerService.this,
@@ -75,7 +77,7 @@ public class PlayerService extends Service implements
         notification.contentIntent = pendingIntent;
         notification.contentView = remoteViews;
         //标记位，设置通知栏一直存在
-        notification.flags =Notification.FLAG_ONGOING_EVENT;
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
 
         Intent intent = new Intent(PlayerService.class.getSimpleName());
         intent.putExtra("BUTTON_NOTI", 1);
@@ -118,15 +120,16 @@ public class PlayerService extends Service implements
         PlayerService.MyBroadCastReceiver receiver = new MyBroadCastReceiver();
         registerReceiver(receiver, filter);
     }
-    public void setRemoteViews(){
-        if(mQueue.size()>0){
+
+    public void setRemoteViews() {
+        if (mQueue.size() > 0) {
             remoteViews.setTextViewText(R.id.music_name,
-                   mQueue.get(mQueueIndex).getName());
+                    mQueue.get(mQueueIndex).getName());
             remoteViews.setTextViewText(R.id.music_author,
                     mQueue.get(mQueueIndex).getContent());
             Bitmap icon = MusicIconLoader.getInstance().load(
                     mQueue.get(mQueueIndex).getAvatar());
-            remoteViews.setImageViewBitmap(R.id.music_icon,icon == null
+            remoteViews.setImageViewBitmap(R.id.music_icon, icon == null
                     ? ImageTools.scaleBitmap(R.drawable.ic_launcher)
                     : ImageTools.scaleBitmap(icon));
 
@@ -134,18 +137,20 @@ public class PlayerService extends Service implements
         if (isPlaying()) {
             remoteViews.setImageViewResource(R.id.music_play_pause,
                     R.mipmap.btn_notification_player_stop_normal);
-        }else {
+        } else {
             remoteViews.setImageViewResource(R.id.music_play_pause,
                     R.mipmap.btn_notification_player_play_normal);
         }
         //通知栏更新
         notificationManager.notify(5, notification);
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(0, notification);//让服务前台运行
         return Service.START_STICKY;
     }
+
     /**
      * 更新进度的线程
      */
@@ -157,7 +162,7 @@ public class PlayerService extends Service implements
                         && mListener != null) {
                     mListener.onPublish(mPlayer.getCurrentPosition());
                 }
-			/*
+            /*
 			 * SystemClock.sleep(millis) is a utility function very similar
 			 * to Thread.sleep(millis), but it ignores InterruptedException.
 			 * Use this function for delays if you do not use
@@ -168,25 +173,27 @@ public class PlayerService extends Service implements
             }
         }
     };
+
     public void setOnMusicEventListener(PlayerService.OnMusicEventListener l) {
         mListener = l;
     }
+
     public int play(int position) {
-        if (mPlayer==null) {
+        if (mPlayer == null) {
             mPlayer = new MediaPlayer();
             mPlayer.setOnCompletionListener(this);
         }
-		if(mQueue.size()<=0){
-			return -1;
-		}
-		if (position < 0)
-			position = 0;
-		if (position >=mQueue.size())
-			position = mQueue.size() - 1;
+        if (mQueue.size() <= 0) {
+            return -1;
+        }
+        if (position < 0)
+            position = 0;
+        if (position >= mQueue.size())
+            position = mQueue.size() - 1;
         try {
             mPlayer.reset();
             mPlayer.setDataSource(mQueue.get(position).getPath());
-            XtomToastUtil.showLongToast(getApplicationContext(),"开始播放");
+            XtomToastUtil.showLongToast(getApplicationContext(), "开始播放");
             mPlayer.prepare();
             start();
             if (mListener != null)
@@ -199,49 +206,59 @@ public class PlayerService extends Service implements
         setRemoteViews();
         return mQueueIndex;
     }
+
     public int resume() {
-        if(mPlayer==null){
+        if (mPlayer == null) {
             return -1;
         }
         if (isPlaying())
             return -1;
         mPlayer.start();
+        EventBus.getDefault().post(new EventBusModel(EventBusConfig.STATE_PLAY));
         setRemoteViews();
         return mQueueIndex;
     }
+
     public int pause() {
-        if(mQueue.size()==0){
+        if (mQueue.size() == 0) {
             return -1;
         }
         if (!isPlaying())
             return -1;
         mPlayer.pause();
+        EventBus.getDefault().post(new EventBusModel(EventBusConfig.STATE_PAUSE));
         setRemoteViews();
         return mQueueIndex;
     }
+
     public int next() {
         if (mQueueIndex >= mQueue.size() - 1) {
             return play(0);
         }
         return play(mQueueIndex + 1);
     }
+
     public int pre() {
         if (mQueueIndex <= 0) {
             return play(mQueue.size() - 1);
         }
         return play(mQueueIndex - 1);
     }
+
     public boolean isPlaying() {
         return null != mPlayer && mPlayer.isPlaying();
     }
+
     public int getPlayingPosition() {
         return mQueueIndex;
     }
+
     public int getDuration() {
         if (!isPlaying())
             return 0;
         return mPlayer.getDuration();
     }
+
     /**
      * 拖放到指定位置进行播放
      *
@@ -258,7 +275,9 @@ public class PlayerService extends Service implements
      */
     private void start() {
         mPlayer.start();
+        EventBus.getDefault().post(new EventBusModel(EventBusConfig.STATE_PLAY));
     }
+
     @Override
     public boolean onUnbind(Intent intent) {
         return true;
@@ -312,6 +331,7 @@ public class PlayerService extends Service implements
             mWakeLock = null;
         }
     }
+
     private class MyBroadCastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -347,18 +367,31 @@ public class PlayerService extends Service implements
             }
         }
     }
+
     public void onEventMainThread(EventBusModel event) {
         switch (event.getType()) {
             case PLAY:
                 mQueue.clear();
                 mQueue.addAll(event.getSongs());
-                mQueueIndex=event.getCode();
-               // mPlayer =  MediaPlayer.create(PlayerService.this, Uri.parse(mQueue.get(mQueueIndex).getPath()));
-                play(mQueueIndex);
+                mQueueIndex = event.getCode();
+                int Type = event.getPlaytype();
+                if (isPlaying()) {
+                    pause();
+                } else {
+                    if (Type==playType){
+                        resume();
+                    }else {
+                        playType=Type;
+                        play(mQueueIndex);
+                    }
+                }
 //                MusicPlayer.getPlayer().setQueue(event.getSongs(), 0);
                 break;
             case NEXT:
-                MusicPlayer.getPlayer().next();
+                next();
+                break;
+            case PRE:
+                pre();
                 break;
         }
     }
@@ -367,6 +400,7 @@ public class PlayerService extends Service implements
     public void onCompletion(MediaPlayer mediaPlayer) {
         next();
     }
+
     /**
      * 音乐播放回调接口
      */

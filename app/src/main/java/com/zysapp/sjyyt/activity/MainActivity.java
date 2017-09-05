@@ -1,13 +1,20 @@
 package com.zysapp.sjyyt.activity;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
@@ -19,14 +26,14 @@ import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.BaseFragmentActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.UpGrade;
-import com.zysapp.sjyyt.model.Song;
+import com.zysapp.sjyyt.fragment.FirstPageFragment;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.newgetui.GeTuiIntentService;
 import com.zysapp.sjyyt.newgetui.PushUtils;
 import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,12 +46,40 @@ import xtom.frame.util.XtomDeviceUuidFactory;
  */
 public class MainActivity extends BaseFragmentActivity {
 
-    @BindView(R.id.start)
-    TextView start;
-    @BindView(R.id.danmu)
-    TextView danmu;
-    @BindView(R.id.login)
-    TextView login;
+    @BindView(R.id.fragment_contentview)
+    FrameLayout fragmentContentview;
+    @BindView(R.id.iv_first)
+    ImageView ivFirst;
+    @BindView(R.id.tv_first)
+    TextView tvFirst;
+    @BindView(R.id.rl_first)
+    RelativeLayout rlFirst;
+    @BindView(R.id.iv_playback)
+    ImageView ivPlayback;
+    @BindView(R.id.tv_playback)
+    TextView tvPlayback;
+    @BindView(R.id.rl_playback)
+    RelativeLayout rlPlayback;
+    @BindView(R.id.iv_play)
+    ImageButton ivPlay;
+    @BindView(R.id.rl_play)
+    RelativeLayout rlPlay;
+    @BindView(R.id.iv_reply)
+    ImageView ivReply;
+    @BindView(R.id.tv_reply)
+    TextView tvReply;
+    @BindView(R.id.rl_reply)
+    RelativeLayout rlReply;
+    @BindView(R.id.iv_center)
+    ImageView ivCenter;
+    @BindView(R.id.tv_center)
+    TextView tvCenter;
+    @BindView(R.id.rl_center)
+    RelativeLayout rlCenter;
+    @BindView(R.id.point_message)
+    View pointMessage;
+    @BindView(R.id.layout)
+    LinearLayout layout;
     private UpGrade upGrade;
     private long time;// 用于判断二次点击返回键的时间间隔
 
@@ -65,6 +100,7 @@ public class MainActivity extends BaseFragmentActivity {
         EventBus.getDefault().register(this);
         upGrade = new UpGrade(mContext);
         user = BaseApplication.getInstance().getUser();
+        ChangeFragment(FirstPageFragment.class);
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -111,50 +147,50 @@ public class MainActivity extends BaseFragmentActivity {
 
     @Override
     protected void setListener() {
-        danmu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent it = new Intent(mContext, DanMuActivity.class);
-                startActivity(it);
-            }
-        });
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent it = new Intent(mContext, LoginActivity.class);
-                startActivity(it);
-            }
-        });
+//        danmu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent it = new Intent(mContext, DanMuActivity.class);
+//                startActivity(it);
+//            }
+//        });
+//        login.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent it = new Intent(mContext, LoginActivity.class);
+//                startActivity(it);
+//            }
+//        });
     }
 
 
-//    public void ChangeFragment(Class<? extends Fragment> c) {
-//        FragmentManager manager = getSupportFragmentManager();
-//        String tag = c.getName();
-//        FragmentTransaction transaction = manager.beginTransaction();
-//        Fragment fragment = manager.findFragmentByTag(tag);
-//
-//        if (fragment == null) {
-//            try {
-//                fragment = c.newInstance();
-//                // 替换时保留Fragment,以便复用
-//                transaction.add(R.id.fragment_contentview, fragment, tag);
-//            } catch (Exception e) {
-//            }
-//        } else {
-//        }
-//
-//        // 遍历存在的Fragment,隐藏其他Fragment
-//        List<Fragment> fragments = manager.getFragments();
-//        if (fragments != null)
-//            for (Fragment fm : fragments)
-//                if (!fm.equals(fragment))
-//                    transaction.hide(fm);
-//
-//        transaction.show(fragment);
-//        //  transaction.commit();
-//        transaction.commitAllowingStateLoss();
-//    }
+    public void ChangeFragment(Class<? extends Fragment> c) {
+        FragmentManager manager = getSupportFragmentManager();
+        String tag = c.getName();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Fragment fragment = manager.findFragmentByTag(tag);
+
+        if (fragment == null) {
+            try {
+                fragment = c.newInstance();
+                // 替换时保留Fragment,以便复用
+                transaction.add(R.id.fragment_contentview, fragment, tag);
+            } catch (Exception e) {
+            }
+        } else {
+        }
+
+        // 遍历存在的Fragment,隐藏其他Fragment
+        List<Fragment> fragments = manager.getFragments();
+        if (fragments != null)
+            for (Fragment fm : fragments)
+                if (!fm.equals(fragment))
+                    transaction.hide(fm);
+
+        transaction.show(fragment);
+        //  transaction.commit();
+        transaction.commitAllowingStateLoss();
+    }
 
     @Override
     protected void callBeforeDataBack(HemaNetTask hemaNetTask) {
@@ -259,18 +295,51 @@ public class MainActivity extends BaseFragmentActivity {
 
     @Override
     public void onChange(int position) {
-
+        EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_SONG,position));
     }
 
-    @OnClick(R.id.start)
-    public void onViewClicked() {
-        Song song = new Song();
-        song.setAvatar("");
-        song.setContent("张延山");
-        song.setName("双节棍");
-        song.setPath("http://sc1.111ttt.com/2015/1/06/06/99060941326.mp3");
-        ArrayList<Song> songs = new ArrayList<>();
-        songs.add(song);
-        EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, 0));
+    @OnClick({R.id.rl_first, R.id.rl_playback, R.id.iv_play, R.id.rl_reply, R.id.rl_center})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.rl_first:
+                ivFirst.setImageResource(R.mipmap.play_p);
+                ivPlayback.setImageResource(R.mipmap.playback_n);
+                ivReply.setImageResource(R.mipmap.notice_n);
+                ivCenter.setImageResource(R.mipmap.center_n);
+                ChangeFragment(FirstPageFragment.class);
+                break;
+            case R.id.rl_playback:
+                ivFirst.setImageResource(R.mipmap.play_n);
+                ivPlayback.setImageResource(R.mipmap.playback_p);
+                ivReply.setImageResource(R.mipmap.notice_n);
+                ivCenter.setImageResource(R.mipmap.center_n);
+                break;
+            case R.id.iv_play:
+                break;
+            case R.id.rl_reply:
+                ivFirst.setImageResource(R.mipmap.play_n);
+                ivPlayback.setImageResource(R.mipmap.playback_n);
+                ivReply.setImageResource(R.mipmap.notice_p);
+                ivCenter.setImageResource(R.mipmap.center_n);
+                break;
+            case R.id.rl_center:
+                ivFirst.setImageResource(R.mipmap.play_n);
+                ivPlayback.setImageResource(R.mipmap.playback_n);
+                ivReply.setImageResource(R.mipmap.notice_n);
+                ivCenter.setImageResource(R.mipmap.center_p);
+                break;
+        }
     }
+
+//    @OnClick(R.id.start)
+//    public void onViewClicked() {
+//        Song song = new Song();
+//        song.setAvatar("");
+//        song.setContent("张延山");
+//        song.setName("双节棍");
+//        song.setPath("http://sc1.111ttt.com/2015/1/06/06/99060941326.mp3");
+//        ArrayList<Song> songs = new ArrayList<>();
+//        songs.add(song);
+//        EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, 0));
+//    }
 }

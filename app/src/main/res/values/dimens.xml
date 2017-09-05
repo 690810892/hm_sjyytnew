@@ -52,7 +52,7 @@
     <dimen name="margin_95">47.5dp</dimen>
     <dimen name="margin_100">50dp</dimen>
     <dimen name="margin_110">52dp</dimen>
-    <dimen name="title">50dp</dimen>
+    <dimen name="title">45dp</dimen>
     <dimen name="viewpager">175dp</dimen>
     <dimen name="viewpagerbig">200dp</dimen>
     <dimen name="buyinforimg">175dp</dimen>

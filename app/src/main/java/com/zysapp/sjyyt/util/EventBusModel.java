@@ -19,6 +19,7 @@ public class EventBusModel extends XtomObject implements Serializable {
     private String content = "";
     private Object object;
     private int code=0;
+    private int playtype=0;
     private ArrayList<Song> songs;
     public EventBusModel(EventBusConfig type) {
         this.type = type;
@@ -37,6 +38,12 @@ public class EventBusModel extends XtomObject implements Serializable {
         this(type);
         this.songs = object;
         this.code = code;
+    }
+    public EventBusModel(EventBusConfig type, ArrayList<Song> object,int code,int playtype) {
+        this(type);
+        this.songs = object;
+        this.code = code;
+        this.playtype = playtype;
     }
     public EventBusModel(EventBusConfig type, Object object,String content) {
         this(type);
@@ -82,6 +89,14 @@ public class EventBusModel extends XtomObject implements Serializable {
 
     public int getCode() {
         return code;
+    }
+
+    public int getPlaytype() {
+        return playtype;
+    }
+
+    public void setPlaytype(int playtype) {
+        this.playtype = playtype;
     }
 
     public void setCode(int code) {

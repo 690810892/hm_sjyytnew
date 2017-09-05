@@ -220,6 +220,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".DanMuActivity"
@@ -228,6 +229,15 @@
         <activity
             android:name=".Register2Activity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".GetPassword0Activity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ShowInternetPageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <service android:name="com.zysapp.sjyyt.service.PlayerService"/>
     </application>

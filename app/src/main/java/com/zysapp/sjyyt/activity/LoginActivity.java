@@ -82,7 +82,8 @@ public class LoginActivity extends BaseActivity {
     int flag = 1;
     private String code;
     private TimeThread timeThread;
-    private String tempToken,username,password;
+    private String tempToken, username, password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_login);
@@ -192,10 +193,10 @@ public class LoginActivity extends BaseActivity {
                 @SuppressWarnings("unchecked")
                 HemaArrayParse<Token> sResult = (HemaArrayParse<Token>) baseResult;
                 tempToken = sResult.getObjects().get(0).getTemp_token();
-                Intent it2=new Intent(mContext,Register2Activity.class);
-                it2.putExtra("username",this.username);
-                it2.putExtra("password",this.password);
-                it2.putExtra("token",tempToken);
+                Intent it2 = new Intent(mContext, Register2Activity.class);
+                it2.putExtra("username", this.username);
+                it2.putExtra("password", this.password);
+                it2.putExtra("token", tempToken);
                 startActivity(it2);
 //                getNetWorker().clientAdd(tempToken, username, Md5Util.getMd5(XtomConfig.DATAKEY
 //                        + Md5Util.getMd5(password)),nickname);
@@ -326,10 +327,10 @@ public class LoginActivity extends BaseActivity {
                 getNetWorker().clientVerify(uname);
                 break;
             case R.id.tv_forgetpwd:
-                //                Intent it2 = new Intent(mContext, GetPassword0Activity.class);
-//                it2.putExtra("flag", "1");
-//                it2.putExtra("titlename", "找回密码");
-//                startActivity(it2);
+                it = new Intent(mContext, GetPassword0Activity.class);
+                it.putExtra("flag", "1");
+                it.putExtra("titlename", "忘记密码");
+                startActivity(it);
                 break;
             case R.id.bt_login:
                 if (flag == 1) {
@@ -346,8 +347,8 @@ public class LoginActivity extends BaseActivity {
                     BaseNetWorker netWorker = getNetWorker();
                     netWorker.clientLogin(username, Md5Util.getMd5(XtomConfig.DATAKEY
                             + Md5Util.getMd5(password)));
-                }else {
-                    BaseUtil.hideInput(mContext,tvAgreen);
+                } else {
+                    BaseUtil.hideInput(mContext, tvAgreen);
                     if (isNull(username)) {
                         showTextDialog("请先验证手机号");
                         return;
@@ -370,6 +371,13 @@ public class LoginActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_agreen:
+                String sys_web_service = getApplicationContext().getSysInitInfo()
+                        .getSys_web_service();
+                String path = sys_web_service + "webview/parm/protocal";
+                it = new Intent(mContext, ShowInternetPageActivity.class);
+                it.putExtra("path", path);
+                it.putExtra("name", "用户协议");
+                startActivity(it);
                 break;
             case R.id.iv_login_wechat:
                 break;

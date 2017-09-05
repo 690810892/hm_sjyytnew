@@ -26,10 +26,13 @@ public enum EventBusConfig {
     REFRESH_CAR_LIST(16, "刷新接车列表"),
     REFRESH_Custom_INFOR(17, "刷新客户详情"),
     REFRESH_CAR_INFOR(18, "刷新接车详情"),
-    REFRESH_folder_LIST(19, "刷新文件夹"),
+    REFRESH_SONG(19, "刷新歌曲"),
     REFRESH_MEMO_LIST(20, "刷新备忘录"),
     PLAY(21, "播放"),
-    NEXT(22, "下一曲");
+    NEXT(22, "下一曲"),
+    PRE(22, "上一曲"),
+    STATE_PAUSE(22, "暂停"),
+    STATE_PLAY(22, "播放"),;
 
 
     private int id;
