@@ -203,15 +203,6 @@ public class FirstPageFragment extends BaseFragment {
     protected void findView() {
     }
 
-    private void initPager() {
-//        ArrayList<String> urls = new ArrayList<>();
-//        for (Image item : images) {
-//            urls.add(item.getImgurlbig());
-//        }
-//        imageCarouselBanner.getLayoutParams().height = screenWide * 14 / 25;
-//        imageCarouselBanner.onInstance(getActivity(), urls, R.drawable.indicator_show,
-//                new ImageCarouselHeadClickListener(getActivity(), images, "1"));
-    }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
@@ -265,7 +256,6 @@ public class FirstPageFragment extends BaseFragment {
                 if (images != null && images.size() > 0)
                     images.clear();
                 images.addAll(imageList);
-                initPager();
                 break;
             default:
                 break;
@@ -461,6 +451,7 @@ public class FirstPageFragment extends BaseFragment {
     private void setBim(Bitmap bitmap,String content,boolean isLive) {
         BaseDanmaku danmaku = danmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
         MyDrawable drawable = new MyDrawable(bitmap);
+        drawable.setRound(100);
         drawable.setBounds(0, 0, 100, 100);
         SpannableStringBuilder spannable = createSpannable(drawable, content);
         danmaku.text = spannable;
@@ -524,7 +515,7 @@ public class FirstPageFragment extends BaseFragment {
                     int time = new Random().nextInt(300);
                     String content = "" + time + time;
 //                    addDanmaku(content, false);
-                    addDanmaKuShowTextAndImage("http://www.bilibili.com/favicon.ico", content, true);
+                    addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg", content, true);
                     try {
                         Thread.sleep(time);
                     } catch (InterruptedException e) {

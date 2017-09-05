@@ -7,6 +7,7 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
@@ -33,79 +34,94 @@ import xtom.frame.util.XtomFileUtil;
 
 public class MyDrawable extends Drawable {
 
-    private Paint paint;//画笔
-    private Bitmap bitmap;//我们要操作的Bitmap
-    private RectF rectF;//矩形f
+    private Paint mPaint;//画笔
+    private int mWidth;//图片宽与长度的最小值
+    private int mRadius;//半径
+    private int mRound;//圆角
+    private RectF mRectF;//矩形
+    private Bitmap mBitmap;//图片
+    private Type mType = Type.TYPE_ROUND;//默认是矩形
 
-    public MyDrawable(Bitmap bitmap) {
-        this.bitmap = bitmap;
-        paint = new Paint();//初始化画笔
-        paint.setAntiAlias(true);//抗锯齿
-        //位图渲染器(参数1:我们要操作的Bitmap,参数2.3:X轴,Y轴的填充类型,
-        // 类型一共有三种,REPEAT:重复类型,CLAMP:拉伸类型(注意这里的拉伸是指拉伸图片的而最后一个像素),MIRROM:镜像类型)
-        BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-        paint.setShader(shader);
+    //设置类型
+    enum Type{
+        TYPE_ROUND, TYPE_CICLE;
+    }
+
+    public MyDrawable(Bitmap bitmap){
+        this.mBitmap = bitmap;
+
+        //初始化画笔
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        BitmapShader shader = new BitmapShader(mBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+        mPaint.setShader(shader);
+
+        mWidth = Math.min(mBitmap.getWidth(), mBitmap.getHeight());
+        mRadius = mWidth / 2;
     }
 
     /**
-     * 这个方法是指drawbale将被绘制在画布上的区域
-     *
-     * @param left
-     * @param top
-     * @param right
-     * @param bottom
+     * 向外提供设置图片类型的方法
+     * @param type
      */
-    //左上右下
+    public void setType(Type type){
+        this.mType = type;
+    }
+
+    /**
+     * 暴露给外面设置圆角的大小
+     *
+     * @param round
+     */
+    public void setRound(int round) {
+        this.mRound = round;
+    }
+
     @Override
     public void setBounds(int left, int top, int right, int bottom) {
         super.setBounds(left, top, right, bottom);
-        //绘制区域
-        rectF = new RectF(left, top, right, bottom);
-
+        mRectF = new RectF(left, top, right, bottom);
     }
 
-    //获取bipmap的高度
-    @Override
-    public int getIntrinsicHeight() {
-        return bitmap.getHeight();
-    }
-
-    //获取bitmap的宽
-    @Override
-    public int getIntrinsicWidth() {
-        return bitmap.getWidth();
-    }
-
-
-    /**
-     * 这是我们的核心方法,绘制我们想要的图片
-     *
-     * @param canvas
-     */
     @Override
     public void draw(Canvas canvas) {
-        //参数1:绘制的区域,参数2:X轴圆角半径,参数3:Y轴圆角半径,参数4:画笔
-        //canvas.drawRoundRect(rectF, 50, 50, paint);
-        //画圆(参数1.2:确定圆心坐标,参数3:半径,参数4:画笔)
-        canvas.drawCircle(getIntrinsicWidth() , getIntrinsicHeight() , getIntrinsicWidth() , paint);
+        if (mType == Type.TYPE_ROUND) {
+            canvas.drawRoundRect(mRectF, mRound, mRound, mPaint);
+        }else {
+            canvas.drawCircle(mWidth / 2, mWidth / 2, mRadius, mPaint);
+        }
     }
 
+    @Override
+    public int getIntrinsicWidth() {
+        if (mType == Type.TYPE_CICLE) {
+            return mWidth;
+        }else {
+            return mBitmap.getWidth();
+        }
+    }
 
-    //设置透明度
+    @Override
+    public int getIntrinsicHeight() {
+        if (mType == Type.TYPE_CICLE) {
+            return mWidth;
+        }else {
+            return mBitmap.getHeight();
+        }
+    }
+
     @Override
     public void setAlpha(int alpha) {
-
+        mPaint.setAlpha(alpha);
     }
 
-    //设置滤镜渲染颜色
     @Override
-    public void setColorFilter(ColorFilter colorFilter) {
-
+    public void setColorFilter(ColorFilter cf) {
+        mPaint.setColorFilter(cf);
     }
 
-    //获取透明图
     @Override
     public int getOpacity() {
-        return 0;
+        return PixelFormat.TRANSLUCENT;
     }
 }
