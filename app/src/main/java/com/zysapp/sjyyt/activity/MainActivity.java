@@ -26,6 +26,7 @@ import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.BaseFragmentActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.UpGrade;
+import com.zysapp.sjyyt.fragment.CenterFragment;
 import com.zysapp.sjyyt.fragment.FirstPageFragment;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.newgetui.GeTuiIntentService;
@@ -100,6 +101,7 @@ public class MainActivity extends BaseFragmentActivity {
         EventBus.getDefault().register(this);
         upGrade = new UpGrade(mContext);
         user = BaseApplication.getInstance().getUser();
+        ChangeFragment(CenterFragment.class);
         ChangeFragment(FirstPageFragment.class);
     }
 
@@ -327,6 +329,7 @@ public class MainActivity extends BaseFragmentActivity {
                 ivPlayback.setImageResource(R.mipmap.playback_n);
                 ivReply.setImageResource(R.mipmap.notice_n);
                 ivCenter.setImageResource(R.mipmap.center_p);
+                ChangeFragment(CenterFragment.class);
                 break;
         }
     }

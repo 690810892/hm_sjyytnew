@@ -292,7 +292,7 @@ public class BaseNetWorker extends HemaNetWorker {
         BaseHttpInformation information = BaseHttpInformation.CLIENT_GET;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("token", token);// 登陆令牌
-        params.put("to_id", id);// 用户Id
+        params.put("id", id);// 用户Id
 
         ExecuteNetTask<User> task = new ExecuteNetTask<>(information, params, User.class);
         executeTask(task);
@@ -301,19 +301,14 @@ public class BaseNetWorker extends HemaNetWorker {
     /**
      * 保存用户资料接口
      */
-    public void clientSave(String token, String nickname,String sex, String age,String birthday
-            , String country, String district_1_id, String district_2_id, String district_3_id) {
+    public void clientSave(String token, String nickname,String sex, String avatar,String district_name) {
         BaseHttpInformation information = BaseHttpInformation.CLIENT_SAVE;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("token", token);// 登陆令牌
         params.put("nickname", nickname);// 用户昵称
-        params.put("age", age);
+        params.put("avatar", avatar);
         params.put("sex", sex);// 用户性别
-        params.put("birthday", birthday);//
-        params.put("country", country);//
-        params.put("district_1_id", district_1_id);//
-        params.put("district_2_id", district_2_id);//
-        params.put("district_3_id", district_3_id);//
+        params.put("district_name", district_name);//
 
         CurrentTask task = new CurrentTask(information, params);
         executeTask(task);

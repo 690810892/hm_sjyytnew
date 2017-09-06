@@ -3,6 +3,7 @@ package com.zysapp.sjyyt;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.text.SpannableString;
 import android.view.MotionEvent;
@@ -995,5 +996,12 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		return format.format(date);
 	}
+	public static Bitmap convertViewToBitmap(View view){
+		view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+		view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+		view.buildDrawingCache();
+		Bitmap bitmap = view.getDrawingCache();
 
+		return bitmap;
+	}
 }

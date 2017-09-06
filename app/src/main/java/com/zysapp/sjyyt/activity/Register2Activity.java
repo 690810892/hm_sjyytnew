@@ -463,41 +463,6 @@ public class Register2Activity extends BaseActivity implements OnClickListener {
         }
     }
 
-    private class FinishListener implements OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-//            String nickname = nicknameTextView.getText().toString();
-//            if (isNull(nickname)) {
-////				String b=username.substring(0,3);
-////				String e=username.substring(8,11);
-////				nickname=b+"**"+e;
-//                showTextDialog("请输入姓名");
-//                return;
-//            }
-//            String sex = sexTextView.getText().toString();
-//            if (isNull(sex)) {
-//                showTextDialog("请选择性别");
-//                return;
-//            }
-//            String em = emailTextView.getText().toString();
-//            if (isNull(em)) {
-//                showTextDialog("请输入邮箱");
-//                return;
-//            }
-//            String city = cityTextView.getText().toString();
-//            if (isNull(city)) {
-//                showTextDialog("请选择城市");
-//                return;
-//            }
-//            String invit = telEdittext.getText().toString();
-//            // getNetWorker().clientSave(tempToken,nickname,sex,em,district_1_id,district_2_id,city,invit);
-//            getNetWorker().clientAdd(tempToken, username, Md5Util.getMd5(XtomConfig.DATAKEY
-//                    + Md5Util.getMd5(password)), nickname, sex, em, district_1_id, district_2_id, city, invit);
-        }
-
-    }
-
     private class ImageTask extends XtomImageTask {
 
         public ImageTask(ImageView imageView, String path, Object context,

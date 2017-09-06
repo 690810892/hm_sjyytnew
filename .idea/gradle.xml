@@ -10,7 +10,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/onekeyshare" />
             <option value="$PROJECT_DIR$/pickerview" />
+            <option value="$PROJECT_DIR$/sharesdk" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -20,6 +20,7 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -50,6 +51,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -345,16 +347,21 @@ public class FirstPageFragment extends BaseFragment {
         titleText.setText("江阴主播电台");
 //        if (songs.size() > 0)
 //            EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition,1));
+        danmakuContext = DanmakuContext.create();
+        danmakuContext.setCacheStuffer(new SpannedCacheStuffer(), mCacheStufferAdapter);
+        // 设置是否禁止重叠
+        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
+        overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
+        danmakuContext.preventOverlapping(overlappingEnablePair);
+        danmakuView.prepare(parser, danmakuContext);
         danmakuView.enableDanmakuDrawingCache(true);
         danmakuView.setCallback(new DrawHandler.Callback() {
             @Override
             public void prepared() {
                 showDanmaku = true;
                 danmakuView.start();
-                generateSomeDanmaku();
-                for (String d : strings) {
-                    addDanmaku(d, false);
-                }
+//                generateSomeDanmaku();
             }
 
             @Override
@@ -372,9 +379,6 @@ public class FirstPageFragment extends BaseFragment {
 
             }
         });
-        danmakuContext = DanmakuContext.create();
-        danmakuContext.setCacheStuffer(new SpannedCacheStuffer(), mCacheStufferAdapter);
-        danmakuView.prepare(parser, danmakuContext);
         return rootView;
     }
 
@@ -388,8 +392,10 @@ public class FirstPageFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.title_btn_right:
+                addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg","张延山", "你好哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", true);
                 break;
             case R.id.tv_channel:
+                addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg","林俊杰", "呵呵，不错", true);
                 break;
             case R.id.iv_open:
                 if (showDanmaku) {
@@ -448,32 +454,28 @@ public class FirstPageFragment extends BaseFragment {
         danmakuView.addDanmaku(danmaku);
     }
 
-    private void setBim(Bitmap bitmap,String content,boolean isLive) {
-        BaseDanmaku danmaku = danmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-        MyDrawable drawable = new MyDrawable(bitmap);
-        drawable.setRound(100);
-        drawable.setBounds(0, 0, 100, 100);
-        SpannableStringBuilder spannable = createSpannable(drawable, content);
-        danmaku.text = spannable;
-        danmaku.padding = 5;
-        danmaku.priority = 1;  // 一定会显示, 一般用于本机发送的弹幕
-        danmaku.isLive = isLive;
-        danmaku.setTime(danmakuView.getCurrentTime() + 1200);
-        danmaku.textSize = sp2px(20);
-        danmaku.textColor = Color.RED;
-        danmaku.textShadowColor = 0; // 重要：如果有图文混排，最好不要设置描边(设textShadowColor=0)，否则会进行两次复杂的绘制导致运行效率降低
-//        danmaku.underlineColor = Color.GREEN;
-        danmakuView.addDanmaku(danmaku);
+    private void addDanmaKuShowTextAndImage(String avatar, String name, String content, boolean islive) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.listitem_danmu, null);
+        TextView tv_content = (TextView) view.findViewById(R.id.tv_content);
+        TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
+        RoundedImageView iv_avatar = (RoundedImageView) view.findViewById(R.id.iv_image);
+        iv_avatar.setCornerRadius(100);
+        tv_content.setText(content);
+        tv_name.setText(name);
+        ImageLoader.getInstance().loadImage(avatar, new imgload(iv_avatar, view));
+//        ImageLoader.getInstance().displayImage( avatar,iv_avatar, BaseApplication.getInstance()
+//                .getOptions(R.mipmap.default_avatar));
+
     }
 
-    private class img implements ImageLoadingListener {
-        String content;
-        boolean islive;
-
-        public img(String content, boolean islive) {
-            this.content = content;
-            this.islive = islive;
+    private class imgload implements ImageLoadingListener {
+        public imgload(RoundedImageView iv_avatar, View view) {
+            this.iv_avatar = iv_avatar;
+            this.view0 = view;
         }
+
+        RoundedImageView iv_avatar;
+        View view0;
 
         @Override
         public void onLoadingStarted(String s, View view) {
@@ -486,8 +488,18 @@ public class FirstPageFragment extends BaseFragment {
         }
 
         @Override
-        public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-            setBim(bitmap,content,islive);
+        public void onLoadingComplete(String s, View view, Bitmap bit) {
+            iv_avatar.setImageBitmap(bit);
+            Bitmap bitmap = BaseUtil.convertViewToBitmap(view0);
+            BaseDanmaku danmaku = danmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+            SpannableStringBuilder spannable = createSpannable(bitmap, "");
+            danmaku.text = spannable;
+            danmaku.padding = 20;
+            danmaku.priority = 1;  // 一定会显示, 一般用于本机发送的弹幕
+            danmaku.isLive = true;
+            danmaku.setTime(danmakuView.getCurrentTime() + 1500);
+            danmaku.textShadowColor = 0; // 重要：如果有图文混排，最好不要设置描边(设textShadowColor=0)，否则会进行两次复杂的绘制导致运行效率降低
+            danmakuView.addDanmaku(danmaku);
         }
 
         @Override
@@ -495,14 +507,6 @@ public class FirstPageFragment extends BaseFragment {
 
         }
     }
-
-    private void addDanmaKuShowTextAndImage(String avatar, String content, boolean islive) {
-//        Drawable drawable = getResources().getDrawable(R.drawable.ic_launcher);
-        String url = avatar;
-        ImageLoader.getInstance().loadImage(url, new img(content, islive));
-
-    }
-
 
     /**
      * 随机生成一些弹幕内容以供测试
@@ -515,7 +519,7 @@ public class FirstPageFragment extends BaseFragment {
                     int time = new Random().nextInt(300);
                     String content = "" + time + time;
 //                    addDanmaku(content, false);
-                    addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg", content, true);
+//                    addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg", content, true);
                     try {
                         Thread.sleep(time);
                     } catch (InterruptedException e) {
@@ -535,7 +539,6 @@ public class FirstPageFragment extends BaseFragment {
     }
 
     private BaseCacheStuffer.Proxy mCacheStufferAdapter = new BaseCacheStuffer.Proxy() {
-        private Drawable mDrawable;
 
         /**
          * 在弹幕显示前使用新的text,使用新的text
@@ -545,44 +548,9 @@ public class FirstPageFragment extends BaseFragment {
          */
         @Override
         public void prepareDrawing(final BaseDanmaku danmaku, boolean fromWorkerThread) {
-            if (danmaku.text instanceof Spanned) { // 根据你的条件检查是否需要需要更新弹幕
-                // FIXME 这里只是简单启个线程来加载远程url图片，请使用你自己的异步线程池，最好加上你的缓存池
-                new Thread() {
-                    @Override
-                    public void run() {
-                        String url = "http://www.bilibili.com/favicon.ico";
-                        InputStream inputStream = null;
-                        Drawable drawable = mDrawable;
-                        if (drawable == null) {
-                            try {
-                                URLConnection urlConnection = new URL(url).openConnection();
-                                try {
-                                    inputStream = urlConnection.getInputStream();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                drawable = BitmapDrawable.createFromStream(inputStream, "bitmap");
-                                mDrawable = drawable;
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } finally {
-                                IOUtils.closeQuietly(inputStream);
-                            }
-                        }
-                        if (drawable != null) {
-                            drawable.setBounds(0, 0, 100, 100);
-                            SpannableStringBuilder spannable = createSpannable(drawable, "123");
-                            danmaku.text = spannable;
-                            if (danmakuView != null) {
-                                danmakuView.invalidateDanmaku(danmaku, false);
-                            }
-                            return;
-                        }
-                    }
-                }.start();
-            }
+//            if (danmaku.text instanceof Spanned) { // 根据你的条件检查是否需要需要更新弹幕
+//                addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg", danmaku.text.toString(), true);
+//            }
         }
 
         @Override
@@ -597,13 +565,13 @@ public class FirstPageFragment extends BaseFragment {
      * @param drawable
      * @return
      */
-    private SpannableStringBuilder createSpannable(Drawable drawable, String content) {
-        String text = content;
+    private SpannableStringBuilder createSpannable(Bitmap drawable, String content) {
+        String text = " ";
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(text);
-        ImageSpan span = new ImageSpan(drawable);//ImageSpan.ALIGN_BOTTOM);
-        spannableStringBuilder.setSpan(span, 0, text.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-        spannableStringBuilder.append(content);
-        spannableStringBuilder.setSpan(new BackgroundColorSpan(Color.parseColor("#ffffff")), 0, spannableStringBuilder.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        ImageSpan span = new ImageSpan(getActivity(), drawable, ImageSpan.ALIGN_BASELINE);//ImageSpan.ALIGN_BOTTOM);
+        spannableStringBuilder.setSpan(span, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+//        spannableStringBuilder.append(content);
+//        spannableStringBuilder.setSpan(new BackgroundColorSpan(Color.parseColor("#ffffff")), 0, spannableStringBuilder.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         return spannableStringBuilder;
     }
 

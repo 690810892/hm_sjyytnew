@@ -40,16 +40,17 @@ public class User extends HemaUser {
     private String lastloginversion; //lastloginversion
     private String regdate; //用户注册时间
     private String token; //登陆令牌
-    private String  city; //	所在城市
+    private String city; //	所在城市
     private String a_username; //	绑定用户账号
-    private String  a_nickname; //	绑定用户昵称
-    private String  district_1_id; //
-    private String  district_2_id; //
-    private String  out_trade; //
-    private String  age; //	年龄
-    private String   birthday; //	出生日期		格式【1990-11-11】
-    private String    country; //	地区
-    private String    district_3_id	; //区ID
+    private String a_nickname; //	绑定用户昵称
+    private String district_1_id; //
+    private String district_2_id; //
+    private String out_trade; //
+    private String age; //	年龄
+    private String birthday; //	出生日期		格式【1990-11-11】
+    private String country; //	地区
+    private String district_3_id; //区ID
+    private String district_name;
     public User() {
         super("");
     }
@@ -58,6 +59,7 @@ public class User extends HemaUser {
         super(jsonObject);
         if (jsonObject != null) {
             try {
+                district_name = get(jsonObject, "district_name");
                 age = get(jsonObject, "age");
                 birthday = get(jsonObject, "birthday");
                 country = get(jsonObject, "country");
@@ -138,6 +140,7 @@ public class User extends HemaUser {
                 ", birthday='" + birthday + '\'' +
                 ", country='" + country + '\'' +
                 ", district_3_id='" + district_3_id + '\'' +
+                ", district_name='" + district_name + '\'' +
                 '}';
     }
 
@@ -155,6 +158,10 @@ public class User extends HemaUser {
 
     public String getAge() {
         return age;
+    }
+
+    public String getDistrict_name() {
+        return district_name;
     }
 
     public String getBirthday() {
@@ -190,6 +197,8 @@ public class User extends HemaUser {
     }
 
     public String getSex() {
+        if (isNull(sex))
+            sex = "男";
         return sex;
     }
 

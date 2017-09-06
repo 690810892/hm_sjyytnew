@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/bg_linearLayout">
+
+    <include layout="@layout/title_image" />
+
+    <com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout
+        android:id="@+id/refreshLoadmoreLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/lv_infor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/bg_center_top"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:paddingRight="10dp"
+                        android:paddingTop="10dp"
+                        android:text="信息管理"
+                        android:textColor="@color/hui"
+                        android:textSize="@dimen/textsize_7" />
+
+                    <com.hemaapp.hm_FrameWork.view.RoundedImageView
+                        android:id="@+id/iv_avatar"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/default_avatar" />
+
+                    <TextView
+                        android:id="@+id/tv_nickname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingTop="8dp"
+                        android:text="未登录"
+                        android:textColor="@color/word_black"
+                        android:textSize="@dimen/textsize_8" />
+
+                    <com.hemaapp.hm_FrameWork.view.RoundedImageView
+                        android:id="@+id/iv_sex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="3dp"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/sex_f" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lv_notice"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <TextView
+                        android:id="@+id/tv_notice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:background="@color/white"
+                        android:drawableLeft="@mipmap/center_notice"
+                        android:gravity="center_vertical"
+                        android:drawablePadding="8dp"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:text="消息"
+                        android:textColor="@color/word_black"
+                        android:textSize="@dimen/textsize_7.5" />
+                    <TextView
+                        android:id="@+id/tv_notice_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:gravity="center_vertical|right"
+                        android:paddingLeft="15dp"
+                        android:paddingRight="15dp"
+                        android:text="0"
+                        android:textColor="@color/word_black"
+                        android:textSize="@dimen/textsize_7.5" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/white"
+                    android:paddingLeft="60dp"
+                    android:paddingRight="15dp"
+                    android:src="@color/line" />
+
+                <TextView
+                    android:id="@+id/tv_played"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:layout_marginTop="5dp"
+                    android:drawableLeft="@mipmap/center_played"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:text="播放记录"
+                    android:textColor="@color/word_black"
+                    android:textSize="@dimen/textsize_7.5" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/white"
+                    android:paddingLeft="60dp"
+                    android:paddingRight="15dp"
+                    android:src="@color/line" />
+
+                <TextView
+                    android:id="@+id/tv_score"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:drawableLeft="@mipmap/center_score"
+                    android:drawablePadding="8dp"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:text="我的积分"
+                    android:textColor="@color/word_black"
+                    android:textSize="@dimen/textsize_7.5" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/white"
+                    android:paddingLeft="60dp"
+                    android:paddingRight="15dp"
+                    android:src="@color/line" />
+
+                <TextView
+                    android:id="@+id/tv_tip"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:drawableLeft="@mipmap/center_tip"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="5dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:text="叫我起床"
+                    android:textColor="@color/word_black"
+                    android:textSize="@dimen/textsize_7.5" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/white"
+                    android:paddingLeft="60dp"
+                    android:paddingRight="15dp"
+                    android:src="@color/line" />
+                <TextView
+                    android:id="@+id/tv_love"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:drawableLeft="@mipmap/center_love"
+                    android:drawablePadding="8dp"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:text="我喜欢的"
+                    android:textColor="@color/word_black"
+                    android:textSize="@dimen/textsize_7.5" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/white"
+                    android:paddingLeft="60dp"
+                    android:paddingRight="15dp"
+                    android:src="@color/line" />
+            </LinearLayout>
+        </ScrollView>
+    </com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout>
+</LinearLayout>
