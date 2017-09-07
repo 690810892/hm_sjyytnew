@@ -242,7 +242,7 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	/**
 	 *未读消息数接口
 	 * */
-	UNREAD_GET(59, "unread_notice_count_get", "未读消息数接口", false),
+	UNREAD_GET(59, "unread_get", "未读消息数接口", false),
 	/**
 	 *修改并保存手机号
 	 * */

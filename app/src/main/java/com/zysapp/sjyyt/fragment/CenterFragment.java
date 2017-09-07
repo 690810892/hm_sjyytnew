@@ -23,8 +23,12 @@ import com.zysapp.sjyyt.BaseFragment;
 import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.ToLogin;
 import com.zysapp.sjyyt.activity.MyInforActivity;
+import com.zysapp.sjyyt.activity.MyLoveActivity;
+import com.zysapp.sjyyt.activity.MyPlayedActivity;
+import com.zysapp.sjyyt.activity.NoticeListActivity;
 import com.zysapp.sjyyt.activity.R;
 import com.zysapp.sjyyt.activity.SetActivity;
+import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.util.EventBusModel;
@@ -84,12 +88,14 @@ public class CenterFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         sysInitInfo = BaseApplication.getInstance().getSysInitInfo();
-        init();
+
     }
 
     public void onEventMainThread(EventBusModel event) {
         switch (event.getType()) {
             case NEW_MESSAGE:
+                if (user != null)
+                    getNetWorker().unreadGet(user.getToken());
                 break;
             case REFRESH_USER:
                 getNetWorker().clientGet(user.getToken(), user.getId());
@@ -103,6 +109,7 @@ public class CenterFragment extends BaseFragment {
             tvNickname.setText("未登录");
         } else {
             getNetWorker().clientGet(user.getToken(), user.getId());
+            getNetWorker().unreadGet(user.getToken());
         }
     }
 
@@ -169,7 +176,10 @@ public class CenterFragment extends BaseFragment {
                 BaseApplication.getInstance().setUser(user);
                 initUserInfor();
                 break;
-            case CLIENT_LOGINOUT:
+            case UNREAD_GET:
+                HemaArrayResult<ID> TResult = (HemaArrayResult<ID>) baseResult;
+                String count = TResult.getObjects().get(0).getNum();
+                tvNoticeNum.setText(count);
                 break;
             default:
                 break;
@@ -181,9 +191,9 @@ public class CenterFragment extends BaseFragment {
                 .getOptions(R.mipmap.default_avatar));
         ivAvatar.setCornerRadius(100);
         tvNickname.setText(user.getNickname());
-        if (user.getSex().equals("男")){
+        if (user.getSex().equals("男")) {
             ivSex.setImageResource(R.mipmap.sex_m);
-        }else {
+        } else {
             ivSex.setImageResource(R.mipmap.sex_f);
         }
     }
@@ -237,6 +247,7 @@ public class CenterFragment extends BaseFragment {
         // TODO: inflate a fragment view
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         unbinder = ButterKnife.bind(this, rootView);
+        init();
         titleBtnRight.setImageResource(R.mipmap.center_set);
         titleText.setText("我的");
         titleBtnLeft.setVisibility(View.GONE);
@@ -275,26 +286,44 @@ public class CenterFragment extends BaseFragment {
             case R.id.title_btn_left:
                 break;
             case R.id.title_btn_right:
-                it=new Intent(getActivity(), SetActivity.class);
+                it = new Intent(getActivity(), SetActivity.class);
                 startActivity(it);
                 break;
             case R.id.lv_infor:
-                if (user==null){
+                if (user == null) {
                     ToLogin.showLogin(getActivity());
                     break;
                 }
-                it=new Intent(getActivity(), MyInforActivity.class);
+                it = new Intent(getActivity(), MyInforActivity.class);
                 startActivity(it);
                 break;
             case R.id.lv_notice:
+                if (user == null) {
+                    ToLogin.showLogin(getActivity());
+                    break;
+                }
+                it = new Intent(getActivity(), NoticeListActivity.class);
+                startActivity(it);
                 break;
             case R.id.tv_played:
+                if (user == null) {
+                    ToLogin.showLogin(getActivity());
+                    break;
+                }
+                it = new Intent(getActivity(), MyPlayedActivity.class);
+                startActivity(it);
                 break;
             case R.id.tv_score:
                 break;
             case R.id.tv_tip:
                 break;
             case R.id.tv_love:
+                if (user == null) {
+                    ToLogin.showLogin(getActivity());
+                    break;
+                }
+                it = new Intent(getActivity(), MyLoveActivity.class);
+                startActivity(it);
                 break;
         }
     }

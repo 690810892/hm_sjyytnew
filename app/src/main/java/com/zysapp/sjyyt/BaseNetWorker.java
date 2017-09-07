@@ -8,8 +8,10 @@ import com.hemaapp.hm_FrameWork.task.CurrentTask;
 import com.hemaapp.hm_FrameWork.task.ExecuteNetTask;
 import com.zysapp.sjyyt.model.DistrictInfor;
 import com.zysapp.sjyyt.model.FileUploadResult;
+import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.Image;
 import com.zysapp.sjyyt.model.JsonBean;
+import com.zysapp.sjyyt.model.Notice;
 import com.zysapp.sjyyt.model.PCD;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.Token;
@@ -401,10 +403,10 @@ public class BaseNetWorker extends HemaNetWorker {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("token", token);// 登陆令牌
         params.put("content", content);// 意见内容
-        params.put("devicetype", "2");//
-        params.put("loginversion", loginversion);
-        params.put("mobile_brand", mobile_brand);
-        params.put("system_type", system_type);
+        params.put("device", "Android Phone");//
+        params.put("version", loginversion);
+        params.put("brand", mobile_brand);
+        params.put("system", system_type);
         CurrentTask task = new CurrentTask(information, params);
         executeTask(task);
     }
@@ -420,5 +422,34 @@ public class BaseNetWorker extends HemaNetWorker {
         ExecuteNetTask<PCD> task = new ExecuteNetTask<>(information, params, PCD.class);
         executeTask(task);
     }
-
+    public void unreadGet(String token) {
+        BaseHttpInformation information = BaseHttpInformation.UNREAD_GET;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        ExecuteNetTask<ID> task = new ExecuteNetTask<>(information, params, ID.class);
+        executeTask(task);
+    }
+    /**
+     * 获取用户通知列表接口
+     */
+    public void noticeList(String token,  int page) {
+        BaseHttpInformation information = BaseHttpInformation.NOTICE_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("noticetype", "0");
+        params.put("page", String.valueOf(page));
+        ExecuteNetTask<Notice> task = new ExecuteNetTask<>(information, params, Notice.class);
+        executeTask(task);
+    }
+    public void noticeOperate(String token, String id,String keytype,String keyid,String operatetype) {
+        BaseHttpInformation information = BaseHttpInformation.NOTICE_SAVEOPERATE;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("id", id);
+        params.put("keytype", keytype);
+        params.put("keyid", keyid);
+        params.put("operatetype", operatetype);
+        ExecuteNetTask<Notice> task = new ExecuteNetTask<>(information, params, Notice.class);
+        executeTask(task);
+    }
 }

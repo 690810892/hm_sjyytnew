@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/bg_linearLayout"
+    android:background="@color/white">
+    <include layout="@layout/title" />
+
+    <EditText
+        android:id="@+id/edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_advice"
+        android:gravity="left"
+        android:layout_margin="12dp"
+        android:hint="请输入您的反馈意见"
+        android:minLines="9"
+        android:padding="10dp"
+        android:textColor="#555555"
+        android:textColorHint="#D4D4D4"
+        android:textSize="@dimen/textsize_7.5" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingRight="10dp"
+        android:visibility="visible"
+        android:gravity="right">
+        <TextView
+            android:id="@+id/textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:background="@color/white"
+            android:text="0"
+            android:textColor="#565656"
+            android:textSize="@dimen/textsize_6" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:gravity="right"
+            android:background="@color/white"
+            android:text="/140"
+            android:textColor="#565656"
+            android:textSize="@dimen/textsize_6" />
+    </LinearLayout>
+</LinearLayout>

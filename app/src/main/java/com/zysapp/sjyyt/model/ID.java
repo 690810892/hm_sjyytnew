@@ -21,6 +21,7 @@ public class ID extends XtomObject implements Serializable {
 	private String count;
 	private String about_id;
 	private String phone;
+	private String num;
 	public ID(JSONObject jsonObject) throws DataParseException {
 		if (jsonObject != null) {
 			try {
@@ -30,6 +31,7 @@ public class ID extends XtomObject implements Serializable {
 				about_id = get(jsonObject, "about_id");
 				count = get(jsonObject, "count");
 				phone = get(jsonObject, "phone");
+				num = get(jsonObject, "num");
 				log_i(toString());
 			} catch (JSONException e) {
 				throw new DataParseException(e);
@@ -46,6 +48,7 @@ public class ID extends XtomObject implements Serializable {
 				", count='" + count + '\'' +
 				", about_id='" + about_id + '\'' +
 				", phone='" + phone + '\'' +
+				", num='" + num + '\'' +
 				'}';
 	}
 
@@ -71,6 +74,10 @@ public class ID extends XtomObject implements Serializable {
 
 	public String getCount() {
 		return count;
+	}
+
+	public String getNum() {
+		return num;
 	}
 
 	public void setCount(String count) {

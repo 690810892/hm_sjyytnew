@@ -28,6 +28,9 @@ import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.UpGrade;
 import com.zysapp.sjyyt.fragment.CenterFragment;
 import com.zysapp.sjyyt.fragment.FirstPageFragment;
+import com.zysapp.sjyyt.fragment.PlayBackFragment;
+import com.zysapp.sjyyt.fragment.ReplyFragment;
+import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.newgetui.GeTuiIntentService;
 import com.zysapp.sjyyt.newgetui.PushUtils;
@@ -43,7 +46,7 @@ import de.greenrobot.event.EventBus;
 import xtom.frame.util.XtomDeviceUuidFactory;
 
 /*
-666666666666666666666666
+
  */
 public class MainActivity extends BaseFragmentActivity {
 
@@ -101,6 +104,8 @@ public class MainActivity extends BaseFragmentActivity {
         EventBus.getDefault().register(this);
         upGrade = new UpGrade(mContext);
         user = BaseApplication.getInstance().getUser();
+        if (user != null)
+            getNetWorker().unreadGet(user.getToken());
         ChangeFragment(CenterFragment.class);
         ChangeFragment(FirstPageFragment.class);
     }
@@ -111,6 +116,10 @@ public class MainActivity extends BaseFragmentActivity {
                 break;
             case CLIENT_ID:
                 saveDevice(event.getContent());
+                break;
+            case NEW_MESSAGE:
+                if (user != null)
+                    getNetWorker().unreadGet(user.getToken());
                 break;
         }
     }
@@ -214,6 +223,14 @@ public class MainActivity extends BaseFragmentActivity {
                 user = uResult.getObjects().get(0);
                 BaseApplication.getInstance().setUser(user);
                 break;
+            case UNREAD_GET:
+                HemaArrayResult<ID> TResult = (HemaArrayResult<ID>) hemaBaseResult;
+                String count = TResult.getObjects().get(0).getNum();
+                if (isNull(count) || count.equals("0"))
+                    pointMessage.setVisibility(View.INVISIBLE);
+                else
+                    pointMessage.setVisibility(View.VISIBLE);
+                break;
             default:
                 break;
         }
@@ -297,7 +314,7 @@ public class MainActivity extends BaseFragmentActivity {
 
     @Override
     public void onChange(int position) {
-        EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_SONG,position));
+        EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_SONG, position));
     }
 
     @OnClick({R.id.rl_first, R.id.rl_playback, R.id.iv_play, R.id.rl_reply, R.id.rl_center})
@@ -315,6 +332,7 @@ public class MainActivity extends BaseFragmentActivity {
                 ivPlayback.setImageResource(R.mipmap.playback_p);
                 ivReply.setImageResource(R.mipmap.notice_n);
                 ivCenter.setImageResource(R.mipmap.center_n);
+                ChangeFragment(PlayBackFragment.class);
                 break;
             case R.id.iv_play:
                 break;
@@ -323,6 +341,7 @@ public class MainActivity extends BaseFragmentActivity {
                 ivPlayback.setImageResource(R.mipmap.playback_n);
                 ivReply.setImageResource(R.mipmap.notice_p);
                 ivCenter.setImageResource(R.mipmap.center_n);
+                ChangeFragment(ReplyFragment.class);
                 break;
             case R.id.rl_center:
                 ivFirst.setImageResource(R.mipmap.play_n);

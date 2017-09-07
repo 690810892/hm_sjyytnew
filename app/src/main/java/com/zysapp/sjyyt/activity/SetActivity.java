@@ -44,6 +44,7 @@ import butterknife.OnClick;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.onekeyshare.OnekeyShare;
+import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.tencent.qzone.QZone;
 import cn.sharesdk.wechat.favorite.WechatFavorite;
@@ -253,6 +254,9 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
     @Override
     protected void setListener() {
         titleText.setText("设置");
+        if (user!=null&&HemaUtil.isThirdSave(mContext)){
+            tvPassword.setVisibility(View.GONE);
+        }
     }
 
 
@@ -279,12 +283,18 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
             case R.id.title_btn_right:
                 break;
             case R.id.tv_password:
+                if (user == null) {
+                    ToLogin.showLogin(mContext);
+                    break;
+                }
+                it = new Intent(mContext, ResetPassword1Activity.class);
+                startActivity(it);
                 break;
             case R.id.tv_aboutapp:
-                path = sys_web_service + "webview/parm/introduction";
+                path = sys_web_service + "webview/parm/aboutus";
                 it = new Intent(mContext, ShowInternetPageActivity.class);
                 it.putExtra("path", path);
-                it.putExtra("name", "软件介绍");
+                it.putExtra("name", "关于软件");
                 startActivity(it);
                 break;
             case R.id.tv_advice:
@@ -292,8 +302,8 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
                     ToLogin.showLogin(mContext);
                     break;
                 }
-//                it = new Intent(mContext, AdviceActivity.class);
-//                startActivity(it);
+                it = new Intent(mContext, AdviceActivity.class);
+                startActivity(it);
                 break;
             case R.id.tv_share:
                 if (user == null) {
@@ -418,77 +428,77 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
 
     @SuppressWarnings("deprecation")
     private void share() {
-//        if (mWindow_exit != null) {
-//            mWindow_exit.dismiss();
-//        }
-//        mWindow_exit = new PopupWindow(mContext);
-//        mWindow_exit.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
-//        mWindow_exit.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
-//        mWindow_exit.setBackgroundDrawable(new BitmapDrawable());
-//        mWindow_exit.setFocusable(true);
-//        mWindow_exit.setAnimationStyle(R.style.PopupAnimation);
-//        mViewGroup_exit = (ViewGroup) LayoutInflater.from(mContext).inflate(
-//                R.layout.pop_share, null);
-//        TextView wechat = (TextView) mViewGroup_exit.findViewById(R.id.wechat);
-//        TextView moment = (TextView) mViewGroup_exit.findViewById(R.id.moment);
-//        TextView qqshare = (TextView) mViewGroup_exit.findViewById(R.id.qq);
-//        TextView qzone = (TextView) mViewGroup_exit.findViewById(R.id.zone);
-//        TextView cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
-//        View all = mViewGroup_exit.findViewById(R.id.allitem);
-//        mWindow_exit.setContentView(mViewGroup_exit);
-//        mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
-//        cancel.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                mWindow_exit.dismiss();
-//            }
-//        });
-//        all.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                mWindow_exit.dismiss();
-//            }
-//        });
-//        qqshare.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                showShare(QQ.NAME);
-//                mWindow_exit.dismiss();
-//            }
-//        });
-//        wechat.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                showShare(Wechat.NAME);
-//                mWindow_exit.dismiss();
-//            }
-//        });
-//        moment.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                showShare(WechatMoments.NAME);
-//                mWindow_exit.dismiss();
-//            }
-//        });
-//        qzone.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                showShare(QZone.NAME);
-//                mWindow_exit.dismiss();
-//            }
-//        });
+        if (mWindow_exit != null) {
+            mWindow_exit.dismiss();
+        }
+        mWindow_exit = new PopupWindow(mContext);
+        mWindow_exit.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setBackgroundDrawable(new BitmapDrawable());
+        mWindow_exit.setFocusable(true);
+        mWindow_exit.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup_exit = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_share, null);
+        TextView wechat = (TextView) mViewGroup_exit.findViewById(R.id.wechat);
+        TextView moment = (TextView) mViewGroup_exit.findViewById(R.id.moment);
+        TextView qqshare = (TextView) mViewGroup_exit.findViewById(R.id.qq);
+        TextView qzone = (TextView) mViewGroup_exit.findViewById(R.id.zone);
+        TextView weibo = (TextView) mViewGroup_exit.findViewById(R.id.weibo);
+        TextView cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
+        mWindow_exit.setContentView(mViewGroup_exit);
+        mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
+        cancel.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+                mWindow_exit.dismiss();
+            }
+        });
+        qqshare.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(QQ.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        wechat.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(Wechat.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        moment.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(WechatMoments.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        qzone.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(QZone.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        weibo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(SinaWeibo.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
 
     }
 
     private void showShare(String platform) {
-        pathWX = sys_plugins + "share/callback.php?id=app_" + user.getId();
+        pathWX = sys_plugins + "share/sdk.php?id=0&keytype=0";
         imageurl = initImagePath();
         if (oks == null) {
             oks = new OnekeyShare();
@@ -522,6 +532,9 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
         }
         if (arg0.getName().equals(WechatFavorite.NAME)) {// 判断成功的平台是不是微信收藏
             handler.sendEmptyMessage(5);
+        }
+        if (arg0.getName().equals(SinaWeibo.NAME)) {// 判断成功的平台是不是微博
+            handler.sendEmptyMessage(8);
         }
     }
 
@@ -559,6 +572,9 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
                     break;
                 case 5:
                     Toast.makeText(getApplicationContext(), "微信收藏分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 8:
+                    Toast.makeText(getApplicationContext(), "微博分享成功", Toast.LENGTH_LONG).show();
                     break;
                 case 7:
                     Toast.makeText(getApplicationContext(), "取消分享", Toast.LENGTH_LONG).show();

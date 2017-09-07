@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/all"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="#60000000" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="0dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="0dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp">
+
+            <TextView
+                android:id="@+id/wechat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:drawableTop="@mipmap/share_wechat"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/hui"
+                android:textSize="@dimen/textsize_7" />
+
+            <TextView
+                android:id="@+id/moment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:drawableTop="@mipmap/share_moment"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/hui"
+                android:textSize="@dimen/textsize_7" />
+
+
+            <TextView
+                android:id="@+id/qq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:drawableTop="@mipmap/share_qq"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/hui"
+                android:textSize="@dimen/textsize_7" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <TextView
+                android:id="@+id/zone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:drawableTop="@mipmap/share_qzone"
+                android:gravity="center"
+                android:text="QQ空间"
+                android:textColor="@color/hui"
+                android:textSize="@dimen/textsize_7" />
+
+            <TextView
+                android:id="@+id/weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:drawableTop="@mipmap/share_weibo"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/hui"
+                android:textSize="@dimen/textsize_7" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:drawableTop="@mipmap/share_weibo"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/hui"
+                android:textSize="@dimen/textsize_7"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:drawableTop="@mipmap/share_cancel"
+            android:gravity="center"
+            android:padding="15dp"
+            android:text=""
+            android:textColor="@color/word_black"
+            android:textSize="@dimen/textsize_8" />
+    </LinearLayout>
+
+</FrameLayout>

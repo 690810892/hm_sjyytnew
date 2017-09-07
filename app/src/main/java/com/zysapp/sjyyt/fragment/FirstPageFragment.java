@@ -172,16 +172,6 @@ public class FirstPageFragment extends BaseFragment {
         songs.add(song);
         songs.add(song2);
 
-        strings.add("张延山1111111111");
-        strings.add("张延山2222222221");
-        strings.add("张延山3333333333111");
-        strings.add("张延山18888888888811");
-        strings.add("张延山19999999999999911");
-        strings.add("张延山7777777777711");
-        strings.add("张延山1144444444444444");
-        strings.add("张延山113333333333333333111");
-        strings.add("张延山10000000000000011");
-        strings.add("张延山1111111111");
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -341,7 +331,7 @@ public class FirstPageFragment extends BaseFragment {
         // TODO: inflate a fragment view
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         unbinder = ButterKnife.bind(this, rootView);
-        ivMusic.getLayoutParams().height = screenWide;
+        ivMusic.getLayoutParams().height = screenWide*3/5;
         titleBtnLeft.setVisibility(View.GONE);
         titleBtnRight.setImageResource(R.mipmap.first_right);
         titleText.setText("江阴主播电台");
@@ -361,7 +351,6 @@ public class FirstPageFragment extends BaseFragment {
             public void prepared() {
                 showDanmaku = true;
                 danmakuView.start();
-//                generateSomeDanmaku();
             }
 
             @Override
@@ -427,10 +416,28 @@ public class FirstPageFragment extends BaseFragment {
             case R.id.tv_tip:
                 break;
             case R.id.tv_center:
+                tvCenter.setTextColor(0xff000000);
+                tvContent.setTextColor(0xff212121);
+                tvReplylist.setTextColor(0xff212121);
+                ivLine1.setVisibility(View.VISIBLE);
+                ivLine2.setVisibility(View.INVISIBLE);
+                ivLine3.setVisibility(View.INVISIBLE);
                 break;
             case R.id.tv_content:
+                tvCenter.setTextColor(0xff212121);
+                tvContent.setTextColor(0xff000000);
+                tvReplylist.setTextColor(0xff212121);
+                ivLine1.setVisibility(View.INVISIBLE);
+                ivLine2.setVisibility(View.VISIBLE);
+                ivLine3.setVisibility(View.INVISIBLE);
                 break;
             case R.id.tv_replylist:
+                tvCenter.setTextColor(0xff212121);
+                tvContent.setTextColor(0xff212121);
+                tvReplylist.setTextColor(0xff000000);
+                ivLine1.setVisibility(View.INVISIBLE);
+                ivLine2.setVisibility(View.INVISIBLE);
+                ivLine3.setVisibility(View.VISIBLE);
                 break;
         }
     }

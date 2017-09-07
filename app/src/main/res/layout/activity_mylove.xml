@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/bg_linearLayout">
+
+    <include layout="@layout/title" />
+
+    <RadioGroup
+        android:id="@+id/type"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:background="@color/background"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbt0"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_radiobutton_mainline"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:text="我喜欢的节目"
+            android:textColor="@color/selector_radio_text"
+            android:textSize="@dimen/textsize_7.5" />
+
+        <ImageView
+            android:layout_width="1dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:src="@color/line" />
+
+        <RadioButton
+            android:id="@+id/rbt1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_radiobutton_mainline"
+            android:button="@null"
+            android:gravity="center"
+            android:text="订阅的频道"
+            android:textColor="@color/selector_radio_text"
+            android:textSize="@dimen/textsize_7.5" />
+    </RadioGroup>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_weight="1">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+</LinearLayout>
