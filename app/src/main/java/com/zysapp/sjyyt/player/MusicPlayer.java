@@ -56,7 +56,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
     public void play(Song song) {
         try {
             mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(song.getPath());
+            mMediaPlayer.setDataSource(song.getUrl());
             mMediaPlayer.prepareAsync();
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override

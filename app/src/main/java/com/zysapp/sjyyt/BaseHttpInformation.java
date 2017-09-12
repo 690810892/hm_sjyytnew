@@ -106,11 +106,11 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	/**
 	 * 获取帖子回复列表
 	 */
-	REPLY_LIST(23, "article_comment_list", "获取评论列表信息", false),
+	REPLY_LIST(23, "comment_list", "获取评论列表信息", false),
 	/**
 	 * 添加评论
 	 */
-	REPLY_ADD(24, "article_comment", "添加评论", false),
+	REPLY_ADD(24, "comment_add", "添加评论", false),
 	/**
 	 * 订单评论
 	 */
@@ -305,34 +305,18 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	 *点赞列表接口
 	 * */
 	GOOD_LIST(107, "good_list", "点赞列表接口", false),
-	CUSTOM_ADD(107, "custom_add", "新建客户", false),
-	CUSTOM_LIST(107, "custom_list", "客户列表", false),
+	CHANNEL_LIST(107, "channel_list", "频道列表", false),
+	LIVE_LIST(107, "live_list", "节目列表", false),
 	CUSTOM_GET(107, "custom_get", "客户详情", false),
 	CUSTOM_REMOVE(107, "custom_remove", "客户删除", false),
 	REPAIR_ADD(107, "repair_add", "新建维修", false),
 	CAR_LIST(107, "car_list", "接车列表", false),
 	NEW_LIST(107, "new_list", "提醒列表", false),
-	CAR_GET(107, "car_get", "接车详情", false),
-	CAR_REMOVE(107, "car_remove", "删除接车记录", false),
-	INSURANCE_ADD(107, "insurance_add", "新建保险", false),
-	CAR_ADD(107, "car_add", "新建审车", false),
-	FOLDER_ADD(107, "folder_add", "添加文件夹", false),
-	FOLDER_LIST(107, "folder_list", "文件夹列表", false),
-	MEMO_REMOVE(107, "memo_remove", "删除备忘录/文件夹", false),
-	MEMO_ADD(107, "memo_add", "添加备忘录", false),
-	MEMO_LIST(107, "memo_list", "备忘录列表", false),
+
 	BLOG_LIST(107, "repair_circle_list", "动态列表", false),
-	BLOG_GET(107, "repair_circle_get", "动态详情", false),
-	BLOG_ADD(107, "repair_circle_save", "发布/编辑动态", false),
-	BLOG_OPERATE(107, "repair_circle_operate", "动态操作", false),
-	COMMENT_ADD(107, "comment_add", "发表评论", false),
-	LOVE_LIST(107, "love_list", "点赞列表", false),
-	COMMENT_LIST(107, "comment_list", "评论列表", false),
-	CASH_GET(107, "cash_get", "财务管理", false),
 	BROADCAST_LIST(107, "broadcast_list", "公告列表", false),
 	SEARCH_LIST(107, "search_get", "搜索", false),
 	CITY_LIST(107, "city_all_get", "所有城市", false),
-	CONTACT_GET(107, "contact_get", "联系我们", false),
 	;
 
 

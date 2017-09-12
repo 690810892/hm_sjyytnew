@@ -40,7 +40,7 @@ public class PlayerService extends Service implements
     private NotificationManager notificationManager;
     private MediaPlayer mPlayer;
     private ArrayList<Song> mQueue = new ArrayList<>();
-    private int mQueueIndex = 0, playType = 0;
+    private int mQueueIndex = 0, playType = 0, typeid = 0;
     private PlayerService.OnMusicEventListener mListener;
     // 单线程池
     private ExecutorService mProgressUpdatedListener = Executors
@@ -126,9 +126,9 @@ public class PlayerService extends Service implements
             remoteViews.setTextViewText(R.id.music_name,
                     mQueue.get(mQueueIndex).getName());
             remoteViews.setTextViewText(R.id.music_author,
-                    mQueue.get(mQueueIndex).getContent());
+                    mQueue.get(mQueueIndex).getAuthor());
             Bitmap icon = MusicIconLoader.getInstance().load(
-                    mQueue.get(mQueueIndex).getAvatar());
+                    mQueue.get(mQueueIndex).getAuthor_imgurl());
             remoteViews.setImageViewBitmap(R.id.music_icon, icon == null
                     ? ImageTools.scaleBitmap(R.drawable.ic_launcher)
                     : ImageTools.scaleBitmap(icon));
@@ -163,7 +163,7 @@ public class PlayerService extends Service implements
                     mListener.onPublish(mPlayer.getCurrentPosition());
                 }
             /*
-			 * SystemClock.sleep(millis) is a utility function very similar
+             * SystemClock.sleep(millis) is a utility function very similar
 			 * to Thread.sleep(millis), but it ignores InterruptedException.
 			 * Use this function for delays if you do not use
 			 * Thread.interrupt(), as it will preserve the interrupted state
@@ -192,7 +192,7 @@ public class PlayerService extends Service implements
             position = mQueue.size() - 1;
         try {
             mPlayer.reset();
-            mPlayer.setDataSource(mQueue.get(position).getPath());
+            mPlayer.setDataSource(mQueue.get(position).getUrl());
             XtomToastUtil.showLongToast(getApplicationContext(), "开始播放");
             mPlayer.prepare();
             start();
@@ -373,19 +373,37 @@ public class PlayerService extends Service implements
             case PLAY:
                 mQueue.clear();
                 mQueue.addAll(event.getSongs());
-                mQueueIndex = event.getCode();
-                int Type = event.getPlaytype();
-                if (isPlaying()) {
-                    pause();
-                } else {
-                    if (Type==playType){
-                        resume();
-                    }else {
-                        playType=Type;
-                        play(mQueueIndex);
+//                mQueueIndex = event.getCode();
+                int position = event.getCode();
+                int Type = event.getPlaytype();//频道或分类
+                int TypeId = event.getTypeid();//频道或分类的id
+                //判断是否当前播放的列表还是新列表
+                if (Type != playType) {
+                    playType = Type;
+                    typeid = TypeId;
+                    mQueueIndex = position;
+                    play(mQueueIndex);
+                } else if (TypeId != typeid) {
+                    typeid = TypeId;
+                    mQueueIndex = position;
+                    play(mQueueIndex);
+                } else if (Type == playType && TypeId == typeid) {
+                    if (isPlaying()) {
+                        if (mQueueIndex == position)
+                            pause();
+                        else {
+                            mQueueIndex = position;
+                            play(mQueueIndex);
+                        }
+                    } else {
+                        if (mQueueIndex == position)
+                            resume();
+                        else {
+                            mQueueIndex = position;
+                            play(mQueueIndex);
+                        }
                     }
                 }
-//                MusicPlayer.getPlayer().setQueue(event.getSongs(), 0);
                 break;
             case NEXT:
                 next();

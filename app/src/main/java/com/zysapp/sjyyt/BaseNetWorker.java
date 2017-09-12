@@ -6,13 +6,17 @@ import com.hemaapp.hm_FrameWork.HemaNetWorker;
 import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.task.CurrentTask;
 import com.hemaapp.hm_FrameWork.task.ExecuteNetTask;
+import com.zysapp.sjyyt.model.Channel;
 import com.zysapp.sjyyt.model.DistrictInfor;
 import com.zysapp.sjyyt.model.FileUploadResult;
 import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.Image;
 import com.zysapp.sjyyt.model.JsonBean;
+import com.zysapp.sjyyt.model.Normal;
 import com.zysapp.sjyyt.model.Notice;
 import com.zysapp.sjyyt.model.PCD;
+import com.zysapp.sjyyt.model.Reply;
+import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.Token;
 import com.zysapp.sjyyt.model.User;
@@ -450,6 +454,33 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("keyid", keyid);
         params.put("operatetype", operatetype);
         ExecuteNetTask<Notice> task = new ExecuteNetTask<>(information, params, Notice.class);
+        executeTask(task);
+    }
+    public void channelList(int page) {
+        BaseHttpInformation information = BaseHttpInformation.CHANNEL_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("page", String.valueOf(page));
+        ExecuteNetTask<Channel> task = new ExecuteNetTask<>(information, params, Channel.class);
+        executeTask(task);
+    }
+    public void liveList(String keytype,String keyid,int page) {
+        BaseHttpInformation information = BaseHttpInformation.LIVE_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("keytype", keytype);
+        params.put("keyid", keyid);
+        params.put("page", String.valueOf(page));
+        ExecuteNetTask<Song> task = new ExecuteNetTask<>(information, params, Song.class);
+        executeTask(task);
+    }
+    public void replyAdd(String token,String keytype,String keyid, String comment_id,String content) {
+        BaseHttpInformation information = BaseHttpInformation.REPLY_ADD;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("comment_id", comment_id);
+        params.put("keytype", keytype);
+        params.put("keyid", keyid);
+        params.put("content", content);
+        ExecuteNetTask<Reply> task = new ExecuteNetTask<>(information, params, Reply.class);
         executeTask(task);
     }
 }

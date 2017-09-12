@@ -24,7 +24,7 @@ public enum EventBusConfig {
     PAY_WECHAT(14, "微信支付"),
     REFRESH_Custom_LIST(15, "刷新客户列表"),
     REFRESH_CAR_LIST(16, "刷新接车列表"),
-    REFRESH_Custom_INFOR(17, "刷新客户详情"),
+    REFRESH_REPLY(17, "刷新评论"),
     REFRESH_CAR_INFOR(18, "刷新接车详情"),
     REFRESH_SONG(19, "刷新歌曲"),
     REFRESH_MEMO_LIST(20, "刷新备忘录"),

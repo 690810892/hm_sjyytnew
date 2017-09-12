@@ -1,25 +1,79 @@
 package com.zysapp.sjyyt.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+
+import xtom.frame.XtomObject;
+import xtom.frame.exception.DataParseException;
+
 /**
 
  */
-public class Song {
+public class Song extends XtomObject implements Serializable {
 
-    private String path;
-    private String name;
-    private String content;
-    private String avatar;
-
-    public String getAvatar() {
-        return avatar;
+    private String  id;//	主键id
+    private String   name;//	名称
+    private String  author;//	作者
+    private String author_imgurl;//	作者头像
+    private String  author_content;//	作者头像
+    private String  description;//	简介
+    private String  imgurl;//	图片
+    private String  url;//	音频地址
+    private String  replycount;//	评论数
+    private String  listencount	;//收听数
+    private String  sharecount;//	分享数
+    private String startdate;//	开始时间	客户端根据此时间判断音频进度
+    private String   enddate;//	结束时间	客户端根据此时间判断音频进度
+    public Song(JSONObject jsonObject) throws DataParseException {
+        if (jsonObject != null) {
+            try {
+                id = get(jsonObject, "id");
+                name = get(jsonObject, "name");
+                author = get(jsonObject, "author");
+                author_imgurl = get(jsonObject, "author_imgurl");
+                author_content = get(jsonObject, "author_content");
+                description = get(jsonObject, "description");
+                imgurl = get(jsonObject, "imgurl");
+                url = get(jsonObject, "url");
+                replycount = get(jsonObject, "replycount");
+                listencount = get(jsonObject, "listencount");
+                sharecount = get(jsonObject, "sharecount");
+                startdate = get(jsonObject, "startdate");
+                enddate = get(jsonObject, "enddate");
+                log_i(toString());
+            } catch (JSONException e) {
+                throw new DataParseException(e);
+            }
+        }
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    @Override
+    public String toString() {
+        return "Song{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", author_imgurl='" + author_imgurl + '\'' +
+                ", author_content='" + author_content + '\'' +
+                ", description='" + description + '\'' +
+                ", imgurl='" + imgurl + '\'' +
+                ", url='" + url + '\'' +
+                ", replycount='" + replycount + '\'' +
+                ", listencount='" + listencount + '\'' +
+                ", sharecount='" + sharecount + '\'' +
+                ", startdate='" + startdate + '\'' +
+                ", enddate='" + enddate + '\'' +
+                '}';
     }
 
-    public String getPath() {
-        return path;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -30,15 +84,91 @@ public class Song {
         this.name = name;
     }
 
-    public String getContent() {
-        return content;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public String getAuthor_imgurl() {
+        return author_imgurl;
+    }
+
+    public void setAuthor_imgurl(String author_imgurl) {
+        this.author_imgurl = author_imgurl;
+    }
+
+    public String getAuthor_content() {
+        return author_content;
+    }
+
+    public void setAuthor_content(String author_content) {
+        this.author_content = author_content;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImgurl() {
+        return imgurl;
+    }
+
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getReplycount() {
+        return replycount;
+    }
+
+    public void setReplycount(String replycount) {
+        this.replycount = replycount;
+    }
+
+    public String getListencount() {
+        return listencount;
+    }
+
+    public void setListencount(String listencount) {
+        this.listencount = listencount;
+    }
+
+    public String getSharecount() {
+        return sharecount;
+    }
+
+    public void setSharecount(String sharecount) {
+        this.sharecount = sharecount;
+    }
+
+    public String getStartdate() {
+        return startdate;
+    }
+
+    public void setStartdate(String startdate) {
+        this.startdate = startdate;
+    }
+
+    public String getEnddate() {
+        return enddate;
+    }
+
+    public void setEnddate(String enddate) {
+        this.enddate = enddate;
     }
 }

@@ -20,6 +20,7 @@ public class Normal extends XtomObject implements Serializable {
 	private String min_price="0";
 	private String max_price="0";
 	private String regdate;
+	private String lastdate;
 	private boolean check=false;//
 	public Normal(JSONObject jsonObject) throws DataParseException {
 		if (jsonObject != null) {
@@ -27,6 +28,7 @@ public class Normal extends XtomObject implements Serializable {
 				id = get(jsonObject, "id");
 				name = get(jsonObject, "name");
 				regdate= get(jsonObject, "regdate");
+				lastdate= get(jsonObject, "lastdate");
 				log_i(toString());
 			} catch (JSONException e) {
 				throw new DataParseException(e);
@@ -53,11 +55,16 @@ public class Normal extends XtomObject implements Serializable {
 		this.min_price=min_price;
 		this.max_price=max_price;
 	}
+
 	@Override
 	public String toString() {
 		return "Normal{" +
 				"id='" + id + '\'' +
 				", name='" + name + '\'' +
+				", min_price='" + min_price + '\'' +
+				", max_price='" + max_price + '\'' +
+				", regdate='" + regdate + '\'' +
+				", lastdate='" + lastdate + '\'' +
 				", check=" + check +
 				'}';
 	}
@@ -94,6 +101,10 @@ public class Normal extends XtomObject implements Serializable {
 
 	public String getMin_price() {
 		return min_price;
+	}
+
+	public String getLastdate() {
+		return lastdate;
 	}
 
 	public String getMax_price() {

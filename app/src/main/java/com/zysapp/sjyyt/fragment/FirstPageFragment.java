@@ -4,23 +4,17 @@ package com.zysapp.sjyyt.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -36,20 +30,22 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.BaseFragment;
 import com.zysapp.sjyyt.BaseHttpInformation;
+import com.zysapp.sjyyt.BaseRecycleAdapter;
 import com.zysapp.sjyyt.BaseUtil;
+import com.zysapp.sjyyt.ToLogin;
 import com.zysapp.sjyyt.activity.R;
+import com.zysapp.sjyyt.activity.ReplyAddActivity;
+import com.zysapp.sjyyt.adapter.ChannelAdapter;
+import com.zysapp.sjyyt.adapter.LiveAdapter;
+import com.zysapp.sjyyt.model.Channel;
 import com.zysapp.sjyyt.model.Image;
+import com.zysapp.sjyyt.model.Normal;
 import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
-import com.zysapp.sjyyt.view.MyDrawable;
+import com.zysapp.sjyyt.util.RecycleUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -68,7 +64,6 @@ import master.flame.danmaku.danmaku.model.android.DanmakuContext;
 import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.model.android.SpannedCacheStuffer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
-import master.flame.danmaku.danmaku.util.IOUtils;
 import master.flame.danmaku.ui.widget.DanmakuView;
 
 /**
@@ -127,6 +122,8 @@ public class FirstPageFragment extends BaseFragment {
     @BindView(R.id.rv_reply)
     RecyclerView rvReply;
     Unbinder unbinder;
+    @BindView(R.id.line)
+    ImageView line;
     private User user;
     private String district = "", city;
     private String token;
@@ -140,7 +137,9 @@ public class FirstPageFragment extends BaseFragment {
     private Integer currentPosition = 0;
     private boolean showDanmaku;
     private DanmakuContext danmakuContext;
-    ArrayList<String> strings = new ArrayList<>();
+    ArrayList<Channel> channels = new ArrayList<>();
+    private Channel channel;
+    private LiveAdapter liveAdapter;
     private BaseDanmakuParser parser = new BaseDanmakuParser() {
         @Override
         protected IDanmakus parse() {
@@ -159,19 +158,7 @@ public class FirstPageFragment extends BaseFragment {
             token = "";
         else
             token = user.getToken();
-        Song song = new Song();
-        song.setAvatar("");
-        song.setContent("张延山");
-        song.setName("双节棍");
-        song.setPath("http://sc1.111ttt.com/2015/1/06/06/99060941326.mp3");
-        Song song2 = new Song();
-        song2.setAvatar("");
-        song2.setContent("薛之谦");
-        song2.setName("演员");
-        song2.setPath("http://sc1.111ttt.com/2015/1/06/06/99060941326.mp3");
-        songs.add(song);
-        songs.add(song2);
-
+        getNetWorker().channelList(0);
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -179,8 +166,13 @@ public class FirstPageFragment extends BaseFragment {
             case REFRESH_SONG:
                 currentPosition = event.getCode();
                 tvName.setText(songs.get(currentPosition).getName());
-                ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAvatar(), ivMusic, BaseApplication.getInstance()
+                ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
                         .getOptions(R.mipmap.login_bg));
+                ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
+                        .getOptions(R.mipmap.default_avatar));
+                tvPlayer.setText(songs.get(currentPosition).getAuthor());
+                tvReply.setText(songs.get(currentPosition).getReplycount());
+                tvShare.setText(songs.get(currentPosition).getSharecount());
                 break;
             case STATE_PLAY:
                 ivPlay.setImageResource(R.mipmap.img_play);
@@ -188,6 +180,11 @@ public class FirstPageFragment extends BaseFragment {
             case STATE_PAUSE:
                 ivPlay.setImageResource(R.mipmap.img_pause);
                 break;
+            case REFRESH_REPLY:
+                String content = event.getContent();
+                addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), content, true);
+                break;
+
         }
     }
 
@@ -211,8 +208,8 @@ public class FirstPageFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-                // showProgressDialog("正在提交您的宝贵意见");
+            case LIVE_LIST:
+                showProgressDialog("正在加载");
                 break;
             case BLOG_LIST:
                 break;
@@ -226,7 +223,8 @@ public class FirstPageFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) hemaNetTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
+            case LIVE_LIST:
+                cancelProgressDialog();
                 break;
             case BLOG_LIST:
 //                layout.setVisibility(View.VISIBLE);
@@ -242,12 +240,28 @@ public class FirstPageFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-                HemaArrayParse<Image> iResult = (HemaArrayParse<Image>) baseResult;
-                ArrayList<Image> imageList = iResult.getObjects();
-                if (images != null && images.size() > 0)
-                    images.clear();
-                images.addAll(imageList);
+            case CHANNEL_LIST:
+                HemaArrayParse<Channel> iResult = (HemaArrayParse<Channel>) baseResult;
+                ArrayList<Channel> cs = iResult.getObjects();
+                if (channels != null && channels.size() > 0)
+                    channels.clear();
+                channels.addAll(cs);
+                if (channels.size() > 0) {
+                    channel = channels.get(0);
+                    channels.get(0).setCheck(true);
+                    tvChannel.setText(channels.get(0).getName());
+                    getNetWorker().liveList("1", channels.get(0).getId(), 0);
+                }
+                break;
+            case LIVE_LIST:
+                HemaArrayParse<Song> SResult = (HemaArrayParse<Song>) baseResult;
+                ArrayList<Song> ss = SResult.getObjects();
+                if (songs != null && songs.size() > 0)
+                    songs.clear();
+                songs.addAll(ss);
+                liveAdapter.notifyDataSetChanged();
+                if (songs.size() > 0)
+                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, 1, Integer.parseInt(channel.getId())));
                 break;
             default:
                 break;
@@ -259,8 +273,9 @@ public class FirstPageFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-            case NEW_LIST:
+            case LIVE_LIST:
+            case CHANNEL_LIST:
+                showTextDialog(baseResult.getMsg());
                 break;
             default:
                 break;
@@ -272,9 +287,8 @@ public class FirstPageFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-            case NEW_LIST:
-            case BROADCAST_LIST:
+            case LIVE_LIST:
+            case CHANNEL_LIST:
                 showTextDialog("获取信息失败");
                 break;
             default:
@@ -331,12 +345,19 @@ public class FirstPageFragment extends BaseFragment {
         // TODO: inflate a fragment view
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         unbinder = ButterKnife.bind(this, rootView);
-        ivMusic.getLayoutParams().height = screenWide*3/5;
+        ivMusic.getLayoutParams().height = screenWide * 3 / 5;
         titleBtnLeft.setVisibility(View.GONE);
         titleBtnRight.setImageResource(R.mipmap.first_right);
         titleText.setText("江阴主播电台");
-//        if (songs.size() > 0)
-//            EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition,1));
+        liveAdapter = new LiveAdapter(getActivity(), songs);
+        RecycleUtils.initVerticalRecyleNoScrll(rvContent);
+        rvContent.setAdapter(liveAdapter);
+        liveAdapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, position, 1, Integer.parseInt(channel.getId())));
+            }
+        });
         danmakuContext = DanmakuContext.create();
         danmakuContext.setCacheStuffer(new SpannedCacheStuffer(), mCacheStufferAdapter);
         // 设置是否禁止重叠
@@ -379,12 +400,13 @@ public class FirstPageFragment extends BaseFragment {
 
     @OnClick({R.id.title_btn_right, R.id.tv_channel, R.id.iv_open, R.id.tv_save, R.id.tv_share, R.id.tv_reply, R.id.iv_previous, R.id.iv_play, R.id.iv_next, R.id.tv_tip, R.id.tv_center, R.id.tv_content, R.id.tv_replylist})
     public void onViewClicked(View view) {
+        Intent it;
         switch (view.getId()) {
             case R.id.title_btn_right:
-                addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg","张延山", "你好哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", true);
+                addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), "你好哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", true);
                 break;
             case R.id.tv_channel:
-                addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg","林俊杰", "呵呵，不错", true);
+                channelDialog();
                 break;
             case R.id.iv_open:
                 if (showDanmaku) {
@@ -396,10 +418,22 @@ public class FirstPageFragment extends BaseFragment {
                 }
                 break;
             case R.id.tv_save:
+                if (user == null) {
+                    ToLogin.showLogin(getActivity());
+                    break;
+                }
                 break;
             case R.id.tv_share:
                 break;
             case R.id.tv_reply:
+                if (user == null) {
+                    ToLogin.showLogin(getActivity());
+                    break;
+                }
+                it = new Intent(getActivity(), ReplyAddActivity.class);
+                it.putExtra("live_id", songs.get(currentPosition).getId());
+                it.putExtra("comment_id", "0");
+                startActivity(it);
                 break;
             case R.id.iv_previous:
                 if (songs.size() > 0)
@@ -407,7 +441,7 @@ public class FirstPageFragment extends BaseFragment {
                 break;
             case R.id.iv_play:
                 if (songs.size() > 0)
-                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, 1));
+                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, 1, Integer.parseInt(channel.getId())));
                 break;
             case R.id.iv_next:
                 if (songs.size() > 0)
@@ -422,6 +456,8 @@ public class FirstPageFragment extends BaseFragment {
                 ivLine1.setVisibility(View.VISIBLE);
                 ivLine2.setVisibility(View.INVISIBLE);
                 ivLine3.setVisibility(View.INVISIBLE);
+                rvContent.setVisibility(View.GONE);
+                rvReply.setVisibility(View.GONE);
                 break;
             case R.id.tv_content:
                 tvCenter.setTextColor(0xff212121);
@@ -430,6 +466,8 @@ public class FirstPageFragment extends BaseFragment {
                 ivLine1.setVisibility(View.INVISIBLE);
                 ivLine2.setVisibility(View.VISIBLE);
                 ivLine3.setVisibility(View.INVISIBLE);
+                rvContent.setVisibility(View.VISIBLE);
+                rvReply.setVisibility(View.GONE);
                 break;
             case R.id.tv_replylist:
                 tvCenter.setTextColor(0xff212121);
@@ -438,6 +476,8 @@ public class FirstPageFragment extends BaseFragment {
                 ivLine1.setVisibility(View.INVISIBLE);
                 ivLine2.setVisibility(View.INVISIBLE);
                 ivLine3.setVisibility(View.VISIBLE);
+                rvContent.setVisibility(View.GONE);
+                rvReply.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -582,4 +622,50 @@ public class FirstPageFragment extends BaseFragment {
         return spannableStringBuilder;
     }
 
+    @SuppressWarnings("deprecation")
+    private void channelDialog() {
+        if (mWindow_exit != null) {
+            mWindow_exit.dismiss();
+        }
+        mWindow_exit = new PopupWindow(getActivity());
+        mWindow_exit.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setBackgroundDrawable(new BitmapDrawable());
+        mWindow_exit.setFocusable(true);
+        mViewGroup_exit = (ViewGroup) LayoutInflater.from(getActivity()).inflate(
+                R.layout.pop_channel, null);
+        TextView bt_ok = (TextView) mViewGroup_exit.findViewById(R.id.tv_button);
+        RecyclerView rv_type = (RecyclerView) mViewGroup_exit.findViewById(R.id.rv_list);
+        View allview = mViewGroup_exit.findViewById(R.id.all);
+        View content = mViewGroup_exit.findViewById(R.id.father);
+        ChannelAdapter adapter = new ChannelAdapter(getActivity(), channels);
+        RecycleUtils.initVerticalRecyle(rv_type);
+        rv_type.setAdapter(adapter);
+        mWindow_exit.setContentView(mViewGroup_exit);
+        mWindow_exit.showAsDropDown(line);
+        allview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mWindow_exit.dismiss();
+            }
+        });
+        content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+        adapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                mWindow_exit.dismiss();
+                for (Channel normal : channels) {
+                    normal.setCheck(false);
+                }
+                channel = channels.get(position);
+                channels.get(position).setCheck(true);
+                tvChannel.setText(channels.get(position).getName());
+                getNetWorker().liveList("1", channels.get(position).getId(), 0);
+            }
+        });
+    }
 }
