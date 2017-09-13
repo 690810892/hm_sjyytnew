@@ -7,6 +7,7 @@ import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.task.CurrentTask;
 import com.hemaapp.hm_FrameWork.task.ExecuteNetTask;
 import com.zysapp.sjyyt.model.Channel;
+import com.zysapp.sjyyt.model.Count;
 import com.zysapp.sjyyt.model.DistrictInfor;
 import com.zysapp.sjyyt.model.FileUploadResult;
 import com.zysapp.sjyyt.model.ID;
@@ -480,6 +481,31 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("keytype", keytype);
         params.put("keyid", keyid);
         params.put("content", content);
+        ExecuteNetTask<Reply> task = new ExecuteNetTask<>(information, params, Reply.class);
+        executeTask(task);
+    }
+    public void replyList(String keytype,String keyid, String page) {
+        BaseHttpInformation information = BaseHttpInformation.REPLY_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("page", page);
+        params.put("keytype", keytype);
+        params.put("keyid", keyid);
+        ExecuteNetTask<Reply> task = new ExecuteNetTask<>(information, params, Reply.class);
+        executeTask(task);
+    }
+    public void liveGet(String id) {
+        BaseHttpInformation information = BaseHttpInformation.LIVE_GET;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("id", id);
+        ExecuteNetTask<Count> task = new ExecuteNetTask<>(information, params, Count.class);
+        executeTask(task);
+    }
+    public void dataOperate(String token,String keytype,String keyid) {
+        BaseHttpInformation information = BaseHttpInformation.DATA_SAVEOPERATE;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("keytype", keytype);
+        params.put("keyid", keyid);
         ExecuteNetTask<Reply> task = new ExecuteNetTask<>(information, params, Reply.class);
         executeTask(task);
     }

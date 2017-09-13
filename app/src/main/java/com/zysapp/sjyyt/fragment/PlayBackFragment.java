@@ -26,9 +26,12 @@ import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.BaseUtil;
 import com.zysapp.sjyyt.ToLogin;
 import com.zysapp.sjyyt.activity.R;
+import com.zysapp.sjyyt.adapter.BackPlayAdapter;
 import com.zysapp.sjyyt.model.Reply;
+import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.util.EventBusModel;
+import com.zysapp.sjyyt.util.RecycleUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,14 +75,15 @@ public class PlayBackFragment extends BaseFragment {
     @BindView(R.id.lv_top)
     LinearLayout lvTop;
     private User user;
-    private String token,data;
+    private String token, data;
     private Integer currentPage = 0;
-    private ArrayList<Reply> blogs = new ArrayList<>();
-    //    private CarAdapter adapter;
+    private ArrayList<Song> blogs = new ArrayList<>();
+    private BackPlayAdapter adapter;
     private Calendar selectedDate;//系统当前时间
     private Calendar startDate;
     private Calendar endDate;
     private TimePickerView pvDate;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // TODO: inflate a fragment view
@@ -87,21 +91,20 @@ public class PlayBackFragment extends BaseFragment {
         unbinder = ButterKnife.bind(this, rootView);
         titleText.setText("回听");
         titleBtnLeft.setVisibility(View.GONE);
-        String s[]=data.split("-");
+        String s[] = data.split("-");
         tvYear.setText(s[0]);
         tvMonth.setText(s[1]);
         tvDay.setText(s[2]);
-//        adapter = new CarAdapter(getActivity(), blogs);
-//        RecycleUtils.initVerticalRecyle(rvList);
-//        rvList.setAdapter(adapter);
-        carList("0");
+        adapter = new BackPlayAdapter(getActivity(), blogs);
+        RecycleUtils.initVerticalRecyle(rvList);
+        rvList.setAdapter(adapter);
+        carList(0);
 
         return rootView;
     }
 
-    private void carList(String page) {
-//        if (!isNull(token))
-//            getNetWorker().carList(token,"2","0",regdate_keytype,start+" 00:00:00",end+" 23:59:59",car_keytype,page);
+    private void carList(int page) {
+        getNetWorker().liveList("3", data, page);
     }
 
     @Override
@@ -116,8 +119,9 @@ public class PlayBackFragment extends BaseFragment {
         startDate.set(1931, 1, 10);
         endDate.set(2120, 2, 28);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        data = format.format(Calendar.getInstance().getTime());
-        log_d("data=="+data);
+        selectedDate.set(Calendar.DATE, selectedDate.get(Calendar.DATE) - 1);
+        data = format.format(selectedDate.getTime());
+        log_d("data==" + data);
         if (user == null)
             token = "";
         else
@@ -129,7 +133,7 @@ public class PlayBackFragment extends BaseFragment {
         switch (event.getType()) {
             case REFRESH_CAR_LIST:
                 currentPage = 0;
-                carList("0");
+                carList(0);
                 break;
         }
     }
@@ -158,13 +162,13 @@ public class PlayBackFragment extends BaseFragment {
             @Override
             public void onStartRefresh(XtomRefreshLoadmoreLayout v) {
                 currentPage = 0;
-                carList(currentPage.toString());
+                carList(currentPage);
             }
 
             @Override
             public void onStartLoadmore(XtomRefreshLoadmoreLayout v) {
                 currentPage++;
-                carList(currentPage.toString());
+                carList(currentPage);
             }
         });
     }
@@ -174,7 +178,7 @@ public class PlayBackFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
+            case LIVE_LIST:
                 // showProgressDialog("正在提交您的宝贵意见");
                 break;
             case BLOG_LIST:
@@ -191,7 +195,7 @@ public class PlayBackFragment extends BaseFragment {
         switch (information) {
             case INDEX_LIST:
                 break;
-            case CAR_LIST:
+            case LIVE_LIST:
                 progressbar.setVisibility(View.GONE);
                 refreshLoadmoreLayout.setVisibility(View.VISIBLE);
                 break;
@@ -205,10 +209,10 @@ public class PlayBackFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case CAR_LIST:
+            case LIVE_LIST:
                 String page = netTask.getParams().get("page");
-                HemaArrayParse<Reply> gResult = (HemaArrayParse<Reply>) baseResult;
-                ArrayList<Reply> goods = gResult.getObjects();
+                HemaArrayParse<Song> gResult = (HemaArrayParse<Song>) baseResult;
+                ArrayList<Song> goods = gResult.getObjects();
                 if (page.equals("0")) {// 刷新
                     refreshLoadmoreLayout.refreshSuccess();
                     this.blogs.clear();
@@ -228,7 +232,11 @@ public class PlayBackFragment extends BaseFragment {
                         XtomToastUtil.showShortToast(getActivity(), "已经到最后啦");
                     }
                 }
-//                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+                if (blogs.size()>0)
+                    empty.setVisibility(View.GONE);
+                else
+                    empty.setVisibility(View.VISIBLE);
                 break;
             default:
                 break;
@@ -240,8 +248,7 @@ public class PlayBackFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-            case CAR_LIST:
+            case LIVE_LIST:
                 showTextDialog(baseResult.getMsg());
                 break;
             default:
@@ -254,8 +261,7 @@ public class PlayBackFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-            case CAR_LIST:
+            case LIVE_LIST:
                 showTextDialog("获取信息失败");
                 break;
             default:
@@ -294,9 +300,11 @@ public class PlayBackFragment extends BaseFragment {
         pvDate = new TimePickerView.Builder(getActivity(), new TimePickerView.OnTimeSelectListener() {
             @Override
             public void onTimeSelect(Date date, View v) {//选中事件回调
-               data=(BaseUtil.getTime(date));
-                String s[]=data.split("-");
-                log_d("data1=="+data);
+                data = (BaseUtil.getTime(date));
+                currentPage=0;
+                carList(0);
+                String s[] = data.split("-");
+                log_d("data1==" + data);
                 tvYear.setText(s[0]);
                 tvMonth.setText(s[1]);
                 tvDay.setText(s[2]);

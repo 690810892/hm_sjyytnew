@@ -3,7 +3,11 @@
     style="@style/bg_linearLayout">
 
     <include layout="@layout/title_image" />
-
+    <com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout
+        android:id="@+id/refreshLoadmoreLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -247,6 +251,7 @@
                 android:background="@color/white">
 
                 <LinearLayout
+                    android:id="@+id/lv_center"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -255,10 +260,11 @@
 
                     <TextView
                         android:id="@+id/tv_center"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="主播说"
+                        android:gravity="center"
                         android:textColor="@color/black"
                         android:textSize="@dimen/textsize_7" />
 
@@ -271,6 +277,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/lv_content"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -296,6 +303,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/lv_replylist"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -334,17 +342,20 @@
                     android:id="@+id/rv_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:scrollbars="none" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_reply"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="none" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_reply"
+                        android:layout_width="match_parent"
+                        android:visibility="gone"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none" />
+
             </FrameLayout>
-
 
         </LinearLayout>
     </ScrollView>
-
+    </com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout>
 </LinearLayout>

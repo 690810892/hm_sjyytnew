@@ -268,11 +268,6 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	 * */
 	FEEACCOUNT_REMOVE(65, "feeaccount_remove", "余额购买接口", false),
 	/**
-	 *关注接口
-	 * */
-	DATA_SAVEOPERATE(66, "data_saveoperate", "关注接口", false),
-
-	/**
 	 *地址列表接口
 	 * */
 	ADDRESS_LIST(75, "address_list", "地址列表接口", false),
@@ -307,8 +302,8 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	GOOD_LIST(107, "good_list", "点赞列表接口", false),
 	CHANNEL_LIST(107, "channel_list", "频道列表", false),
 	LIVE_LIST(107, "live_list", "节目列表", false),
-	CUSTOM_GET(107, "custom_get", "客户详情", false),
-	CUSTOM_REMOVE(107, "custom_remove", "客户删除", false),
+	LIVE_GET(107, "live_get", "节目详情", false),
+	DATA_SAVEOPERATE(107, "data_saveoperate", "数据操作", false),
 	REPAIR_ADD(107, "repair_add", "新建维修", false),
 	CAR_LIST(107, "car_list", "接车列表", false),
 	NEW_LIST(107, "new_list", "提醒列表", false),

@@ -23,9 +23,11 @@ import com.zysapp.sjyyt.BaseFragment;
 import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.ToLogin;
 import com.zysapp.sjyyt.activity.R;
+import com.zysapp.sjyyt.adapter.ReplyAdapter;
 import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.util.EventBusModel;
+import com.zysapp.sjyyt.util.RecycleUtils;
 
 import java.util.ArrayList;
 
@@ -60,8 +62,8 @@ public class ReplyFragment extends BaseFragment {
     private String token;
     private Integer currentPage = 0;
     private ArrayList<Reply> blogs = new ArrayList<>();
+    private ReplyAdapter adapter;
 
-    //    private CarAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // TODO: inflate a fragment view
@@ -69,17 +71,18 @@ public class ReplyFragment extends BaseFragment {
         unbinder = ButterKnife.bind(this, rootView);
         titleText.setText("最近评论");
         titleBtnLeft.setVisibility(View.GONE);
-//        adapter = new CarAdapter(getActivity(), blogs);
-//        RecycleUtils.initVerticalRecyle(rvList);
-//        rvList.setAdapter(adapter);
+        adapter = new ReplyAdapter(getActivity(), blogs,getNetWorker());
+        adapter.setKeytype("2");
+        RecycleUtils.initVerticalRecyle(rvList);
+        rvList.setAdapter(adapter);
+
         carList("0");
 
         return rootView;
     }
 
     private void carList(String page) {
-//        if (!isNull(token))
-//            getNetWorker().carList(token,"2","0",regdate_keytype,start+" 00:00:00",end+" 23:59:59",car_keytype,page);
+        getNetWorker().replyList("2", "0", page);
     }
 
     @Override
@@ -97,7 +100,7 @@ public class ReplyFragment extends BaseFragment {
 
     public void onEventMainThread(EventBusModel event) {
         switch (event.getType()) {
-            case REFRESH_CAR_LIST:
+            case REFRESH_REPLY:
                 currentPage = 0;
                 carList("0");
                 break;
@@ -144,8 +147,8 @@ public class ReplyFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-                // showProgressDialog("正在提交您的宝贵意见");
+            case DATA_SAVEOPERATE:
+                showProgressDialog("请稍后");
                 break;
             case BLOG_LIST:
                 break;
@@ -159,9 +162,10 @@ public class ReplyFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) hemaNetTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
+            case DATA_SAVEOPERATE:
+                cancelProgressDialog();
                 break;
-            case CAR_LIST:
+            case REPLY_LIST:
                 progressbar.setVisibility(View.GONE);
                 refreshLoadmoreLayout.setVisibility(View.VISIBLE);
                 break;
@@ -175,7 +179,7 @@ public class ReplyFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case CAR_LIST:
+            case REPLY_LIST:
                 String page = netTask.getParams().get("page");
                 HemaArrayParse<Reply> gResult = (HemaArrayParse<Reply>) baseResult;
                 ArrayList<Reply> goods = gResult.getObjects();
@@ -198,7 +202,11 @@ public class ReplyFragment extends BaseFragment {
                         XtomToastUtil.showShortToast(getActivity(), "已经到最后啦");
                     }
                 }
-//                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+                break;
+            case DATA_SAVEOPERATE:
+                currentPage = 0;
+                carList(currentPage.toString());
                 break;
             default:
                 break;
@@ -210,8 +218,8 @@ public class ReplyFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-            case CAR_LIST:
+            case DATA_SAVEOPERATE:
+            case REPLY_LIST:
                 showTextDialog(baseResult.getMsg());
                 break;
             default:
@@ -224,8 +232,10 @@ public class ReplyFragment extends BaseFragment {
         BaseHttpInformation information = (BaseHttpInformation) netTask
                 .getHttpInformation();
         switch (information) {
-            case INDEX_LIST:
-            case CAR_LIST:
+            case DATA_SAVEOPERATE:
+                showTextDialog("操作失败");
+                break;
+            case REPLY_LIST:
                 showTextDialog("获取信息失败");
                 break;
             default:

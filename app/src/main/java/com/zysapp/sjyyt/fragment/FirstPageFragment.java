@@ -17,12 +17,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
+import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
 import com.hemaapp.hm_FrameWork.view.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -37,9 +39,11 @@ import com.zysapp.sjyyt.activity.R;
 import com.zysapp.sjyyt.activity.ReplyAddActivity;
 import com.zysapp.sjyyt.adapter.ChannelAdapter;
 import com.zysapp.sjyyt.adapter.LiveAdapter;
+import com.zysapp.sjyyt.adapter.ReplyAdapter;
 import com.zysapp.sjyyt.model.Channel;
+import com.zysapp.sjyyt.model.Count;
 import com.zysapp.sjyyt.model.Image;
-import com.zysapp.sjyyt.model.Normal;
+import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.util.EventBusConfig;
@@ -65,6 +69,8 @@ import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.model.android.SpannedCacheStuffer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
+import xtom.frame.util.XtomToastUtil;
+import xtom.frame.view.XtomRefreshLoadmoreLayout;
 
 /**
  *
@@ -124,6 +130,14 @@ public class FirstPageFragment extends BaseFragment {
     Unbinder unbinder;
     @BindView(R.id.line)
     ImageView line;
+    @BindView(R.id.refreshLoadmoreLayout)
+    RefreshLoadmoreLayout refreshLoadmoreLayout;
+    @BindView(R.id.lv_center)
+    LinearLayout lvCenter;
+    @BindView(R.id.lv_content)
+    LinearLayout lvContent;
+    @BindView(R.id.lv_replylist)
+    LinearLayout lvReplylist;
     private User user;
     private String district = "", city;
     private String token;
@@ -140,6 +154,8 @@ public class FirstPageFragment extends BaseFragment {
     ArrayList<Channel> channels = new ArrayList<>();
     private Channel channel;
     private LiveAdapter liveAdapter;
+    private ReplyAdapter replyAdapter;
+    ArrayList<Reply> replies = new ArrayList<>();
     private BaseDanmakuParser parser = new BaseDanmakuParser() {
         @Override
         protected IDanmakus parse() {
@@ -173,6 +189,8 @@ public class FirstPageFragment extends BaseFragment {
                 tvPlayer.setText(songs.get(currentPosition).getAuthor());
                 tvReply.setText(songs.get(currentPosition).getReplycount());
                 tvShare.setText(songs.get(currentPosition).getSharecount());
+                currentPage = 0;
+                getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 break;
             case STATE_PLAY:
                 ivPlay.setImageResource(R.mipmap.img_play);
@@ -183,6 +201,9 @@ public class FirstPageFragment extends BaseFragment {
             case REFRESH_REPLY:
                 String content = event.getContent();
                 addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), content, true);
+                currentPage = 0;
+                getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
+                getNetWorker().liveGet(songs.get(currentPosition).getId());
                 break;
 
         }
@@ -211,7 +232,8 @@ public class FirstPageFragment extends BaseFragment {
             case LIVE_LIST:
                 showProgressDialog("正在加载");
                 break;
-            case BLOG_LIST:
+            case DATA_SAVEOPERATE:
+                showProgressDialog("请稍后");
                 break;
             default:
                 break;
@@ -224,6 +246,9 @@ public class FirstPageFragment extends BaseFragment {
                 .getHttpInformation();
         switch (information) {
             case LIVE_LIST:
+                cancelProgressDialog();
+                break;
+            case DATA_SAVEOPERATE:
                 cancelProgressDialog();
                 break;
             case BLOG_LIST:
@@ -251,17 +276,59 @@ public class FirstPageFragment extends BaseFragment {
                     channels.get(0).setCheck(true);
                     tvChannel.setText(channels.get(0).getName());
                     getNetWorker().liveList("1", channels.get(0).getId(), 0);
+
                 }
                 break;
             case LIVE_LIST:
                 HemaArrayParse<Song> SResult = (HemaArrayParse<Song>) baseResult;
                 ArrayList<Song> ss = SResult.getObjects();
+                currentPosition = 0;
                 if (songs != null && songs.size() > 0)
                     songs.clear();
                 songs.addAll(ss);
                 liveAdapter.notifyDataSetChanged();
                 if (songs.size() > 0)
                     EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, 1, Integer.parseInt(channel.getId())));
+                getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
+                break;
+            case REPLY_LIST:
+                String page = netTask.getParams().get("page");
+                String live_id = netTask.getParams().get("keyid");
+                @SuppressWarnings("unchecked")
+                HemaArrayParse<Reply> gResult = (HemaArrayParse<Reply>) baseResult;
+                ArrayList<Reply> goods = gResult.getObjects();
+                if (page.equals("0")) {// 刷新
+                    refreshLoadmoreLayout.refreshSuccess();
+                    this.replies.clear();
+                    this.replies.addAll(goods);
+                    int sysPagesize = BaseApplication.getInstance().getSysInitInfo()
+                            .getSys_pagesize();
+                    if (goods.size() < sysPagesize)
+                        refreshLoadmoreLayout.setLoadmoreable(false);
+                    else
+                        refreshLoadmoreLayout.setLoadmoreable(true);
+                } else {// 更多
+                    refreshLoadmoreLayout.loadmoreSuccess();
+                    if (goods.size() > 0)
+                        this.replies.addAll(goods);
+                    else {
+                        refreshLoadmoreLayout.setLoadmoreable(false);
+                        XtomToastUtil.showShortToast(getActivity(), "已经到最后啦");
+                    }
+                }
+                refreshLoadmoreLayout.setRefreshable(false);
+                replyAdapter.notifyDataSetChanged();
+                replyAdapter.setLive_id(live_id);
+                break;
+            case LIVE_GET:
+                HemaArrayParse<Count> cResult = (HemaArrayParse<Count>) baseResult;
+                 Count cc = cResult.getObjects().get(0);
+                tvShare.setText(cc.getSharecount());
+                tvReply.setText(cc.getReplycount());
+                break;
+            case DATA_SAVEOPERATE:
+                currentPage = 0;
+                getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 break;
             default:
                 break;
@@ -275,6 +342,7 @@ public class FirstPageFragment extends BaseFragment {
         switch (information) {
             case LIVE_LIST:
             case CHANNEL_LIST:
+            case DATA_SAVEOPERATE:
                 showTextDialog(baseResult.getMsg());
                 break;
             default:
@@ -290,6 +358,9 @@ public class FirstPageFragment extends BaseFragment {
             case LIVE_LIST:
             case CHANNEL_LIST:
                 showTextDialog("获取信息失败");
+                break;
+            case DATA_SAVEOPERATE:
+                showTextDialog("操作失败");
                 break;
             default:
                 break;
@@ -349,6 +420,7 @@ public class FirstPageFragment extends BaseFragment {
         titleBtnLeft.setVisibility(View.GONE);
         titleBtnRight.setImageResource(R.mipmap.first_right);
         titleText.setText("江阴主播电台");
+        refreshLoadmoreLayout.setRefreshable(false);
         liveAdapter = new LiveAdapter(getActivity(), songs);
         RecycleUtils.initVerticalRecyleNoScrll(rvContent);
         rvContent.setAdapter(liveAdapter);
@@ -356,6 +428,22 @@ public class FirstPageFragment extends BaseFragment {
             @Override
             public void onClick(int position) {
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, position, 1, Integer.parseInt(channel.getId())));
+            }
+        });
+        replyAdapter = new ReplyAdapter(getActivity(), replies,getNetWorker());
+        RecycleUtils.initVerticalRecyleNoScrll(rvReply);
+        rvReply.setAdapter(replyAdapter);
+        refreshLoadmoreLayout.setOnStartListener(new XtomRefreshLoadmoreLayout.OnStartListener() {
+
+            @Override
+            public void onStartRefresh(XtomRefreshLoadmoreLayout v) {
+            }
+
+            @Override
+            public void onStartLoadmore(XtomRefreshLoadmoreLayout v) {
+                currentPage++;
+                if (rvReply.getVisibility() == View.VISIBLE)
+                    getNetWorker().replyList("1", songs.get(currentPosition).getId(), currentPage.toString());
             }
         });
         danmakuContext = DanmakuContext.create();
@@ -398,7 +486,7 @@ public class FirstPageFragment extends BaseFragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.title_btn_right, R.id.tv_channel, R.id.iv_open, R.id.tv_save, R.id.tv_share, R.id.tv_reply, R.id.iv_previous, R.id.iv_play, R.id.iv_next, R.id.tv_tip, R.id.tv_center, R.id.tv_content, R.id.tv_replylist})
+    @OnClick({R.id.title_btn_right, R.id.tv_channel, R.id.iv_open, R.id.tv_save, R.id.tv_share, R.id.tv_reply, R.id.iv_previous, R.id.iv_play, R.id.iv_next, R.id.tv_tip, R.id.tv_center, R.id.tv_content, R.id.tv_replylist, R.id.lv_center, R.id.lv_content, R.id.lv_replylist})
     public void onViewClicked(View view) {
         Intent it;
         switch (view.getId()) {
@@ -450,6 +538,7 @@ public class FirstPageFragment extends BaseFragment {
             case R.id.tv_tip:
                 break;
             case R.id.tv_center:
+            case R.id.lv_center:
                 tvCenter.setTextColor(0xff000000);
                 tvContent.setTextColor(0xff212121);
                 tvReplylist.setTextColor(0xff212121);
@@ -458,8 +547,10 @@ public class FirstPageFragment extends BaseFragment {
                 ivLine3.setVisibility(View.INVISIBLE);
                 rvContent.setVisibility(View.GONE);
                 rvReply.setVisibility(View.GONE);
+                refreshLoadmoreLayout.setLoadmoreable(false);
                 break;
             case R.id.tv_content:
+            case R.id.lv_content:
                 tvCenter.setTextColor(0xff212121);
                 tvContent.setTextColor(0xff000000);
                 tvReplylist.setTextColor(0xff212121);
@@ -468,8 +559,10 @@ public class FirstPageFragment extends BaseFragment {
                 ivLine3.setVisibility(View.INVISIBLE);
                 rvContent.setVisibility(View.VISIBLE);
                 rvReply.setVisibility(View.GONE);
+                refreshLoadmoreLayout.setLoadmoreable(false);
                 break;
             case R.id.tv_replylist:
+            case R.id.lv_replylist:
                 tvCenter.setTextColor(0xff212121);
                 tvContent.setTextColor(0xff212121);
                 tvReplylist.setTextColor(0xff000000);
@@ -478,6 +571,7 @@ public class FirstPageFragment extends BaseFragment {
                 ivLine3.setVisibility(View.VISIBLE);
                 rvContent.setVisibility(View.GONE);
                 rvReply.setVisibility(View.VISIBLE);
+                refreshLoadmoreLayout.setLoadmoreable(true);
                 break;
         }
     }

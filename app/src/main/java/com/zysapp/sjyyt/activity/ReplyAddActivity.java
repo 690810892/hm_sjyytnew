@@ -40,7 +40,7 @@ public class ReplyAddActivity extends BaseActivity {
     TextView titleText;
     @BindView(R.id.edittext)
     EditText edittext;
-    private String live_id  = "1";
+    private String live_id  = "1",keytype="1";
     private String comment_id,content;
 
     @Override
@@ -169,7 +169,7 @@ public class ReplyAddActivity extends BaseActivity {
                     return;
                 }
                 User user = BaseApplication.getInstance().getUser();
-                getNetWorker().replyAdd(user.getToken(),"1",live_id,comment_id,content);
+                getNetWorker().replyAdd(user.getToken(),keytype,live_id,comment_id,content);
                 break;
         }
     }
