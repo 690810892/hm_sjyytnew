@@ -23,6 +23,7 @@ import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
 import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.BaseFragment;
 import com.zysapp.sjyyt.BaseHttpInformation;
+import com.zysapp.sjyyt.BaseRecycleAdapter;
 import com.zysapp.sjyyt.BaseUtil;
 import com.zysapp.sjyyt.ToLogin;
 import com.zysapp.sjyyt.activity.R;
@@ -30,6 +31,7 @@ import com.zysapp.sjyyt.adapter.BackPlayAdapter;
 import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.User;
+import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.util.RecycleUtils;
 
@@ -98,6 +100,14 @@ public class PlayBackFragment extends BaseFragment {
         adapter = new BackPlayAdapter(getActivity(), blogs);
         RecycleUtils.initVerticalRecyle(rvList);
         rvList.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_FIRST_SONG,blogs,position,3,Integer.parseInt(tvYear.getText().toString()
+                        +tvMonth.getText().toString()+tvDay.getText().toString())));
+//                EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, blogs, position, 3, Integer.parseInt(tvYear.getText().toString()+tvMonth.getText().toString()+tvDay.getText().toString())));
+            }
+        });
         carList(0);
 
         return rootView;

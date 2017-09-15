@@ -121,6 +121,9 @@ public class MainActivity extends BaseFragmentActivity {
                 if (user != null)
                     getNetWorker().unreadGet(user.getToken());
                 break;
+            case MAIN_SEEK:
+                mPlayService.seek(event.getCode());
+                break;
         }
     }
 
@@ -309,7 +312,7 @@ public class MainActivity extends BaseFragmentActivity {
     /*个推相关结束*/
     @Override
     public void onPublish(int progress) {
-
+        EventBus.getDefault().post(new EventBusModel(EventBusConfig.onPublish, progress));
     }
 
     @Override
@@ -352,7 +355,6 @@ public class MainActivity extends BaseFragmentActivity {
                 break;
         }
     }
-
 //    @OnClick(R.id.start)
 //    public void onViewClicked() {
 //        Song song = new Song();

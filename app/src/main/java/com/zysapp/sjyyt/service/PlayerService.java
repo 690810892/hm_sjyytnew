@@ -169,7 +169,7 @@ public class PlayerService extends Service implements
 			 * Thread.interrupt(), as it will preserve the interrupted state
 			 * of the thread. 这种sleep方式不会被Thread.interrupt()所打断
 			 */
-                SystemClock.sleep(200);
+                SystemClock.sleep(1000);
             }
         }
     };
@@ -373,7 +373,6 @@ public class PlayerService extends Service implements
             case PLAY:
                 mQueue.clear();
                 mQueue.addAll(event.getSongs());
-//                mQueueIndex = event.getCode();
                 int position = event.getCode();
                 int Type = event.getPlaytype();//频道或分类
                 int TypeId = event.getTypeid();//频道或分类的id

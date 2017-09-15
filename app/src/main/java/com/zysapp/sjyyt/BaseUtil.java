@@ -1004,4 +1004,16 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 
 		return bitmap;
 	}
+	/********************************************************
+	 * 对时间的格式化
+	 * @param time
+	 * @return
+	 */
+	public static String formatTime(int time){
+		if(time/1000%60 <10){
+			return time/1000/60 + ":0" + time/1000%60;
+		}else{
+			return time/1000/60 + ":" + time/1000%60;
+		}
+	}
 }

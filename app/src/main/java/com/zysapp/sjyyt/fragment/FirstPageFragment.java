@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
@@ -35,6 +36,7 @@ import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.BaseRecycleAdapter;
 import com.zysapp.sjyyt.BaseUtil;
 import com.zysapp.sjyyt.ToLogin;
+import com.zysapp.sjyyt.activity.MainActivity;
 import com.zysapp.sjyyt.activity.R;
 import com.zysapp.sjyyt.activity.ReplyAddActivity;
 import com.zysapp.sjyyt.adapter.ChannelAdapter;
@@ -138,6 +140,12 @@ public class FirstPageFragment extends BaseFragment {
     LinearLayout lvContent;
     @BindView(R.id.lv_replylist)
     LinearLayout lvReplylist;
+    @BindView(R.id.sb_play_progress)
+    SeekBar sbPlayProgress;
+    @BindView(R.id.tv_time_now)
+    TextView tvTimeNow;
+    @BindView(R.id.tv_time)
+    TextView tvTime;
     private User user;
     private String district = "", city;
     private String token;
@@ -162,12 +170,14 @@ public class FirstPageFragment extends BaseFragment {
             return new Danmakus();
         }
     };
+    MainActivity mainActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.fragment_first);
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        mainActivity = MainActivity.getInstance();
         screenWide = BaseUtil.getScreenWidth(getActivity());
         user = BaseApplication.getInstance().getUser();
         if (user == null)
@@ -181,6 +191,7 @@ public class FirstPageFragment extends BaseFragment {
         switch (event.getType()) {
             case REFRESH_SONG:
                 currentPosition = event.getCode();
+                log_d("555--" + currentPosition);
                 tvName.setText(songs.get(currentPosition).getName());
                 ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
                         .getOptions(R.mipmap.login_bg));
@@ -189,7 +200,10 @@ public class FirstPageFragment extends BaseFragment {
                 tvPlayer.setText(songs.get(currentPosition).getAuthor());
                 tvReply.setText(songs.get(currentPosition).getReplycount());
                 tvShare.setText(songs.get(currentPosition).getSharecount());
+                tvTime.setText(BaseUtil.formatTime(mainActivity.mPlayService.getDuration()));
+                tvTimeNow.setText(BaseUtil.formatTime(mainActivity.mPlayService.getPlayingPosition()));
                 currentPage = 0;
+                sbPlayProgress.setMax(mainActivity.mPlayService.getDuration());
                 getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 break;
             case STATE_PLAY:
@@ -205,7 +219,18 @@ public class FirstPageFragment extends BaseFragment {
                 getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 getNetWorker().liveGet(songs.get(currentPosition).getId());
                 break;
-
+            case REFRESH_FIRST_SONG:
+                songs.clear();
+                songs.addAll(event.getSongs());
+                currentPosition = event.getCode();
+                liveAdapter.notifyDataSetChanged();
+                if (songs.size() > 0)
+                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, event.getPlaytype(), event.getTypeid()));
+                break;
+            case onPublish:
+                sbPlayProgress.setProgress(event.getCode());
+                tvTimeNow.setText(BaseUtil.formatTime(event.getCode()));
+                break;
         }
     }
 
@@ -322,7 +347,7 @@ public class FirstPageFragment extends BaseFragment {
                 break;
             case LIVE_GET:
                 HemaArrayParse<Count> cResult = (HemaArrayParse<Count>) baseResult;
-                 Count cc = cResult.getObjects().get(0);
+                Count cc = cResult.getObjects().get(0);
                 tvShare.setText(cc.getSharecount());
                 tvReply.setText(cc.getReplycount());
                 break;
@@ -420,6 +445,7 @@ public class FirstPageFragment extends BaseFragment {
         titleBtnLeft.setVisibility(View.GONE);
         titleBtnRight.setImageResource(R.mipmap.first_right);
         titleText.setText("江阴主播电台");
+        sbPlayProgress.setOnSeekBarChangeListener(mSeekBarChangeListener);
         refreshLoadmoreLayout.setRefreshable(false);
         liveAdapter = new LiveAdapter(getActivity(), songs);
         RecycleUtils.initVerticalRecyleNoScrll(rvContent);
@@ -430,7 +456,7 @@ public class FirstPageFragment extends BaseFragment {
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, position, 1, Integer.parseInt(channel.getId())));
             }
         });
-        replyAdapter = new ReplyAdapter(getActivity(), replies,getNetWorker());
+        replyAdapter = new ReplyAdapter(getActivity(), replies, getNetWorker());
         RecycleUtils.initVerticalRecyleNoScrll(rvReply);
         rvReply.setAdapter(replyAdapter);
         refreshLoadmoreLayout.setOnStartListener(new XtomRefreshLoadmoreLayout.OnStartListener() {
@@ -762,4 +788,30 @@ public class FirstPageFragment extends BaseFragment {
             }
         });
     }
+
+    /**
+     * 拖动进度条
+     */
+    private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener =
+            new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress,
+                                              boolean fromUser) {
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    int progress = seekBar.getProgress();
+                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.MAIN_SEEK, progress));
+//                    mPlayService.seek(progress);
+                }
+            };
+
+
 }

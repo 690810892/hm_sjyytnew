@@ -21,7 +21,7 @@ import xtom.frame.util.XtomSharedPreferencesUtil;
  * 
  */
 public abstract class BaseFragmentActivity extends HemaAppCompatActivity {
-	protected PlayerService mPlayService;
+	public PlayerService mPlayService;
 	private ServiceConnection mPlayServiceConnection = new ServiceConnection() {
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
