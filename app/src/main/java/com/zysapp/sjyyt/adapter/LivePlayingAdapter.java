@@ -33,7 +33,6 @@ public class LivePlayingAdapter extends BaseRecycleAdapter<Song> {
             holder.getView(R.id.iv_state).setVisibility(View.GONE);
         else
             holder.getView(R.id.iv_state).setVisibility(View.VISIBLE);
-        holder.getView(R.id.tv_state).setVisibility(View.GONE);
         ((TextView) holder.getView(R.id.tv_name)).setText(datas.get(position).getName());
         ((TextView) holder.getView(R.id.tv_author)).setText(datas.get(position).getAuthor());
         ((TextView) holder.getView(R.id.tv_content)).setText(datas.get(position).getDescription());
