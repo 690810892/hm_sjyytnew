@@ -388,9 +388,9 @@ public class PlayerService extends Service implements
                     play(mQueueIndex);
                 } else if (Type == playType && TypeId == typeid) {
                     if (isPlaying()) {
-                        if (mQueueIndex == position)
-                            pause();
-                        else {
+                        if (mQueueIndex == position) {
+//                            pause();
+                        }else {
                             mQueueIndex = position;
                             play(mQueueIndex);
                         }
@@ -425,5 +425,13 @@ public class PlayerService extends Service implements
         public void onPublish(int percent);
 
         public void onChange(int position);
+    }
+
+    public ArrayList<Song> getmQueue() {
+        return mQueue;
+    }
+
+    public int getmQueueIndex() {
+        return mQueueIndex;
     }
 }

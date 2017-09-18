@@ -27,6 +27,7 @@ import com.zysapp.sjyyt.activity.MyLoveActivity;
 import com.zysapp.sjyyt.activity.MyPlayedActivity;
 import com.zysapp.sjyyt.activity.NoticeListActivity;
 import com.zysapp.sjyyt.activity.R;
+import com.zysapp.sjyyt.activity.ScoreActivity;
 import com.zysapp.sjyyt.activity.SetActivity;
 import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.SysInitInfo;
@@ -314,6 +315,12 @@ public class CenterFragment extends BaseFragment {
                 startActivity(it);
                 break;
             case R.id.tv_score:
+                if (user == null) {
+                    ToLogin.showLogin(getActivity());
+                    break;
+                }
+                it = new Intent(getActivity(), ScoreActivity.class);
+                startActivity(it);
                 break;
             case R.id.tv_tip:
                 break;

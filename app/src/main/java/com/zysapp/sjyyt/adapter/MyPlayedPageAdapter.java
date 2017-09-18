@@ -4,12 +4,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.zysapp.sjyyt.fragment.FirstPageFragment;
+import com.zysapp.sjyyt.fragment.LiveHistoryFragment;
+import com.zysapp.sjyyt.fragment.LiveHistoryNowFragment;
 import com.zysapp.sjyyt.fragment.MyLoveChannelFragment;
 import com.zysapp.sjyyt.fragment.MyLoveLiveFragment;
 
-public class MyLovePageAdapter extends FragmentPagerAdapter {
-	public MyLovePageAdapter(FragmentManager fm) {
+public class MyPlayedPageAdapter extends FragmentPagerAdapter {
+	public MyPlayedPageAdapter(FragmentManager fm) {
 		super(fm);
 	}
 
@@ -19,14 +20,14 @@ public class MyLovePageAdapter extends FragmentPagerAdapter {
 		switch (position) {
 		case 0:
 			try {
-				fragment = MyLoveLiveFragment.class.newInstance();
+				fragment = LiveHistoryNowFragment.class.newInstance();
 			} catch (Exception e) {
 				// nothing
 			}
 			break;
 		case 1:
 			try {
-				fragment = MyLoveChannelFragment.class.newInstance();
+				fragment = LiveHistoryFragment.class.newInstance();
 			} catch (Exception e) {
 				// nothing
 			}

@@ -17,6 +17,7 @@ import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.zysapp.sjyyt.BaseFragmentActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.adapter.MyLovePageAdapter;
+import com.zysapp.sjyyt.adapter.MyPlayedPageAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,7 +43,7 @@ public class MyPlayedActivity extends BaseFragmentActivity {
     @BindView(R.id.viewpager)
     ViewPager viewpager;
     private int pagerPosition = 0;
-    private MyLovePageAdapter pagerAdapter;
+    private MyPlayedPageAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class MyPlayedActivity extends BaseFragmentActivity {
     }
 
     public void initData() {
-        pagerAdapter = new MyLovePageAdapter(getSupportFragmentManager());
+        pagerAdapter = new MyPlayedPageAdapter(getSupportFragmentManager());
         viewpager.setAdapter(pagerAdapter);
         viewpager.setCurrentItem(pagerPosition);
     }

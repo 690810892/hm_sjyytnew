@@ -209,7 +209,7 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	INDEX_LIST(47, "ad_list", "广告列表", false),
 	HOTCITY_LIST(48, "popular_city_list", "热门城市", false),
 	COUNT_GET(49, "count_get", "统计计数", false),
-	SCORE_LIST(50, "score_record_list", "积分列表", false),
+	SCORE_LIST(50, "score_list", "积分列表", false),
 	/**
 	 *获取银行列表
 	 * */
@@ -304,13 +304,13 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	LIVE_LIST(107, "live_list", "节目列表", false),
 	LIVE_GET(107, "live_get", "节目详情", false),
 	DATA_SAVEOPERATE(107, "data_saveoperate", "数据操作", false),
-	REPAIR_ADD(107, "repair_add", "新建维修", false),
-	CAR_LIST(107, "car_list", "接车列表", false),
+	LIVE_TYPE_LIST(107, "live_type_list", "节目分类列表接口", false),
 	NEW_LIST(107, "new_list", "提醒列表", false),
 
 	BLOG_LIST(107, "repair_circle_list", "动态列表", false),
-	BROADCAST_LIST(107, "broadcast_list", "公告列表", false),
-	SEARCH_LIST(107, "search_get", "搜索", false),
+	LIVE_LIKE_LIST(107, "live_like_list", "我喜欢的节目接口", false),
+	CHANNEL_LIKE_LIST(107, "channel_like_list", "我订阅的频道接口", false),
+	PLAY_HISTORY_LIST(107, "play_history_list", "播放历史", false),
 	CITY_LIST(107, "city_all_get", "所有城市", false),
 	;
 

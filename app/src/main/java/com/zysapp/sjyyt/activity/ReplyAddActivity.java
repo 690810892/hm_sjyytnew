@@ -90,9 +90,11 @@ public class ReplyAddActivity extends BaseActivity {
 
                     @Override
                     public void run() {
+                        mIntent.putExtra("content",content);
+                        setResult(RESULT_OK,mIntent);
                         finish();
                     }
-                }, 1000);
+                }, 500);
                 break;
             default:
                 break;

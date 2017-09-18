@@ -26,16 +26,25 @@ public class Song extends XtomObject implements Serializable {
     private String  sharecount;//	分享数
     private String startdate;//	开始时间	客户端根据此时间判断音频进度
     private String   enddate;//	结束时间	客户端根据此时间判断音频进度
+    private String   channel_id;//
+    private String   type_id;//
+    private String   dyflag;//
+    private String   loveflag;//
+    private String state="0";
     public Song(JSONObject jsonObject) throws DataParseException {
         if (jsonObject != null) {
             try {
+                loveflag = get(jsonObject, "loveflag");
                 id = get(jsonObject, "id");
+                dyflag = get(jsonObject, "dyflag");
                 name = get(jsonObject, "name");
                 author = get(jsonObject, "author");
                 author_imgurl = get(jsonObject, "author_imgurl");
                 author_content = get(jsonObject, "author_content");
                 description = get(jsonObject, "description");
                 imgurl = get(jsonObject, "imgurl");
+                channel_id = get(jsonObject, "channel_id");
+                type_id = get(jsonObject, "type_id");
                 url = get(jsonObject, "url");
                 replycount = get(jsonObject, "replycount");
                 listencount = get(jsonObject, "listencount");
@@ -65,11 +74,23 @@ public class Song extends XtomObject implements Serializable {
                 ", sharecount='" + sharecount + '\'' +
                 ", startdate='" + startdate + '\'' +
                 ", enddate='" + enddate + '\'' +
+                ", channel_id='" + channel_id + '\'' +
+                ", type_id='" + type_id + '\'' +
+                ", dyflag='" + dyflag + '\'' +
+                ", loveflag='" + loveflag + '\'' +
                 '}';
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public void setId(String id) {
@@ -94,6 +115,22 @@ public class Song extends XtomObject implements Serializable {
 
     public String getAuthor_imgurl() {
         return author_imgurl;
+    }
+
+    public String getChannel_id() {
+        return channel_id;
+    }
+
+    public String getType_id() {
+        return type_id;
+    }
+
+    public String getLoveflag() {
+        return loveflag;
+    }
+
+    public void setLoveflag(String loveflag) {
+        this.loveflag = loveflag;
     }
 
     public void setAuthor_imgurl(String author_imgurl) {
@@ -150,6 +187,16 @@ public class Song extends XtomObject implements Serializable {
 
     public String getSharecount() {
         return sharecount;
+    }
+
+    public String getDyflag() {
+        if (isNull(dyflag))
+            dyflag="0";
+        return dyflag;
+    }
+
+    public void setDyflag(String dyflag) {
+        this.dyflag = dyflag;
     }
 
     public void setSharecount(String sharecount) {

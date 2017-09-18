@@ -17,9 +17,11 @@ import com.zysapp.sjyyt.model.Normal;
 import com.zysapp.sjyyt.model.Notice;
 import com.zysapp.sjyyt.model.PCD;
 import com.zysapp.sjyyt.model.Reply;
+import com.zysapp.sjyyt.model.Score;
 import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.Token;
+import com.zysapp.sjyyt.model.Type;
 import com.zysapp.sjyyt.model.User;
 
 import java.util.HashMap;
@@ -464,11 +466,35 @@ public class BaseNetWorker extends HemaNetWorker {
         ExecuteNetTask<Channel> task = new ExecuteNetTask<>(information, params, Channel.class);
         executeTask(task);
     }
+    public void channelLoveList(String token,int page) {
+        BaseHttpInformation information = BaseHttpInformation.CHANNEL_LIKE_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("page", String.valueOf(page));
+        ExecuteNetTask<Channel> task = new ExecuteNetTask<>(information, params, Channel.class);
+        executeTask(task);
+    }
     public void liveList(String keytype,String keyid,int page) {
         BaseHttpInformation information = BaseHttpInformation.LIVE_LIST;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("keytype", keytype);
         params.put("keyid", keyid);
+        params.put("page", String.valueOf(page));
+        ExecuteNetTask<Song> task = new ExecuteNetTask<>(information, params, Song.class);
+        executeTask(task);
+    }
+    public void liveLoveList(String token,int page) {
+        BaseHttpInformation information = BaseHttpInformation.LIVE_LIKE_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("page", String.valueOf(page));
+        ExecuteNetTask<Song> task = new ExecuteNetTask<>(information, params, Song.class);
+        executeTask(task);
+    }
+    public void playHistoryList(String token,int page) {
+        BaseHttpInformation information = BaseHttpInformation.PLAY_HISTORY_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
         params.put("page", String.valueOf(page));
         ExecuteNetTask<Song> task = new ExecuteNetTask<>(information, params, Song.class);
         executeTask(task);
@@ -507,6 +533,28 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("keytype", keytype);
         params.put("keyid", keyid);
         ExecuteNetTask<Reply> task = new ExecuteNetTask<>(information, params, Reply.class);
+        executeTask(task);
+    }
+    public void typeList() {
+        BaseHttpInformation information = BaseHttpInformation.LIVE_TYPE_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        ExecuteNetTask<Type> task = new ExecuteNetTask<>(information, params, Type.class);
+        executeTask(task);
+    }
+    public void accountGet(String token) {
+        BaseHttpInformation information = BaseHttpInformation.ACCOUNT_GET;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        ExecuteNetTask<Score> task = new ExecuteNetTask<>(information, params, Score.class);
+        executeTask(task);
+    }
+    public void scoreList(String token,String keytype, String page) {
+        BaseHttpInformation information = BaseHttpInformation.SCORE_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("keytype", keytype);
+        params.put("page", page);
+        ExecuteNetTask<Score> task = new ExecuteNetTask<>(information, params, Score.class);
         executeTask(task);
     }
 }
