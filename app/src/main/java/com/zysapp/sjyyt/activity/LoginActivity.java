@@ -23,11 +23,14 @@ import com.zysapp.sjyyt.BaseNetWorker;
 import com.zysapp.sjyyt.BaseUtil;
 import com.zysapp.sjyyt.model.Token;
 import com.zysapp.sjyyt.model.User;
+import com.zysapp.sjyyt.util.EventBusConfig;
+import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.view.ClearEditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import xtom.frame.XtomActivityManager;
 import xtom.frame.XtomConfig;
 import xtom.frame.util.Md5Util;
@@ -83,7 +86,7 @@ public class LoginActivity extends BaseActivity {
     private String code;
     private TimeThread timeThread;
     private String tempToken, username, password;
-
+int logintype=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_login);
@@ -167,9 +170,14 @@ public class LoginActivity extends BaseActivity {
                 XtomSharedPreferencesUtil.save(mContext, "username", username);
                 XtomSharedPreferencesUtil.save(mContext, "password", password);
                 XtomSharedPreferencesUtil.save(mContext, "isAutoLogin", "true");
-                XtomActivityManager.finishAll();
-                Intent it = new Intent(this, MainActivity.class);
-                startActivity(it);
+                if (logintype==0) {
+                    XtomActivityManager.finishAll();
+                    Intent it = new Intent(this, MainActivity.class);
+                    startActivity(it);
+                }else {
+                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_USER));
+                    finish();
+                }
                 break;
             case THIRD_SAVE:
                 @SuppressWarnings("unchecked")
@@ -276,6 +284,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void getExras() {
+        logintype=mIntent.getIntExtra("keytype",0);
     }
 
     @Override

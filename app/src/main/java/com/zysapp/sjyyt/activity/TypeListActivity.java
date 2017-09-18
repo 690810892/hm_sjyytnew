@@ -94,6 +94,13 @@ public class TypeListActivity extends BaseActivity {
                 currentPage = 0;
 //                getNetWorker().typeList();
                 break;
+            case REFRESH_USER:
+                user = BaseApplication.getInstance().getUser();
+                if (user == null)
+                    token = "";
+                else
+                    token = user.getToken();
+                break;
         }
     }
 

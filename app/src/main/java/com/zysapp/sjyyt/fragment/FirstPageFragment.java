@@ -233,6 +233,7 @@ public class FirstPageFragment extends BaseFragment {
                 songs.addAll(event.getSongs());
                 currentPosition = event.getCode();
                 liveAdapter.notifyDataSetChanged();
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_RECORDE, songs, currentPosition, event.getPlaytype(), event.getTypeid()));
                 if (songs.size() > 0)
                     EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, event.getPlaytype(), event.getTypeid()));
                 break;
@@ -244,6 +245,13 @@ public class FirstPageFragment extends BaseFragment {
                 channel= (Channel) event.getObject();
                 tvChannel.setText(channel.getName());
                 getNetWorker().liveList("1", channel.getId(), 0);
+                break;
+            case REFRESH_USER:
+                user = BaseApplication.getInstance().getUser();
+                if (user == null)
+                    token = "";
+                else
+                    token = user.getToken();
                 break;
         }
     }
@@ -326,8 +334,28 @@ public class FirstPageFragment extends BaseFragment {
                     songs.clear();
                 songs.addAll(ss);
                 liveAdapter.notifyDataSetChanged();
-                if (songs.size() > 0)
+                if (songs.size() > 0) {
                     EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, 1, Integer.parseInt(channel.getId())));
+                    tvName.setText(songs.get(currentPosition).getName());
+                    ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
+                            .getOptions(R.mipmap.login_bg));
+                    ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
+                            .getOptions(R.mipmap.default_avatar));
+                    tvPlayer.setText(songs.get(currentPosition).getAuthor());
+                    tvReply.setText(songs.get(currentPosition).getReplycount());
+                    tvShare.setText(songs.get(currentPosition).getSharecount());
+                    if (songs.get(currentPosition).getDyflag().equals("1")) {
+                        tvSave.setTextColor(0xffFFC80C);
+                        tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
+                    }else {
+                        tvSave.setTextColor(0xffffffff);
+                        tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n, 0, 0, 0);
+                    }
+                    tvTime.setText(BaseUtil.formatTime(mainActivity.mPlayService.getDuration()));
+                    tvTimeNow.setText(BaseUtil.formatTime(mainActivity.mPlayService.getPlayingPosition()));
+                    currentPage = 0;
+                    sbPlayProgress.setMax(mainActivity.mPlayService.getDuration());
+                }
                 getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 break;
             case REPLY_LIST:
@@ -394,6 +422,11 @@ public class FirstPageFragment extends BaseFragment {
             case CHANNEL_LIST:
             case DATA_SAVEOPERATE:
                 showTextDialog(baseResult.getMsg());
+                if (baseResult.getMsg().equals("您已订阅")){
+                    songs.get(currentPosition).setDyflag("1");
+                    tvSave.setTextColor(0xffFFC80C);
+                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p,0,0,0);
+                }
                 break;
             default:
                 break;
@@ -540,6 +573,7 @@ public class FirstPageFragment extends BaseFragment {
     @OnClick({R.id.title_btn_right, R.id.tv_channel, R.id.iv_open, R.id.tv_save, R.id.tv_share, R.id.tv_reply, R.id.iv_previous, R.id.iv_play, R.id.iv_next, R.id.tv_tip, R.id.tv_center, R.id.tv_content, R.id.tv_replylist, R.id.lv_center, R.id.lv_content, R.id.lv_replylist})
     public void onViewClicked(View view) {
         Intent it;
+        user = BaseApplication.getInstance().getUser();
         switch (view.getId()) {
             case R.id.title_btn_right:
                 it = new Intent(getActivity(), TypeListActivity.class);

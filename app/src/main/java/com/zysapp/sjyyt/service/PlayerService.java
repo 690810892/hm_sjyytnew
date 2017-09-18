@@ -390,6 +390,7 @@ public class PlayerService extends Service implements
                     if (isPlaying()) {
                         if (mQueueIndex == position) {
 //                            pause();
+                            EventBus.getDefault().post(new EventBusModel(EventBusConfig.STATE_PLAY));
                         }else {
                             mQueueIndex = position;
                             play(mQueueIndex);

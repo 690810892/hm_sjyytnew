@@ -29,10 +29,15 @@ public class LivePlayingAdapter extends BaseRecycleAdapter<Song> {
     @Override
     protected void bindData(BaseViewHolder holder, final int position) {
         Song infor = datas.get(position);
-        if (infor.getState().equals("0"))
+        if (infor.getState().equals("0")) {
             holder.getView(R.id.iv_state).setVisibility(View.GONE);
-        else
+            ((TextView) holder.getView(R.id.tv_name)).setTextColor(0xff000000);
+            ((TextView) holder.getView(R.id.tv_author)).setTextColor(0xff8d8c8c);
+        }else {
             holder.getView(R.id.iv_state).setVisibility(View.VISIBLE);
+            ((TextView) holder.getView(R.id.tv_name)).setTextColor(0xffFFC80C);
+            ((TextView) holder.getView(R.id.tv_author)).setTextColor(0xffFFC80C);
+        }
         ((TextView) holder.getView(R.id.tv_name)).setText(datas.get(position).getName());
         ((TextView) holder.getView(R.id.tv_author)).setText(datas.get(position).getAuthor());
         ((TextView) holder.getView(R.id.tv_content)).setText(datas.get(position).getDescription());

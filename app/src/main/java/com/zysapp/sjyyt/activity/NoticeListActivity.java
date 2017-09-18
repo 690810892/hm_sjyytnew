@@ -89,6 +89,13 @@ public class NoticeListActivity extends BaseActivity {
         switch (event.getType()) {
             case REFRESH_BLOG_LIST:
                 break;
+            case REFRESH_USER:
+                user = BaseApplication.getInstance().getUser();
+                if (user == null)
+                    token = "";
+                else
+                    token = user.getToken();
+                break;
         }
     }
 

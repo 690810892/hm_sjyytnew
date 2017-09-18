@@ -276,6 +276,7 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
                 .getSys_web_service();
         Intent it;
         String path;
+        user = BaseApplication.getInstance().getUser();
         switch (view.getId()) {
             case R.id.title_btn_left:
                 finish();

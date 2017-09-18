@@ -32,6 +32,7 @@ public class ToLogin {
 						public void onClick(DialogInterface dialog, int which) {
 							Intent it = new Intent(activity,
 									LoginActivity.class);
+							it.putExtra("keytype",1);
 							activity.startActivity(it);
 						}
 					});

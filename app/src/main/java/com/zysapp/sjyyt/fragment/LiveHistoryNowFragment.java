@@ -21,6 +21,7 @@ import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.BaseFragment;
 import com.zysapp.sjyyt.BaseHttpInformation;
@@ -44,6 +45,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import de.greenrobot.event.EventBus;
+import xtom.frame.util.XtomTimeUtil;
 import xtom.frame.util.XtomToastUtil;
 import xtom.frame.view.XtomRefreshLoadmoreLayout;
 
@@ -86,20 +88,27 @@ public class LiveHistoryNowFragment extends BaseFragment {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         unbinder = ButterKnife.bind(this, rootView);
         adapter = new LivePlayingAdapter(getActivity(), blogs);
-        RecycleUtils.initVerticalRecyle(rvList);
+        RecycleUtils.initVerticalRecyleNoScrll(rvList);
         rvList.setAdapter(adapter);
+        ImageLoader.getInstance().displayImage( blogs.get(currentPosition).getImgurl(), ivPlay, BaseApplication.getInstance()
+                .getOptions(R.mipmap.default_blog_img));
+        tvName.setText(blogs.get(currentPosition).getName());
+        tvTime.setText(XtomTimeUtil.TransTime(blogs.get(currentPosition).getStartdate(),"yyyy/MM/dd HH:mm")+"上新");
         adapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
             @Override
             public void onClick(int position) {
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_FIRST_SONG, blogs, position, 1, 1));
             }
         });
+        ivPlay.setFocusable(true);
+        ivPlay.setFocusableInTouchMode(true);
+        ivPlay.requestFocus();
         return rootView;
     }
 
-    private void carList(int page) {
-        getNetWorker().playHistoryList(token, page);
-    }
+//    private void carList(int page) {
+//        getNetWorker().playHistoryList(token, page);
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,6 +120,7 @@ public class LiveHistoryNowFragment extends BaseFragment {
         blogs.addAll(mainActivity.mPlayService.getmQueue());
         currentPosition = mainActivity.mPlayService.getmQueueIndex();
         blogs.get(currentPosition).setState("1");
+
         if (user == null)
             token = "";
         else
@@ -121,11 +131,29 @@ public class LiveHistoryNowFragment extends BaseFragment {
     public void onEventMainThread(EventBusModel event) {
         switch (event.getType()) {
             case REFRESH_SONG:
+
                 currentPosition = event.getCode();
                 for (Song song : blogs)
                     song.setState("0");
                 blogs.get(currentPosition).setState("1");
                 adapter.notifyDataSetChanged();
+                ImageLoader.getInstance().displayImage( blogs.get(currentPosition).getImgurl(), ivPlay, BaseApplication.getInstance()
+                        .getOptions(R.mipmap.default_blog_img));
+                tvName.setText(blogs.get(currentPosition).getName());
+                tvTime.setText(XtomTimeUtil.TransTime(blogs.get(currentPosition).getStartdate(),"yyyy/MM/dd HH:mm")+"上新");
+                break;
+            case REFRESH_RECORDE:
+                blogs.clear();
+                blogs.addAll(event.getSongs());
+                currentPosition = event.getCode();
+                for (Song song : blogs)
+                    song.setState("0");
+                blogs.get(currentPosition).setState("1");
+                adapter.notifyDataSetChanged();
+                ImageLoader.getInstance().displayImage( blogs.get(currentPosition).getImgurl(), ivPlay, BaseApplication.getInstance()
+                        .getOptions(R.mipmap.default_blog_img));
+                tvName.setText(blogs.get(currentPosition).getName());
+                tvTime.setText(XtomTimeUtil.TransTime(blogs.get(currentPosition).getStartdate(),"yyyy/MM/dd HH:mm")+"上新");
                 break;
         }
     }
@@ -154,15 +182,17 @@ public class LiveHistoryNowFragment extends BaseFragment {
             @Override
             public void onStartRefresh(XtomRefreshLoadmoreLayout v) {
                 currentPage = 0;
-                carList(currentPage);
+//                carList(currentPage);
             }
 
             @Override
             public void onStartLoadmore(XtomRefreshLoadmoreLayout v) {
                 currentPage++;
-                carList(currentPage);
+//                carList(currentPage);
             }
         });
+        refreshLoadmoreLayout.setLoadmoreable(false);
+        refreshLoadmoreLayout.setRefreshable(false);
     }
 
     @Override
@@ -228,7 +258,7 @@ public class LiveHistoryNowFragment extends BaseFragment {
                 adapter.notifyDataSetChanged();
                 break;
             case DATA_SAVEOPERATE:
-                carList(0);
+//                carList(0);
                 break;
             default:
                 break;

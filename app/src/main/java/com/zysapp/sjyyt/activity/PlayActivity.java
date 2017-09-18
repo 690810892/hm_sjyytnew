@@ -314,6 +314,13 @@ public class PlayActivity extends BaseActivity {
                 sbPlayProgress.setProgress(event.getCode());
                 tvTimeNow.setText(BaseUtil.formatTime(event.getCode()));
                 break;
+            case REFRESH_USER:
+                user = BaseApplication.getInstance().getUser();
+                if (user == null)
+                    token = "";
+                else
+                    token = user.getToken();
+                break;
         }
     }
 
@@ -439,6 +446,11 @@ public class PlayActivity extends BaseActivity {
         switch (information) {
             case DATA_SAVEOPERATE:
                 showTextDialog(baseResult.getMsg());
+                if (baseResult.getMsg().equals("您已订阅")){
+                    songs.get(currentPosition).setDyflag("1");
+                    tvSave.setTextColor(0xffFFC80C);
+                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p,0,0,0);
+                }
                 break;
             default:
                 break;
@@ -505,6 +517,7 @@ public class PlayActivity extends BaseActivity {
     @OnClick({R.id.title_btn_left, R.id.title_btn_right, R.id.iv_open, R.id.tv_save, R.id.tv_share, R.id.tv_reply, R.id.iv_previous, R.id.iv_play, R.id.iv_next, R.id.tv_tip, R.id.lv_center, R.id.lv_content, R.id.lv_replylist})
     public void onViewClicked(View view) {
         Intent it;
+        user = BaseApplication.getInstance().getUser();
         switch (view.getId()) {
             case R.id.title_btn_left:
                 finish();

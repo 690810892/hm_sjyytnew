@@ -105,6 +105,13 @@ public class TypeLiveListActivity extends BaseActivity {
                 currentPage=0;
                 getList(currentPage);
                 break;
+            case REFRESH_USER:
+                user = BaseApplication.getInstance().getUser();
+                if (user == null)
+                    token = "";
+                else
+                    token = user.getToken();
+                break;
         }
     }
 

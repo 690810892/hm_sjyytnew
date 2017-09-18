@@ -31,6 +31,7 @@ public enum EventBusConfig {
     PLAY(21, "播放"),
     NEXT(22, "下一曲"),
     PRE(22, "上一曲"),
+    REFRESH_RECORDE(22, "刷新纪录正在播放"),
     STATE_PAUSE(22, "暂停"),
     STATE_PLAY(22, "播放"),;
 

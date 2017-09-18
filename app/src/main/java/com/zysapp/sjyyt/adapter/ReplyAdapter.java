@@ -84,6 +84,7 @@ public class ReplyAdapter extends BaseRecycleAdapter<Reply> {
         holder.getView(R.id.tv_dogood).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                user = BaseApplication.getInstance().getUser();
                 if (user == null) {
                     ToLogin.showLogin((Activity) mContext);
                     return;
@@ -97,6 +98,7 @@ public class ReplyAdapter extends BaseRecycleAdapter<Reply> {
         holder.getView(R.id.tv_reply).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                user = BaseApplication.getInstance().getUser();
                 if (user == null) {
                     ToLogin.showLogin((Activity) mContext);
                     return;

@@ -93,6 +93,7 @@ public class CenterFragment extends BaseFragment {
     }
 
     public void onEventMainThread(EventBusModel event) {
+        user = BaseApplication.getInstance().getUser();
         switch (event.getType()) {
             case NEW_MESSAGE:
                 if (user != null)
@@ -283,6 +284,7 @@ public class CenterFragment extends BaseFragment {
     @OnClick({R.id.title_btn_left, R.id.title_btn_right, R.id.lv_infor, R.id.lv_notice, R.id.tv_played, R.id.tv_score, R.id.tv_tip, R.id.tv_love})
     public void onViewClicked(View view) {
         Intent it;
+        user = BaseApplication.getInstance().getUser();
         switch (view.getId()) {
             case R.id.title_btn_left:
                 break;

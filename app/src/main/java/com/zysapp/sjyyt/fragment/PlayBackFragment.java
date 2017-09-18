@@ -145,6 +145,13 @@ public class PlayBackFragment extends BaseFragment {
                 currentPage = 0;
                 carList(0);
                 break;
+            case REFRESH_USER:
+                user = BaseApplication.getInstance().getUser();
+                if (user == null)
+                    token = "";
+                else
+                    token = user.getToken();
+                break;
         }
     }
 
@@ -156,6 +163,7 @@ public class PlayBackFragment extends BaseFragment {
 
     @Override
     public void onHiddenChanged(boolean hidden) {
+        user = BaseApplication.getInstance().getUser();
         if (hidden) {
         } else {
             if (user == null) {
