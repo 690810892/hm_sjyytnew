@@ -203,7 +203,7 @@ public class FirstPageFragment extends BaseFragment {
                 if (songs.get(currentPosition).getDyflag().equals("1")) {
                     tvSave.setTextColor(0xffFFC80C);
                     tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
-                }else {
+                } else {
                     tvSave.setTextColor(0xffffffff);
                     tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n, 0, 0, 0);
                 }
@@ -242,7 +242,7 @@ public class FirstPageFragment extends BaseFragment {
                 tvTimeNow.setText(BaseUtil.formatTime(event.getCode()));
                 break;
             case REFRESH_FIRST_CHANNEL:
-                channel= (Channel) event.getObject();
+                channel = (Channel) event.getObject();
                 tvChannel.setText(channel.getName());
                 getNetWorker().liveList("1", channel.getId(), 0);
                 break;
@@ -280,7 +280,11 @@ public class FirstPageFragment extends BaseFragment {
                 showProgressDialog("正在加载");
                 break;
             case DATA_SAVEOPERATE:
-                showProgressDialog("请稍后");
+                String keytype = netTask.getParams().get("keytype");
+                if (keytype.equals("9")) {
+
+                } else
+                    showProgressDialog("请稍后");
                 break;
             default:
                 break;
@@ -347,7 +351,7 @@ public class FirstPageFragment extends BaseFragment {
                     if (songs.get(currentPosition).getDyflag().equals("1")) {
                         tvSave.setTextColor(0xffFFC80C);
                         tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
-                    }else {
+                    } else {
                         tvSave.setTextColor(0xffffffff);
                         tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n, 0, 0, 0);
                     }
@@ -401,11 +405,11 @@ public class FirstPageFragment extends BaseFragment {
                 } else if (keytype.equals("5")) {
                     songs.get(currentPosition).setDyflag("1");
                     tvSave.setTextColor(0xffFFC80C);
-                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p,0,0,0);
+                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
                 } else if (keytype.equals("10")) {
                     songs.get(currentPosition).setDyflag("0");
                     tvSave.setTextColor(0xffffffff);
-                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n,0,0,0);
+                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n, 0, 0, 0);
                 }
                 break;
             default:
@@ -422,10 +426,10 @@ public class FirstPageFragment extends BaseFragment {
             case CHANNEL_LIST:
             case DATA_SAVEOPERATE:
                 showTextDialog(baseResult.getMsg());
-                if (baseResult.getMsg().equals("您已订阅")){
+                if (baseResult.getMsg().equals("您已订阅")) {
                     songs.get(currentPosition).setDyflag("1");
                     tvSave.setTextColor(0xffFFC80C);
-                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p,0,0,0);
+                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
                 }
                 break;
             default:
@@ -619,8 +623,13 @@ public class FirstPageFragment extends BaseFragment {
                     EventBus.getDefault().post(new EventBusModel(EventBusConfig.PRE, songs, currentPosition));
                 break;
             case R.id.iv_play:
-                if (songs.size() > 0)
-                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, 1, Integer.parseInt(channel.getId())));
+                if (mainActivity.mPlayService.isPlaying()) {
+                    mainActivity.mPlayService.pause();
+                } else {
+                    mainActivity.mPlayService.resume();
+                }
+//                if (songs.size() > 0)
+//                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, 1, Integer.parseInt(channel.getId())));
                 break;
             case R.id.iv_next:
                 if (songs.size() > 0)

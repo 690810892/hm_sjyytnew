@@ -83,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:background="@mipmap/main_play" />
+                    android:background="@mipmap/main_pause" />
             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/rl_reply"

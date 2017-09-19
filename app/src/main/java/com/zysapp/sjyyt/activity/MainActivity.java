@@ -124,6 +124,12 @@ public class MainActivity extends BaseFragmentActivity {
             case MAIN_SEEK:
                 mPlayService.seek(event.getCode());
                 break;
+            case STATE_PLAY:
+                ivPlay.setImageResource(R.mipmap.main_pause);
+                break;
+            case STATE_PAUSE:
+                ivPlay.setImageResource(R.mipmap.main_play);
+                break;
         }
     }
 
@@ -338,6 +344,11 @@ public class MainActivity extends BaseFragmentActivity {
                 ChangeFragment(PlayBackFragment.class);
                 break;
             case R.id.iv_play:
+                if (mPlayService.isPlaying()){
+                    mPlayService.pause();
+                }else {
+                    mPlayService.resume();
+                }
                 break;
             case R.id.rl_reply:
                 ivFirst.setImageResource(R.mipmap.play_n);
