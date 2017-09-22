@@ -81,8 +81,8 @@
     <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
 
     <QZone
-        AppId="1106176770"
-        AppKey="DYTbAJ0YBbzIGq3g"
+        AppId="1105241049"
+        AppKey="XjbpaC0yXryishFx"
         Enable="true"
         Id="3"
         ShareByAppClient="false"
@@ -104,24 +104,24 @@
     -->
 
     <Wechat
-        AppId="wxb949793dca492f36"
-        AppSecret="da978eeafb7b2bf7d1d06842aeee5e6a"
+        AppId="wxa6f7272c27e49dde"
+        AppSecret="56a37978d4807e086d4b0a320d094b55"
         BypassApproval="false"
         Enable="true"
         Id="4"
         SortId="4" />
 
     <WechatMoments
-        AppId="wxb949793dca492f36"
-        AppSecret="da978eeafb7b2bf7d1d06842aeee5e6a"
+        AppId="wxa6f7272c27e49dde"
+        AppSecret="56a37978d4807e086d4b0a320d094b55"
         BypassApproval="false"
         Enable="true"
         Id="5"
         SortId="5" />
 
     <WechatFavorite
-        AppId="wxb949793dca492f36"
-        AppSecret="d4bc6293458dde5b7db112b9e7a23e07"
+        AppId="wxa6f7272c27e49dde"
+        AppSecret="56a37978d4807e086d4b0a320d094b55"
         Enable="false"
         Id="6"
         SortId="6" />
@@ -129,8 +129,8 @@
     <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
 
     <QQ
-        AppId="1106176770"
-        AppKey="DYTbAJ0YBbzIGq3g"
+        AppId="1105241049"
+        AppKey="XjbpaC0yXryishFx"
         Enable="true"
         Id="7"
         ShareByAppClient="true"

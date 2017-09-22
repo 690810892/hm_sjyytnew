@@ -44,7 +44,7 @@ public class BaseConfig {
 	/**
 	 * 微信appid
 	 */
-	public static final String APPID_WEIXIN = "wxb949793dca492f36";//
+	public static final String APPID_WEIXIN = "wxa6f7272c27e49dde";//
 	/**
 	 * 数据库版本号
 	 */

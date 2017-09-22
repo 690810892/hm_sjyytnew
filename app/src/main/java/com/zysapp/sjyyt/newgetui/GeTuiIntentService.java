@@ -81,9 +81,9 @@ public class GeTuiIntentService extends GTIntentService {
                 JSONObject msgJson = new JSONObject(data);
                 keyType = msgJson.getString("keyType");
                 keyId = msgJson.getString("keyId");
-                msg = msgJson.getString("msg");
-                msg_nickname = msgJson.getString("nickname");
-                msg_avatar = msgJson.getString("avatar");
+//                msg = msgJson.getString("msg");
+//                msg_nickname = msgJson.getString("nickname");
+//                msg_avatar = msgJson.getString("avatar");
             } catch (JSONException e) {
                 Log.e("msgJsonFailed", e.getMessage());
                 keyType = "-10";

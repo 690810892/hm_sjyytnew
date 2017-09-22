@@ -11,9 +11,9 @@ android {
         versionName "1.0.0.0"
         multiDexEnabled true
         manifestPlaceholders = [
-                GETUI_APP_ID    : "8ryyCKsFIh6LaWHN039oL8",
-                GETUI_APP_KEY   : "cKz0hAaKRk9uxSfVOPLJr6",
-                GETUI_APP_SECRET: "igrIxW2xr58zVeiKVQlsB3",
+                GETUI_APP_ID    : "obROU7PxUa6VqYfxUaPHx4",
+                GETUI_APP_KEY   : "Kw1MGJnywu7ARG0O12bj89",
+                GETUI_APP_SECRET: "1CLvNo6p2Y6UuP6LUgbES7",
         ]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
