@@ -33,6 +33,8 @@ public enum EventBusConfig {
     PRE(22, "上一曲"),
     REFRESH_RECORDE(22, "刷新纪录正在播放"),
     STATE_PAUSE(22, "暂停"),
+    SEEKBAR_VISIBLE(22, "显示进度条"),
+    SEEKBAR_INVISIBLE(22, "隐藏进度条"),
     STATE_PLAY(22, "播放"),;
 
 

@@ -7,6 +7,7 @@ import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.task.CurrentTask;
 import com.hemaapp.hm_FrameWork.task.ExecuteNetTask;
 import com.zysapp.sjyyt.model.Channel;
+import com.zysapp.sjyyt.model.Clock;
 import com.zysapp.sjyyt.model.Count;
 import com.zysapp.sjyyt.model.DistrictInfor;
 import com.zysapp.sjyyt.model.FileUploadResult;
@@ -555,6 +556,23 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("keytype", keytype);
         params.put("page", page);
         ExecuteNetTask<Score> task = new ExecuteNetTask<>(information, params, Score.class);
+        executeTask(task);
+    }
+    public void clockList(String token, String page) {
+        BaseHttpInformation information = BaseHttpInformation.CLOCK_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("page", page);
+        ExecuteNetTask<Clock> task = new ExecuteNetTask<>(information, params, Clock.class);
+        executeTask(task);
+    }
+    public void clockOperate(String token, String keytype, String keyid) {
+        BaseHttpInformation information = BaseHttpInformation.CLOCK_OPERATE;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("keytype", keytype);
+        params.put("keyid", keyid);
+        ExecuteNetTask<Clock> task = new ExecuteNetTask<>(information, params, Clock.class);
         executeTask(task);
     }
 }

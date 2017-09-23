@@ -312,6 +312,8 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	CHANNEL_LIKE_LIST(107, "channel_like_list", "我订阅的频道接口", false),
 	PLAY_HISTORY_LIST(107, "play_history_list", "播放历史", false),
 	CITY_LIST(107, "city_all_get", "所有城市", false),
+	CLOCK_LIST(107, "clock_list", "叫早列表", false),
+	CLOCK_OPERATE(107, "clock_saveoperate", "叫早操作", false),
 	;
 
 

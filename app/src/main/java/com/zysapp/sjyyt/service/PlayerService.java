@@ -16,6 +16,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.widget.RemoteViews;
 
+import com.zysapp.sjyyt.BaseUtil;
 import com.zysapp.sjyyt.activity.MainActivity;
 import com.zysapp.sjyyt.activity.R;
 import com.zysapp.sjyyt.model.Song;
@@ -193,6 +194,11 @@ public class PlayerService extends Service implements
         try {
             mPlayer.reset();
             mPlayer.setDataSource(mQueue.get(position).getUrl());
+            if (BaseUtil.isBefore(mQueue.get(position).getStartdate(), mQueue.get(position).getEnddate())){
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.SEEKBAR_VISIBLE));
+            }else {
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.SEEKBAR_INVISIBLE));
+            }
             XtomToastUtil.showLongToast(getApplicationContext(), "开始播放");
             mPlayer.prepare();
             start();
@@ -349,7 +355,10 @@ public class PlayerService extends Service implements
                         }
                         break;
                     case 3:
-                        next();
+                        if (!BaseUtil.CompareTo_Date(mQueue.get(mQueueIndex).getStartdate(), mQueue.get(mQueueIndex).getEnddate())) {
+                            next();
+                        }
+
                         break;
                     case 4:
                         if (isPlaying()) {
@@ -406,7 +415,9 @@ public class PlayerService extends Service implements
                 }
                 break;
             case NEXT:
-                next();
+                if (!BaseUtil.CompareTo_Date(mQueue.get(mQueueIndex).getStartdate(), mQueue.get(mQueueIndex).getEnddate())) {
+                    next();
+                }
                 break;
             case PRE:
                 pre();

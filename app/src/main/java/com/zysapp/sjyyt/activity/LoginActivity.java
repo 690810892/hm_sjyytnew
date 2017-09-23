@@ -27,9 +27,16 @@ import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.view.ClearEditText;
 
+import java.util.HashMap;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.wechat.friends.Wechat;
 import de.greenrobot.event.EventBus;
 import xtom.frame.XtomActivityManager;
 import xtom.frame.XtomConfig;
@@ -40,7 +47,7 @@ import xtom.frame.util.XtomToastUtil;
 /**
  * 用户登录界面
  */
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements PlatformActionListener {
 
     @BindView(R.id.tv_tomain)
     TextView tvTomain;
@@ -86,12 +93,14 @@ public class LoginActivity extends BaseActivity {
     private String code;
     private TimeThread timeThread;
     private String tempToken, username, password;
-int logintype=0;
+    int logintype = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
+        ShareSDK.initSDK(this);
     }
 
     @Override
@@ -99,6 +108,7 @@ int logintype=0;
         if (timeThread != null)
             timeThread.cancel();
         super.onDestroy();
+        ShareSDK.stopSDK(this);
     }
 
     @Override
@@ -170,11 +180,11 @@ int logintype=0;
                 XtomSharedPreferencesUtil.save(mContext, "username", username);
                 XtomSharedPreferencesUtil.save(mContext, "password", password);
                 XtomSharedPreferencesUtil.save(mContext, "isAutoLogin", "true");
-                if (logintype==0) {
+                if (logintype == 0) {
                     XtomActivityManager.finishAll();
                     Intent it = new Intent(this, MainActivity.class);
                     startActivity(it);
-                }else {
+                } else {
                     EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_USER));
                     finish();
                 }
@@ -186,9 +196,17 @@ int logintype=0;
                 getApplicationContext().setUser(tUser);
                 XtomSharedPreferencesUtil.save(mContext, "isAutoLogin", "true");
                 HemaUtil.setThirdSave(mContext, true);// 将第三方登录标记为true,注意在退出登录时将其置为false
-                XtomActivityManager.finishAll();
-                Intent tIt = new Intent(this, MainActivity.class);
-                startActivity(tIt);
+                if (logintype == 0) {
+                    XtomActivityManager.finishAll();
+                    Intent it = new Intent(this, MainActivity.class);
+                    startActivity(it);
+                } else {
+                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_USER));
+                    finish();
+                }
+//                XtomActivityManager.finishAll();
+//                Intent tIt = new Intent(this, MainActivity.class);
+//                startActivity(tIt);
                 break;
             case CLIENT_VERIFY:
                 showTextDialog("该手机号已经被注册了");
@@ -284,7 +302,7 @@ int logintype=0;
 
     @Override
     protected void getExras() {
-        logintype=mIntent.getIntExtra("keytype",0);
+        logintype = mIntent.getIntExtra("keytype", 0);
     }
 
     @Override
@@ -389,8 +407,17 @@ int logintype=0;
                 startActivity(it);
                 break;
             case R.id.iv_login_wechat:
+               Platform platform = ShareSDK.getPlatform(mContext, Wechat.NAME);
+                //Platform platform = new Wechat(mContext);
+                platform.SSOSetting(false);
+                platform.setPlatformActionListener(LoginActivity.this);
+                platform.authorize();
                 break;
             case R.id.iv_login_qq:
+                Platform platformqq = new QQ(mContext);
+                platformqq.SSOSetting(false);
+                platformqq.setPlatformActionListener(LoginActivity.this);
+                platformqq.authorize();
                 break;
         }
     }
@@ -403,6 +430,63 @@ int logintype=0;
             case 11:
                 break;
         }
+    }
+
+    @Override
+    public void onComplete(Platform platform, int arg1,
+                           HashMap<String, Object> datas) {
+        log_i("onComplete " + arg1);
+        String platName = platform.getName();
+        String nickname = platform.getDb().getUserName();
+        String thirduid = platform.getDb().getUserId();
+        String avatar = platform.getDb().getUserIcon();
+        String thirdtype = "1";// 1：微信 2：QQ 3：微博
+        String sex = platform.getDb().getUserGender();
+        if ("m".equals(sex))
+            sex = "男";
+        else
+            sex = "女";
+        String age = "20";
+        if (platName.equals(Wechat.NAME)) {// 微信授权
+            thirdtype = "1";
+        }
+        if (platName.equals(QQ.NAME)) {// QQ授权
+            thirdtype = "2";
+        }
+        // 将第三方登录信息保存在本地
+        XtomSharedPreferencesUtil.save(mContext, "thirdtype", thirdtype);
+        XtomSharedPreferencesUtil.save(mContext, "thirduid", thirduid);
+        XtomSharedPreferencesUtil.save(mContext, "avatar", avatar);
+        XtomSharedPreferencesUtil.save(mContext, "nickname", nickname);
+        XtomSharedPreferencesUtil.save(mContext, "sex", sex);
+        XtomSharedPreferencesUtil.save(mContext, "age", age);
+        getNetWorker().thirdSave(thirdtype, thirduid, avatar, nickname, sex,
+                age);
+    }
+
+    @Override
+    public void onError(Platform arg0, int arg1, Throwable arg2) {
+        log_i("onError " + arg1);
+        tvLogin.post(new Runnable() {
+
+            @Override
+            public void run() {
+                XtomToastUtil.showLongToast(mContext, "授权失败");
+            }
+        });
+
+    }
+
+    @Override
+    public void onCancel(Platform platform, int i) {
+        log_i("onCancel " + i);
+        tvLogin.post(new Runnable() {
+
+            @Override
+            public void run() {
+                XtomToastUtil.showLongToast(mContext, "您取消了授权");
+            }
+        });
     }
 
     private class TimeThread extends Thread {

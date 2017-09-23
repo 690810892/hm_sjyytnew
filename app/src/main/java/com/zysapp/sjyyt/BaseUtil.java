@@ -1016,4 +1016,37 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 			return time/1000/60 + ":" + time/1000%60;
 		}
 	}
+	public static boolean CompareTo_Date (String start,String end){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String time = XtomTimeUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+		try {
+			Date s=format.parse(start);
+			Date e=format.parse(end);
+			Date t=format.parse(time);
+			int compareToBefore=s.compareTo(t);
+			int compareToIntAfter=e.compareTo(t);
+			if (compareToBefore<=0&&compareToIntAfter>=0)
+				return true;
+			else
+				return false;
+		} catch (ParseException e) {
+			return false;
+		}
+	}
+	public static boolean isBefore (String start,String end){
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String time = XtomTimeUtil.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+		try {
+			Date s=format.parse(start);
+			Date e=format.parse(end);
+			Date t=format.parse(time);
+			int compareToIntAfter=e.compareTo(t);
+			if (compareToIntAfter==-1)
+				return true;
+			else
+				return false;
+		} catch (ParseException e) {
+			return false;
+		}
+	}
 }

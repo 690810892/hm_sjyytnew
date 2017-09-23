@@ -110,6 +110,9 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
         else {
             token = user.getToken();
         }
+        if (HemaUtil.isThirdSave(mContext)) {// 如果是第三方登录
+            tvPassword.setVisibility(View.GONE);
+        }
         // 获取图片的缓存
         long size1 = XtomImageCache.getInstance(mContext).getCacheSize();
         // 获取音频缓存

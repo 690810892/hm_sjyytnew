@@ -103,7 +103,7 @@
 
         <!-- 微信分享回调 -->
         <activity
-            android:name="com.hemaapp.cfjlr.wxapi.WXEntryActivity"
+            android:name="com.zysapp.sjyyt.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -305,6 +305,13 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".ScoreActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <service android:name="com.zysapp.sjyyt.service.PlayerService"/>
+        <activity
+            android:name=".TipListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

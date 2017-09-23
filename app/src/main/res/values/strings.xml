@@ -14,6 +14,7 @@
     <string name="video_file_name_format" translatable="false">"'VID'_yyyyMMdd_HHmmss"</string>
     <string name="remove"><u>删除</u></string>
     <string name="add"><u>添加</u></string>
+    <string name="aboutscore"><u>关于积分</u></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
