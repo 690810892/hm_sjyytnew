@@ -50,6 +50,7 @@ import com.zysapp.sjyyt.adapter.LiveAdapter;
 import com.zysapp.sjyyt.adapter.ReplyAdapter;
 import com.zysapp.sjyyt.model.Channel;
 import com.zysapp.sjyyt.model.Count;
+import com.zysapp.sjyyt.model.Draw;
 import com.zysapp.sjyyt.model.Image;
 import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.Song;
@@ -197,6 +198,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     private String pathWX;
     private String imageurl;
     private OnekeyShare oks;
+    ArrayList<Draw> draws = new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.fragment_first);
@@ -209,7 +211,9 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             token = "";
         else
             token = user.getToken();
+        getNetWorker().drawList(token);
         getNetWorker().channelList(0);
+
     }
 
     public void onEventMainThread(EventBusModel event) {
@@ -319,6 +323,9 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 } else
                     showProgressDialog("请稍后");
                 break;
+            case CLOCK_ADD:
+                showProgressDialog("正在添加");
+                break;
             default:
                 break;
         }
@@ -332,6 +339,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             case LIVE_LIST:
                 cancelProgressDialog();
                 break;
+            case CLOCK_ADD:
             case DATA_SAVEOPERATE:
                 cancelProgressDialog();
                 break;
@@ -450,6 +458,15 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                     tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n, 0, 0, 0);
                 }
                 break;
+            case CLOCK_ADD:
+                showTextDialog("设置提醒成功");
+                break;
+            case DRAW_LIST:
+                HemaArrayParse<Draw> DResult = (HemaArrayParse<Draw>) baseResult;
+                ArrayList<Draw> D = DResult.getObjects();
+                draws.clear();
+                draws.addAll(D);
+                break;
             default:
                 break;
         }
@@ -470,6 +487,9 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                     tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
                 }
                 break;
+            case CLOCK_ADD:
+                showTextDialog(baseResult.getMsg());
+                break;
             default:
                 break;
         }
@@ -484,6 +504,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             case CHANNEL_LIST:
                 showTextDialog("获取信息失败");
                 break;
+            case CLOCK_ADD:
             case DATA_SAVEOPERATE:
                 showTextDialog("操作失败");
                 break;
@@ -675,6 +696,12 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                     EventBus.getDefault().post(new EventBusModel(EventBusConfig.NEXT, songs, currentPosition));
                 break;
             case R.id.tv_tip:
+                if (user == null) {
+                    ToLogin.showLogin(getActivity());
+                    break;
+                }
+                getNetWorker().clockAdd(user.getToken(),songs.get(currentPosition).getId());
+
                 break;
             case R.id.tv_center:
             case R.id.lv_center:

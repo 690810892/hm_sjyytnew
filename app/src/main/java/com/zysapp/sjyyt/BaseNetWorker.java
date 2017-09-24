@@ -10,6 +10,7 @@ import com.zysapp.sjyyt.model.Channel;
 import com.zysapp.sjyyt.model.Clock;
 import com.zysapp.sjyyt.model.Count;
 import com.zysapp.sjyyt.model.DistrictInfor;
+import com.zysapp.sjyyt.model.Draw;
 import com.zysapp.sjyyt.model.FileUploadResult;
 import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.Image;
@@ -573,6 +574,21 @@ public class BaseNetWorker extends HemaNetWorker {
         params.put("keytype", keytype);
         params.put("keyid", keyid);
         ExecuteNetTask<Clock> task = new ExecuteNetTask<>(information, params, Clock.class);
+        executeTask(task);
+    }
+    public void clockAdd(String token,  String keyid) {
+        BaseHttpInformation information = BaseHttpInformation.CLOCK_ADD;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("keyid", keyid);
+        ExecuteNetTask<Clock> task = new ExecuteNetTask<>(information, params, Clock.class);
+        executeTask(task);
+    }
+    public void drawList(String token) {
+        BaseHttpInformation information = BaseHttpInformation.DRAW_LIST;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        ExecuteNetTask<Draw> task = new ExecuteNetTask<>(information, params, Draw.class);
         executeTask(task);
     }
 }

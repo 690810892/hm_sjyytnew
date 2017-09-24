@@ -314,6 +314,8 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	CITY_LIST(107, "city_all_get", "所有城市", false),
 	CLOCK_LIST(107, "clock_list", "叫早列表", false),
 	CLOCK_OPERATE(107, "clock_saveoperate", "叫早操作", false),
+	CLOCK_ADD(107, "clock_add", "叫早添加", false),
+	DRAW_LIST(107, "draw_list", "可抽奖列表接口", false),
 	;
 
 
