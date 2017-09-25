@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -15,13 +16,18 @@ import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
+import com.igexin.sdk.PushManager;
+import com.igexin.sdk.PushService;
 import com.zysapp.sjyyt.BaseActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.BaseLocation;
 import com.zysapp.sjyyt.BaseNetWorker;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.User;
+import com.zysapp.sjyyt.newgetui.GeTuiIntentService;
+import com.zysapp.sjyyt.newgetui.PushUtils;
 
+import xtom.frame.util.XtomDeviceUuidFactory;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 
 /**
@@ -66,6 +72,7 @@ public class LogoActivity extends BaseActivity {
 		animation.setAnimationListener(new StartAnimationListener());
 		imageView.startAnimation(animation);
 	}
+
 
 	// 检查是否已经展示过引导页界面了
 	private boolean isShow() {

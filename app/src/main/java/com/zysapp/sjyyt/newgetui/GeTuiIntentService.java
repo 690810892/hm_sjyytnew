@@ -19,6 +19,7 @@ import com.igexin.sdk.message.GTTransmitMessage;
 import com.igexin.sdk.message.SetTagCmdMessage;
 import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.activity.MainActivity;
+import com.zysapp.sjyyt.activity.NoticeListActivity;
 import com.zysapp.sjyyt.activity.R;
 import com.zysapp.sjyyt.util.EventBusModel;
 
@@ -81,9 +82,7 @@ public class GeTuiIntentService extends GTIntentService {
                 JSONObject msgJson = new JSONObject(data);
                 keyType = msgJson.getString("keyType");
                 keyId = msgJson.getString("keyId");
-//                msg = msgJson.getString("msg");
-//                msg_nickname = msgJson.getString("nickname");
-//                msg_avatar = msgJson.getString("avatar");
+                msg = msgJson.getString("msg");
             } catch (JSONException e) {
                 Log.e("msgJsonFailed", e.getMessage());
                 keyType = "-10";
@@ -167,12 +166,10 @@ public class GeTuiIntentService extends GTIntentService {
         builder.setContentTitle(context.getString(R.string.app_name));
         builder.setContentText(pushModel.getMsg()).setTicker(pushModel.getMsg());
 
-        int id = 0;
-
         if (isAppRunning(context)) {//已经运行
             BaseApplication application = BaseApplication.getInstance();
           //  application.setPushModel(pushModel);//在application中保存推送数据
-            switch (pushModel.getKeyType()) {//1系统通知2评论回复3好友申请
+            switch (pushModel.getKeyType()) {//1系统通知
                 case "-1"://群聊
 //                    intent = new Intent(context, ChatGroupActivity.class);
 //                    intent.putExtra("topic_id", pushModel.getKeyId());
@@ -202,10 +199,9 @@ public class GeTuiIntentService extends GTIntentService {
 //                    intent.putExtra("pagerPosition", 0);
                     break;
                 case "1"://消息通知
-//                    intent = new Intent(context, NoticeActivity.class);
-//                    intent.putExtra("pagerPosition", 0);
+                    intent = new Intent(context, NoticeListActivity.class);
+                    intent.putExtra("pagerPosition", 0);
                     break;
-
                 default:
                     intent = new Intent(context, MainActivity.class);
                     intent.putExtra("pagerPosition", 0);

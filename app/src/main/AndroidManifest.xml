@@ -65,6 +65,7 @@
     <uses-permission android:name="org.simalliance.openmobileapi.SMARTCARD" />
 
     <!-- 个推 end -->
+    <!-- 个推 end -->
     <!-- permissions send -->
     <application
         android:name="com.zysapp.sjyyt.BaseApplication"
@@ -76,6 +77,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="name,icon,label,theme,hardwareAccelerated">
+        <service android:name="com.zysapp.sjyyt.service.PlayerService"/>
         <!-- 高德地图ApiKey -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
@@ -104,12 +106,6 @@
         <!-- 微信分享回调 -->
         <activity
             android:name="com.zysapp.sjyyt.wxapi.WXEntryActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity
-            android:name="com.hemaapp.cfjlr.wxapi.WXPayEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -316,7 +312,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <service android:name="com.zysapp.sjyyt.service.PlayerService"/>
+
     </application>
 
 </manifest>

@@ -22,6 +22,7 @@ import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
+import com.zysapp.sjyyt.BaseAppCompatActivity;
 import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.BaseFragmentActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
@@ -34,6 +35,7 @@ import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.newgetui.GeTuiIntentService;
 import com.zysapp.sjyyt.newgetui.PushUtils;
+import com.zysapp.sjyyt.service.PlayerService;
 import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 
@@ -42,6 +44,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.sharesdk.framework.ShareSDK;
 import de.greenrobot.event.EventBus;
 import xtom.frame.util.XtomDeviceUuidFactory;
 
@@ -94,7 +97,6 @@ public class MainActivity extends BaseFragmentActivity {
     public static MainActivity getInstance() {
         return activity;
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         activity = this;
@@ -103,6 +105,7 @@ public class MainActivity extends BaseFragmentActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         upGrade = new UpGrade(mContext);
+        ShareSDK.initSDK(this);
         user = BaseApplication.getInstance().getUser();
         if (user != null)
             getNetWorker().unreadGet(user.getToken());
@@ -139,13 +142,14 @@ public class MainActivity extends BaseFragmentActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         allowUnbindService();
+        ShareSDK.stopSDK(this);
     }
 
     @Override
     protected void onResume() {
+        checkPermission();
         super.onResume();
         upGrade.check();
-        checkPermission();
         allowBindService();
     }
 
@@ -275,6 +279,7 @@ public class MainActivity extends BaseFragmentActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE},
                     REQUEST_PERMISSION);
         } else {
+            log_d("hhahahah------------------------------------------------------");
             PushManager.getInstance().initialize(this.getApplicationContext(), userPushService);
         }
 
@@ -366,15 +371,4 @@ public class MainActivity extends BaseFragmentActivity {
                 break;
         }
     }
-//    @OnClick(R.id.start)
-//    public void onViewClicked() {
-//        Song song = new Song();
-//        song.setAvatar("");
-//        song.setContent("张延山");
-//        song.setName("双节棍");
-//        song.setPath("http://sc1.111ttt.com/2015/1/06/06/99060941326.mp3");
-//        ArrayList<Song> songs = new ArrayList<>();
-//        songs.add(song);
-//        EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, 0));
-//    }
 }

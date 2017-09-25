@@ -11,6 +11,8 @@ import com.hemaapp.hm_FrameWork.HemaApplication;
 import com.hemaapp.hm_FrameWork.orm.SqliteUtility;
 import com.hemaapp.hm_FrameWork.orm.SqliteUtilityBuilder;
 import com.hemaapp.hm_FrameWork.orm.extra.Extra;
+import com.igexin.sdk.PushManager;
+import com.igexin.sdk.PushService;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
