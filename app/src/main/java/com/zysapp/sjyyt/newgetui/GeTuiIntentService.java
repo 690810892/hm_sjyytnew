@@ -21,6 +21,7 @@ import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.activity.MainActivity;
 import com.zysapp.sjyyt.activity.NoticeListActivity;
 import com.zysapp.sjyyt.activity.R;
+import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 
 import org.json.JSONException;
@@ -29,6 +30,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import xtom.frame.util.XtomBaseUtil;
 
 import static com.zysapp.sjyyt.util.EventBusConfig.CLIENT_ID;
 import static com.zysapp.sjyyt.util.EventBusConfig.NEW_MESSAGE;
@@ -78,18 +80,30 @@ public class GeTuiIntentService extends GTIntentService {
             String msg = "";
             String msg_nickname = "";
             String msg_avatar = "";
+            String msg_content = "";
             try {
                 JSONObject msgJson = new JSONObject(data);
                 keyType = msgJson.getString("keyType");
                 keyId = msgJson.getString("keyId");
                 msg = msgJson.getString("msg");
+                if (keyType.equals("2")) {
+                    msg_avatar = msgJson.getString("avatar");
+                    msg_nickname = msgJson.getString("nickname");
+                    msg_content = msgJson.getString("content");
+                }
+                if (keyType.equals("3")) {
+                    msg_content = msgJson.getString("content");
+                }
             } catch (JSONException e) {
                 Log.e("msgJsonFailed", e.getMessage());
                 keyType = "-10";
                 keyId = "-10";
                 msg = "消息通知格式错误";
             }
-            pushModel = new PushModel(keyType, keyId, msg,msg_nickname,msg_avatar);
+            pushModel = new PushModel(keyType, keyId, msg, msg_nickname, msg_avatar,msg_content);
+            if (keyType.equals("2")) {
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_DANMU,pushModel));
+            }
             EventBus.getDefault().post(new EventBusModel(NEW_MESSAGE));
             mynotify(context);
             PushUtils.savemsgreadflag(context, true, keyType);
@@ -168,7 +182,7 @@ public class GeTuiIntentService extends GTIntentService {
 
         if (isAppRunning(context)) {//已经运行
             BaseApplication application = BaseApplication.getInstance();
-          //  application.setPushModel(pushModel);//在application中保存推送数据
+            //  application.setPushModel(pushModel);//在application中保存推送数据
             switch (pushModel.getKeyType()) {//1系统通知
                 case "-1"://群聊
 //                    intent = new Intent(context, ChatGroupActivity.class);
@@ -237,6 +251,7 @@ public class GeTuiIntentService extends GTIntentService {
         }
         return false;
     }
+
     private boolean isForeground(Context context, String className) {
         if (context == null || TextUtils.isEmpty(className)) {
             return false;

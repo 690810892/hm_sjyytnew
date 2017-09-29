@@ -22,7 +22,7 @@ public enum EventBusConfig {
     REFRESH_TYPELIVE_LIST(12, "刷新资讯列表"),
     REFRESH_CARTYPE(13, "刷新接车时间列表"),
     PAY_WECHAT(14, "微信支付"),
-    REFRESH_Custom_LIST(15, "刷新客户列表"),
+    REFRESH_DANMU(15, "推送弹幕"),
     REFRESH_CAR_LIST(16, "刷新接车列表"),
     REFRESH_REPLY(17, "刷新评论"),
     REFRESH_CAR_INFOR(18, "刷新接车详情"),

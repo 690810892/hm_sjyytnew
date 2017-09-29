@@ -55,7 +55,8 @@ public class BaseApplication extends HemaApplication {
         XtomConfig.LOG = BaseConfig.DEBUG;
         String iow = XtomSharedPreferencesUtil.get(this, "imageload_onlywifi");
         XtomConfig.IMAGELOAD_ONLYWIFI = "true".equals(iow);
-        XtomConfig.DATAKEY = "r4Fv4XfPzKtSqJKI";
+        //XtomConfig.DATAKEY = "r4Fv4XfPzKtSqJKI";
+        XtomConfig.DATAKEY = "ppEaiDm5i";
         XtomConfig.DIGITAL_CHECK = true;
         super.onCreate();
         initImageLoader();

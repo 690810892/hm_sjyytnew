@@ -16,6 +16,12 @@ android {
                 GETUI_APP_SECRET: "1CLvNo6p2Y6UuP6LUgbES7",
         ]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi"
+//            abiFilters "armeabi-v7a"
+//            abiFilters "x86"
+        }
+
     }
     signingConfigs {
         // your debug keystore

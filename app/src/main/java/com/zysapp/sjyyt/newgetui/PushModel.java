@@ -16,13 +16,15 @@ public class PushModel extends XtomObject implements Serializable {
     private String msg;
     private String msg_nickname;
     private String msg_avatar;
+    private String msg_content;
 
-    public PushModel(String keyType, String keyId, String msg, String msg_nickname, String msg_avatar) {
+    public PushModel(String keyType, String keyId, String msg, String msg_nickname, String msg_avatar, String msg_content) {
         this.keyType = keyType;
         this.keyId = keyId;
         this.msg = msg;
         this.msg_nickname = msg_nickname;
         this.msg_avatar = msg_avatar;
+        this.msg_content = msg_content;
     }
 
     public String getKeyType() {
@@ -43,6 +45,10 @@ public class PushModel extends XtomObject implements Serializable {
 
     public String getMsg() {
         return msg;
+    }
+
+    public String getMsg_content() {
+        return msg_content;
     }
 
     public void setMsg(String msg) {

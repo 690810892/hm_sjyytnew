@@ -55,6 +55,7 @@ import com.zysapp.sjyyt.model.Image;
 import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.User;
+import com.zysapp.sjyyt.newgetui.PushModel;
 import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.util.RecycleUtils;
@@ -199,6 +200,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     private String imageurl;
     private OnekeyShare oks;
     ArrayList<Draw> draws = new ArrayList<>();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.fragment_first);
@@ -252,7 +254,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 break;
             case REFRESH_REPLY:
                 String content = event.getContent();
-                addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), content, true);
+//                addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), content, true);
                 currentPage = 0;
                 getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 getNetWorker().liveGet(songs.get(currentPosition).getId());
@@ -289,6 +291,12 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             case SEEKBAR_VISIBLE:
                 lvSeek.setVisibility(View.VISIBLE);
                 fvTimeNow.setVisibility(View.VISIBLE);
+                break;
+            case REFRESH_DANMU:
+                log_d("推送------------------------------------------------------------------");
+                PushModel pushModel = (PushModel) event.getObject();
+                if (pushModel.getKeyId().equals(songs.get(currentPosition).getId()))
+                    addDanmaKuShowTextAndImage(pushModel.getMsg_avatar(), pushModel.getMsg_nickname(), pushModel.getMsg_content(), true);
                 break;
         }
     }
@@ -700,7 +708,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                     ToLogin.showLogin(getActivity());
                     break;
                 }
-                getNetWorker().clockAdd(user.getToken(),songs.get(currentPosition).getId());
+                getNetWorker().clockAdd(user.getToken(), songs.get(currentPosition).getId());
 
                 break;
             case R.id.tv_center:
@@ -792,7 +800,17 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
 
         @Override
         public void onLoadingFailed(String s, View view, FailReason failReason) {
-
+            iv_avatar.setImageResource(R.mipmap.default_avatar);
+            Bitmap bitmap = BaseUtil.convertViewToBitmap(view0);
+            BaseDanmaku danmaku = danmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+            SpannableStringBuilder spannable = createSpannable(bitmap, "");
+            danmaku.text = spannable;
+            danmaku.padding = 20;
+            danmaku.priority = 1;  // 一定会显示, 一般用于本机发送的弹幕
+            danmaku.isLive = true;
+            danmaku.setTime(danmakuView.getCurrentTime() + 1500);
+            danmaku.textShadowColor = 0; // 重要：如果有图文混排，最好不要设置描边(设textShadowColor=0)，否则会进行两次复杂的绘制导致运行效率降低
+            danmakuView.addDanmaku(danmaku);
         }
 
         @Override
@@ -826,8 +844,6 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 while (showDanmaku) {
                     int time = new Random().nextInt(300);
                     String content = "" + time + time;
-//                    addDanmaku(content, false);
-//                    addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg", content, true);
                     try {
                         Thread.sleep(time);
                     } catch (InterruptedException e) {
@@ -856,9 +872,6 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
          */
         @Override
         public void prepareDrawing(final BaseDanmaku danmaku, boolean fromWorkerThread) {
-//            if (danmaku.text instanceof Spanned) { // 根据你的条件检查是否需要需要更新弹幕
-//                addDanmaKuShowTextAndImage("http://fangchan.dpthinking.com/uploadfiles/2017/07/201707181254382898.jpg", danmaku.text.toString(), true);
-//            }
         }
 
         @Override
@@ -953,6 +966,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
 //                    mPlayService.seek(progress);
                 }
             };
+
     @SuppressWarnings("deprecation")
     private void share() {
         if (mWindow_exit != null) {

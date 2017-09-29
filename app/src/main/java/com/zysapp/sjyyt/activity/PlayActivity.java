@@ -44,6 +44,7 @@ import com.zysapp.sjyyt.model.Count;
 import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.User;
+import com.zysapp.sjyyt.newgetui.PushModel;
 import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.util.RecycleUtils;
@@ -320,6 +321,11 @@ public class PlayActivity extends BaseActivity {
                     token = "";
                 else
                     token = user.getToken();
+                break;
+            case REFRESH_DANMU:
+                PushModel pushModel = (PushModel) event.getObject();
+                if (pushModel.getKeyId().equals(songs.get(currentPosition).getId()))
+                addDanmaKuShowTextAndImage(pushModel.getMsg_avatar(), pushModel.getMsg_nickname(), pushModel.getMsg_content(), true);
                 break;
         }
     }
