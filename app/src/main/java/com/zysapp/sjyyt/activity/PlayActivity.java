@@ -3,19 +3,12 @@ package com.zysapp.sjyyt.activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,7 +16,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
-import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
@@ -39,7 +31,6 @@ import com.zysapp.sjyyt.BaseUtil;
 import com.zysapp.sjyyt.ToLogin;
 import com.zysapp.sjyyt.adapter.LiveAdapter;
 import com.zysapp.sjyyt.adapter.ReplyAdapter;
-import com.zysapp.sjyyt.fragment.FirstPageFragment;
 import com.zysapp.sjyyt.model.Count;
 import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.Song;
@@ -138,6 +129,8 @@ public class PlayActivity extends BaseActivity {
     RecyclerView rvReply;
     @BindView(R.id.refreshLoadmoreLayout)
     RefreshLoadmoreLayout refreshLoadmoreLayout;
+    @BindView(R.id.tv_zhuboshuo)
+    TextView tvZhuboshuo;
     private User user;
     private String name, token;
     private int screenWide;
@@ -265,6 +258,7 @@ public class PlayActivity extends BaseActivity {
                 currentPosition = event.getCode();
                 log_d("666--" + currentPosition);
                 tvName.setText(songs.get(currentPosition).getName());
+                tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
                 ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
                         .getOptions(R.mipmap.login_bg));
                 ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
@@ -325,7 +319,7 @@ public class PlayActivity extends BaseActivity {
             case REFRESH_DANMU:
                 PushModel pushModel = (PushModel) event.getObject();
                 if (pushModel.getKeyId().equals(songs.get(currentPosition).getId()))
-                addDanmaKuShowTextAndImage(pushModel.getMsg_avatar(), pushModel.getMsg_nickname(), pushModel.getMsg_content(), true);
+                    addDanmaKuShowTextAndImage(pushModel.getMsg_avatar(), pushModel.getMsg_nickname(), pushModel.getMsg_content(), true);
                 break;
         }
     }
@@ -420,10 +414,10 @@ public class PlayActivity extends BaseActivity {
                     songs.get(currentPosition).setDyflag("0");
                     tvSave.setTextColor(0xffffffff);
                     tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n, 0, 0, 0);
-                }else if (keytype.equals("4")) {
+                } else if (keytype.equals("4")) {
                     songs.get(currentPosition).setLoveflag("1");
                     titleBtnRight.setImageResource(R.mipmap.love_p);
-                }else if (keytype.equals("1")) {
+                } else if (keytype.equals("1")) {
                     songs.get(currentPosition).setLoveflag("0");
                     titleBtnRight.setImageResource(R.mipmap.love_n);
                 }
@@ -452,10 +446,10 @@ public class PlayActivity extends BaseActivity {
         switch (information) {
             case DATA_SAVEOPERATE:
                 showTextDialog(baseResult.getMsg());
-                if (baseResult.getMsg().equals("您已订阅")){
+                if (baseResult.getMsg().equals("您已订阅")) {
                     songs.get(currentPosition).setDyflag("1");
                     tvSave.setTextColor(0xffFFC80C);
-                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p,0,0,0);
+                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
                 }
                 break;
             default:
@@ -518,6 +512,7 @@ public class PlayActivity extends BaseActivity {
     protected void setListener() {
         titleText.setText(name);
         titleBtnRight.setImageResource(R.mipmap.love_n);
+        tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
     }
 
     @OnClick({R.id.title_btn_left, R.id.title_btn_right, R.id.iv_open, R.id.tv_save, R.id.tv_share, R.id.tv_reply, R.id.iv_previous, R.id.iv_play, R.id.iv_next, R.id.tv_tip, R.id.lv_center, R.id.lv_content, R.id.lv_replylist})
@@ -595,6 +590,7 @@ public class PlayActivity extends BaseActivity {
                 ivLine3.setVisibility(View.INVISIBLE);
                 rvContent.setVisibility(View.GONE);
                 rvReply.setVisibility(View.GONE);
+                tvZhuboshuo.setVisibility(View.VISIBLE);
                 refreshLoadmoreLayout.setLoadmoreable(false);
                 break;
             case R.id.lv_content:
@@ -606,6 +602,7 @@ public class PlayActivity extends BaseActivity {
                 ivLine3.setVisibility(View.INVISIBLE);
                 rvContent.setVisibility(View.VISIBLE);
                 rvReply.setVisibility(View.GONE);
+                tvZhuboshuo.setVisibility(View.GONE);
                 refreshLoadmoreLayout.setLoadmoreable(false);
                 break;
             case R.id.lv_replylist:
@@ -617,6 +614,7 @@ public class PlayActivity extends BaseActivity {
                 ivLine3.setVisibility(View.VISIBLE);
                 rvContent.setVisibility(View.GONE);
                 rvReply.setVisibility(View.VISIBLE);
+                tvZhuboshuo.setVisibility(View.GONE);
                 refreshLoadmoreLayout.setLoadmoreable(true);
                 break;
         }

@@ -170,6 +170,8 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     LinearLayout lvSeek;
     @BindView(R.id.fv_time_now)
     FrameLayout fvTimeNow;
+    @BindView(R.id.tv_zhuboshuo)
+    TextView tvZhuboshuo;
     private User user;
     private String district = "", city;
     private String token;
@@ -213,8 +215,6 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             token = "";
         else
             token = user.getToken();
-        getNetWorker().drawList(token);
-        getNetWorker().channelList(0);
 
     }
 
@@ -224,6 +224,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 currentPosition = event.getCode();
                 log_d("555--" + currentPosition);
                 tvName.setText(songs.get(currentPosition).getName());
+                tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
                 ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
                         .getOptions(R.mipmap.login_bg));
                 ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
@@ -402,6 +403,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                     tvPlayer.setText(songs.get(currentPosition).getAuthor());
                     tvReply.setText(songs.get(currentPosition).getReplycount());
                     tvShare.setText(songs.get(currentPosition).getSharecount());
+                    tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
                     if (songs.get(currentPosition).getDyflag().equals("1")) {
                         tvSave.setTextColor(0xffFFC80C);
                         tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
@@ -444,6 +446,8 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 refreshLoadmoreLayout.setRefreshable(false);
                 replyAdapter.notifyDataSetChanged();
                 replyAdapter.setLive_id(live_id);
+                if (ivLine1.getVisibility() == View.VISIBLE)
+                    refreshLoadmoreLayout.setLoadmoreable(false);
                 break;
             case LIVE_GET:
                 HemaArrayParse<Count> cResult = (HemaArrayParse<Count>) baseResult;
@@ -579,6 +583,8 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
         liveAdapter = new LiveAdapter(getActivity(), songs);
         RecycleUtils.initVerticalRecyleNoScrll(rvContent);
         rvContent.setAdapter(liveAdapter);
+        getNetWorker().drawList(token);
+        getNetWorker().channelList(0);
         liveAdapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
             @Override
             public void onClick(int position) {
@@ -721,6 +727,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 ivLine3.setVisibility(View.INVISIBLE);
                 rvContent.setVisibility(View.GONE);
                 rvReply.setVisibility(View.GONE);
+                tvZhuboshuo.setVisibility(View.VISIBLE);
                 refreshLoadmoreLayout.setLoadmoreable(false);
                 break;
             case R.id.tv_content:
@@ -733,6 +740,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 ivLine3.setVisibility(View.INVISIBLE);
                 rvContent.setVisibility(View.VISIBLE);
                 rvReply.setVisibility(View.GONE);
+                tvZhuboshuo.setVisibility(View.GONE);
                 refreshLoadmoreLayout.setLoadmoreable(false);
                 break;
             case R.id.tv_replylist:
@@ -745,6 +753,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 ivLine3.setVisibility(View.VISIBLE);
                 rvContent.setVisibility(View.GONE);
                 rvReply.setVisibility(View.VISIBLE);
+                tvZhuboshuo.setVisibility(View.GONE);
                 refreshLoadmoreLayout.setLoadmoreable(true);
                 break;
         }
