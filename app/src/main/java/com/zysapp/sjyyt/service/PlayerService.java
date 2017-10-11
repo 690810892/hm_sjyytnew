@@ -179,7 +179,7 @@ public class PlayerService extends Service implements
         mListener = l;
     }
 
-    public int play(int position) {
+    public int play( int position) {
         if (mPlayer == null) {
             mPlayer = new MediaPlayer();
             mPlayer.setOnCompletionListener(this);
@@ -200,11 +200,20 @@ public class PlayerService extends Service implements
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.SEEKBAR_INVISIBLE));
             }
             XtomToastUtil.showLongToast(getApplicationContext(), "开始播放");
-            mPlayer.prepare();
-            start();
-            if (mListener != null)
-                mListener.onChange(position);
+            final int p=position;
+            mPlayer.prepareAsync();
+            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    start();
+                    if (mListener != null)
+                        mListener.onChange(p);
+                }
+            });
+           // start();
+
         } catch (Exception e) {
+            XtomToastUtil.showLongToast(getApplicationContext(), "网络异常");
             e.printStackTrace();
         }
 

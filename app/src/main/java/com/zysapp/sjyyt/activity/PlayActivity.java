@@ -2,18 +2,28 @@ package com.zysapp.sjyyt.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
@@ -40,12 +50,23 @@ import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.util.RecycleUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.tencent.qzone.QZone;
+import cn.sharesdk.wechat.favorite.WechatFavorite;
+import cn.sharesdk.wechat.friends.Wechat;
+import cn.sharesdk.wechat.moments.WechatMoments;
 import de.greenrobot.event.EventBus;
 import master.flame.danmaku.controller.DrawHandler;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
@@ -57,13 +78,14 @@ import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.model.android.SpannedCacheStuffer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
+import xtom.frame.util.XtomFileUtil;
 import xtom.frame.util.XtomToastUtil;
 import xtom.frame.view.XtomRefreshLoadmoreLayout;
 
 /**
  * 播放
  */
-public class PlayActivity extends BaseActivity {
+public class PlayActivity extends BaseActivity  implements PlatformActionListener {
 
     @BindView(R.id.title_btn_left)
     ImageButton titleBtnLeft;
@@ -149,7 +171,12 @@ public class PlayActivity extends BaseActivity {
     private Integer currentPosition = 0;
     private Integer currentPage = 0;
     MainActivity mainActivity;
-
+    private PopupWindow mWindow_exit;
+    private ViewGroup mViewGroup_exit;
+    private String sys_plugins;
+    private String pathWX;
+    private String imageurl;
+    private OnekeyShare oks;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_play);
@@ -320,6 +347,8 @@ public class PlayActivity extends BaseActivity {
                 PushModel pushModel = (PushModel) event.getObject();
                 if (pushModel.getKeyId().equals(songs.get(currentPosition).getId()))
                     addDanmaKuShowTextAndImage(pushModel.getMsg_avatar(), pushModel.getMsg_nickname(), pushModel.getMsg_content(), true);
+                log_e("pushid======="+pushModel.getKeyId());
+                log_e("songsid======="+songs.get(currentPosition).getId());
                 break;
         }
     }
@@ -555,7 +584,7 @@ public class PlayActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_share:
-                addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), "哈哈哈哈", true);
+                share();
                 break;
             case R.id.tv_reply:
                 if (user == null) {
@@ -669,7 +698,17 @@ public class PlayActivity extends BaseActivity {
 
         @Override
         public void onLoadingFailed(String s, View view, FailReason failReason) {
-
+            iv_avatar.setImageResource(R.mipmap.default_avatar);
+            Bitmap bitmap = BaseUtil.convertViewToBitmap(view0);
+            BaseDanmaku danmaku = danmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
+            SpannableStringBuilder spannable = createSpannable(bitmap, "");
+            danmaku.text = spannable;
+            danmaku.padding = 20;
+            danmaku.priority = 1;  // 一定会显示, 一般用于本机发送的弹幕
+            danmaku.isLive = true;
+            danmaku.setTime(danmakuView.getCurrentTime() + 1500);
+            danmaku.textShadowColor = 0; // 重要：如果有图文混排，最好不要设置描边(设textShadowColor=0)，否则会进行两次复杂的绘制导致运行效率降低
+            danmakuView.addDanmaku(danmaku);
         }
 
         @Override
@@ -685,6 +724,7 @@ public class PlayActivity extends BaseActivity {
             danmaku.setTime(danmakuView.getCurrentTime() + 1500);
             danmaku.textShadowColor = 0; // 重要：如果有图文混排，最好不要设置描边(设textShadowColor=0)，否则会进行两次复杂的绘制导致运行效率降低
             danmakuView.addDanmaku(danmaku);
+
         }
 
         @Override
@@ -758,7 +798,7 @@ public class PlayActivity extends BaseActivity {
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     int progress = seekBar.getProgress();
 //                    EventBus.getDefault().post(new EventBusModel(EventBusConfig.MAIN_SEEK, progress));
-                    mPlayService.seek(progress);
+                    mainActivity.mPlayService.seek(progress);
                 }
             };
 
@@ -768,9 +808,203 @@ public class PlayActivity extends BaseActivity {
             return;
         switch (requestCode) {
             case 1://
-                String content = data.getStringExtra("content");
-                addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), content, true);
+//                String content = data.getStringExtra("content");
+//                addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), content, true);
                 break;
         }
+    }
+    @SuppressWarnings("deprecation")
+    private void share() {
+        if (mWindow_exit != null) {
+            mWindow_exit.dismiss();
+        }
+        mWindow_exit = new PopupWindow(mContext);
+        mWindow_exit.setWidth(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setHeight(FrameLayout.LayoutParams.MATCH_PARENT);
+        mWindow_exit.setBackgroundDrawable(new BitmapDrawable());
+        mWindow_exit.setFocusable(true);
+        mWindow_exit.setAnimationStyle(R.style.PopupAnimation);
+        mViewGroup_exit = (ViewGroup) LayoutInflater.from(mContext).inflate(
+                R.layout.pop_share, null);
+        TextView wechat = (TextView) mViewGroup_exit.findViewById(R.id.wechat);
+        TextView moment = (TextView) mViewGroup_exit.findViewById(R.id.moment);
+        TextView qqshare = (TextView) mViewGroup_exit.findViewById(R.id.qq);
+        TextView qzone = (TextView) mViewGroup_exit.findViewById(R.id.zone);
+        TextView weibo = (TextView) mViewGroup_exit.findViewById(R.id.weibo);
+        TextView cancel = (TextView) mViewGroup_exit.findViewById(R.id.tv_cancel);
+        mWindow_exit.setContentView(mViewGroup_exit);
+        mWindow_exit.showAtLocation(mViewGroup_exit, Gravity.CENTER, 0, 0);
+        cancel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWindow_exit.dismiss();
+            }
+        });
+        qqshare.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(QQ.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        wechat.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(Wechat.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        moment.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(WechatMoments.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        qzone.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(QZone.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+        weibo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showShare(SinaWeibo.NAME);
+                mWindow_exit.dismiss();
+            }
+        });
+
+    }
+
+    private void showShare(String platform) {
+        pathWX = sys_plugins + "share/sdk.php?id=0&keytype=0";
+        imageurl = initImagePath();
+        if (oks == null) {
+            oks = new OnekeyShare();
+            oks.setTitle("手机音乐台");
+            oks.setTitleUrl(pathWX); // 标题的超链接
+            oks.setText("手机音乐台软件");
+            oks.setImageUrl(imageurl);
+            oks.setFilePath(imageurl);
+            oks.setImagePath(imageurl);
+            oks.setUrl(pathWX);
+            oks.setSiteUrl(pathWX);
+            oks.setCallback(this);
+        }
+        oks.setPlatform(platform);
+        oks.show(mContext);
+    }
+
+    @Override
+    public void onComplete(Platform arg0, int arg1, HashMap<String, Object> hashMap) {
+        if (arg0.getName().equals(Wechat.NAME)) {// 判断成功的平台是不是微信
+            handler.sendEmptyMessage(1);
+        }
+        if (arg0.getName().equals(WechatMoments.NAME)) {// 判断成功的平台是不是微信朋友圈
+            handler.sendEmptyMessage(2);
+        }
+        if (arg0.getName().equals(QQ.NAME)) {// 判断成功的平台是不是QQ
+            handler.sendEmptyMessage(3);
+        }
+        if (arg0.getName().equals(QZone.NAME)) {// 判断成功的平台是不是空间
+            handler.sendEmptyMessage(4);
+        }
+        if (arg0.getName().equals(WechatFavorite.NAME)) {// 判断成功的平台是不是微信收藏
+            handler.sendEmptyMessage(5);
+        }
+        if (arg0.getName().equals(SinaWeibo.NAME)) {// 判断成功的平台是不是微博
+            handler.sendEmptyMessage(8);
+        }
+    }
+
+    @Override
+    public void onError(Platform arg0, int arg1, Throwable arg2) {
+        arg2.printStackTrace();
+        Message msg = new Message();
+        msg.what = 6;
+        msg.obj = arg2.getMessage();
+        handler.sendMessage(msg);
+
+    }
+
+    @Override
+    public void onCancel(Platform platform, int i) {
+        handler.sendEmptyMessage(7);
+    }
+
+    Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    Toast.makeText(mContext, "微信分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 2:
+                    Toast.makeText(mContext, "朋友圈分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 3:
+                    Toast.makeText(mContext, "QQ分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 4:
+                    Toast.makeText(mContext, "QQ空间分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 5:
+                    Toast.makeText(mContext, "微信收藏分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 8:
+                    Toast.makeText(mContext, "微博分享成功", Toast.LENGTH_LONG).show();
+                    break;
+                case 7:
+                    Toast.makeText(mContext, "取消分享", Toast.LENGTH_LONG).show();
+                    break;
+                case 6:
+                    Toast.makeText(mContext, "分享失败", Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    };
+
+    private String initImagePath() {
+        String imagePath;
+        try {
+
+            String cachePath_internal = XtomFileUtil.getCacheDir(mContext)
+                    + "images/";// 获取缓存路径
+            File dirFile = new File(cachePath_internal);
+            if (!dirFile.exists()) {
+                dirFile.mkdirs();
+            }
+            imagePath = cachePath_internal + "share.png";
+            File file = new File(imagePath);
+            if (!file.exists()) {
+                file.createNewFile();
+                Bitmap pic;
+
+                pic = BitmapFactory.decodeResource(mContext.getResources(),
+                        R.mipmap.ic_launcher);
+
+                FileOutputStream fos = new FileOutputStream(file);
+                pic.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.flush();
+                fos.close();
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+            imagePath = null;
+        }
+        log_i("imagePath:" + imagePath);
+        return imagePath;
     }
 }
