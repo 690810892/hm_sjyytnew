@@ -129,7 +129,7 @@ public class PlayBackFragment extends BaseFragment {
         startDate.set(1931, 1, 10);
         endDate.set(2120, 2, 28);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        selectedDate.set(Calendar.DATE, selectedDate.get(Calendar.DATE) - 1);
+        selectedDate.set(Calendar.DATE, selectedDate.get(Calendar.DATE));
         data = format.format(selectedDate.getTime());
         log_d("data==" + data);
         if (user == null)

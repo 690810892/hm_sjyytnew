@@ -39,8 +39,10 @@ import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.BaseRecycleAdapter;
 import com.zysapp.sjyyt.BaseUtil;
 import com.zysapp.sjyyt.ToLogin;
+import com.zysapp.sjyyt.adapter.AuthorAdapter;
 import com.zysapp.sjyyt.adapter.LiveAdapter;
 import com.zysapp.sjyyt.adapter.ReplyAdapter;
+import com.zysapp.sjyyt.model.Author;
 import com.zysapp.sjyyt.model.Count;
 import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.Song;
@@ -85,7 +87,7 @@ import xtom.frame.view.XtomRefreshLoadmoreLayout;
 /**
  * 播放
  */
-public class PlayActivity extends BaseActivity  implements PlatformActionListener {
+public class PlayActivity extends BaseActivity implements PlatformActionListener {
 
     @BindView(R.id.title_btn_left)
     ImageButton titleBtnLeft;
@@ -121,12 +123,12 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
     ImageView ivPlay;
     @BindView(R.id.iv_next)
     ImageView ivNext;
-    @BindView(R.id.avatar)
-    RoundedImageView avatar;
-    @BindView(R.id.tv_player)
-    TextView tvPlayer;
-    @BindView(R.id.tv_tip)
-    TextView tvTip;
+    //    @BindView(R.id.avatar)
+//    RoundedImageView avatar;
+//    @BindView(R.id.tv_player)
+//    TextView tvPlayer;
+//    @BindView(R.id.tv_tip)
+//    TextView tvTip;
     @BindView(R.id.tv_center)
     TextView tvCenter;
     @BindView(R.id.iv_line1)
@@ -153,6 +155,10 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
     RefreshLoadmoreLayout refreshLoadmoreLayout;
     @BindView(R.id.tv_zhuboshuo)
     TextView tvZhuboshuo;
+    @BindView(R.id.rv_author)
+    RecyclerView rvAuthor;
+    @BindView(R.id.lv_author_top)
+    LinearLayout lvAuthorTop;
     private User user;
     private String name, token;
     private int screenWide;
@@ -177,6 +183,9 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
     private String pathWX;
     private String imageurl;
     private OnekeyShare oks;
+    private AuthorAdapter authorAdapter;
+    ArrayList<Author> authors = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_play);
@@ -205,6 +214,9 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
         replyAdapter = new ReplyAdapter(mContext, replies, getNetWorker());
         RecycleUtils.initVerticalRecyleNoScrll(rvReply);
         rvReply.setAdapter(replyAdapter);
+        authorAdapter = new AuthorAdapter(mContext, authors, getNetWorker());
+        RecycleUtils.initVerticalRecyleNoScrll(rvAuthor);
+        rvAuthor.setAdapter(authorAdapter);
         refreshLoadmoreLayout.setOnStartListener(new XtomRefreshLoadmoreLayout.OnStartListener() {
 
             @Override
@@ -254,9 +266,20 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
         tvName.setText(songs.get(currentPosition).getName());
         ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
                 .getOptions(R.mipmap.login_bg));
-        ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
-                .getOptions(R.mipmap.default_avatar));
-        tvPlayer.setText(songs.get(currentPosition).getAuthor());
+//        ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
+//                .getOptions(R.mipmap.default_avatar));
+//        tvPlayer.setText(songs.get(currentPosition).getAuthor());
+        authors.clear();
+        authors.addAll(songs.get(currentPosition).getAuthors());
+        authorAdapter.setLive_id(songs.get(currentPosition).getId());
+        authorAdapter.notifyDataSetChanged();
+        if (authors.size() == 0) {
+            lvAuthorTop.setVisibility(View.GONE);
+            //lvCenter.setVisibility(View.GONE);
+        } else {
+            lvAuthorTop.setVisibility(View.VISIBLE);
+            //lvCenter.setVisibility(View.VISIBLE);
+        }
         tvReply.setText(songs.get(currentPosition).getReplycount());
         tvShare.setText(songs.get(currentPosition).getSharecount());
         if (songs.get(currentPosition).getDyflag().equals("1")) {
@@ -285,12 +308,30 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
                 currentPosition = event.getCode();
                 log_d("666--" + currentPosition);
                 tvName.setText(songs.get(currentPosition).getName());
-                tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
+                // tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
+                String Author_content = songs.get(currentPosition).getAuthor_content();
+                if (!isNull(Author_content)) {
+                    Author_content = Author_content.replace("\\n", "\n");
+                    tvZhuboshuo.setText(Author_content);
+                } else {
+                    tvZhuboshuo.setText("");
+                }
                 ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
                         .getOptions(R.mipmap.login_bg));
-                ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
-                        .getOptions(R.mipmap.default_avatar));
-                tvPlayer.setText(songs.get(currentPosition).getAuthor());
+//                ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
+//                        .getOptions(R.mipmap.default_avatar));
+//                tvPlayer.setText(songs.get(currentPosition).getAuthor());
+                authors.clear();
+                authors.addAll(songs.get(currentPosition).getAuthors());
+                authorAdapter.setLive_id(songs.get(currentPosition).getId());
+                authorAdapter.notifyDataSetChanged();
+                if (authors.size() == 0) {
+                    lvAuthorTop.setVisibility(View.GONE);
+                   // lvCenter.setVisibility(View.GONE);
+                } else {
+                    lvAuthorTop.setVisibility(View.VISIBLE);
+                   // lvCenter.setVisibility(View.VISIBLE);
+                }
                 tvReply.setText(songs.get(currentPosition).getReplycount());
                 tvShare.setText(songs.get(currentPosition).getSharecount());
                 if (songs.get(currentPosition).getDyflag().equals("1")) {
@@ -347,8 +388,8 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
                 PushModel pushModel = (PushModel) event.getObject();
                 if (pushModel.getKeyId().equals(songs.get(currentPosition).getId()))
                     addDanmaKuShowTextAndImage(pushModel.getMsg_avatar(), pushModel.getMsg_nickname(), pushModel.getMsg_content(), true);
-                log_e("pushid======="+pushModel.getKeyId());
-                log_e("songsid======="+songs.get(currentPosition).getId());
+                log_e("pushid=======" + pushModel.getKeyId());
+                log_e("songsid=======" + songs.get(currentPosition).getId());
                 break;
         }
     }
@@ -541,7 +582,14 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
     protected void setListener() {
         titleText.setText(name);
         titleBtnRight.setImageResource(R.mipmap.love_n);
-        tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
+        //tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
+        String Author_content = songs.get(currentPosition).getAuthor_content();
+        if (!isNull(Author_content)) {
+            Author_content = Author_content.replace("\\n", "\n");
+            tvZhuboshuo.setText(Author_content);
+        } else {
+            tvZhuboshuo.setText("");
+        }
     }
 
     @OnClick({R.id.title_btn_left, R.id.title_btn_right, R.id.iv_open, R.id.tv_save, R.id.tv_share, R.id.tv_reply, R.id.iv_previous, R.id.iv_play, R.id.iv_next, R.id.tv_tip, R.id.lv_center, R.id.lv_content, R.id.lv_replylist})
@@ -813,6 +861,7 @@ public class PlayActivity extends BaseActivity  implements PlatformActionListene
                 break;
         }
     }
+
     @SuppressWarnings("deprecation")
     private void share() {
         if (mWindow_exit != null) {

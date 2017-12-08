@@ -14,6 +14,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.zysapp.sjyyt.BaseUtil;
@@ -26,26 +27,46 @@ import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.util.ImageTools;
 import com.zysapp.sjyyt.util.MusicIconLoader;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.greenrobot.event.EventBus;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 import xtom.frame.util.XtomToastUtil;
 
 public class PlayerService extends Service implements
-        MediaPlayer.OnCompletionListener {
+        IjkMediaPlayer.OnCompletionListener {
     private PowerManager.WakeLock mWakeLock = null;//获取设备电源锁，防止锁屏后服务被停止
     private Notification notification;//通知栏
     private RemoteViews remoteViews;//通知栏布局
     private NotificationManager notificationManager;
-    private MediaPlayer mPlayer;
+    //    private MediaPlayer mPlayer;
+    IjkMediaPlayer mPlayer;
     private ArrayList<Song> mQueue = new ArrayList<>();
     private int mQueueIndex = 0, playType = 0, typeid = 0;
     private PlayerService.OnMusicEventListener mListener;
     // 单线程池
     private ExecutorService mProgressUpdatedListener = Executors
             .newSingleThreadExecutor();
+
+    @Override
+    public void onCompletion(IMediaPlayer mp) {
+        next();
+    }
 
     public class PlayBinder extends Binder {
         public PlayerService getService() {
@@ -66,7 +87,7 @@ public class PlayerService extends Service implements
         acquireWakeLock();//获取设备电源锁
         // 开始更新进度的线程
         mProgressUpdatedListener.execute(mPublishProgressRunnable);
-        mPlayer = new MediaPlayer();
+        mPlayer = new IjkMediaPlayer();
         mPlayer.setOnCompletionListener(this);
         PendingIntent pendingIntent = PendingIntent
                 .getActivity(PlayerService.this,
@@ -161,7 +182,7 @@ public class PlayerService extends Service implements
             while (true) {
                 if (mPlayer != null && mPlayer.isPlaying()
                         && mListener != null) {
-                    mListener.onPublish(mPlayer.getCurrentPosition());
+                    mListener.onPublish((int) mPlayer.getCurrentPosition());
                 }
             /*
              * SystemClock.sleep(millis) is a utility function very similar
@@ -179,9 +200,9 @@ public class PlayerService extends Service implements
         mListener = l;
     }
 
-    public int play( int position) {
+    public int play(int position) {
         if (mPlayer == null) {
-            mPlayer = new MediaPlayer();
+            mPlayer = new IjkMediaPlayer();
             mPlayer.setOnCompletionListener(this);
         }
         if (mQueue.size() <= 0) {
@@ -194,23 +215,23 @@ public class PlayerService extends Service implements
         try {
             mPlayer.reset();
             mPlayer.setDataSource(mQueue.get(position).getUrl());
-            if (BaseUtil.isBefore(mQueue.get(position).getStartdate(), mQueue.get(position).getEnddate())){
+            if (BaseUtil.isBefore(mQueue.get(position).getStartdate(), mQueue.get(position).getEnddate())) {
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.SEEKBAR_VISIBLE));
-            }else {
+            } else {
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.SEEKBAR_INVISIBLE));
             }
-            XtomToastUtil.showLongToast(getApplicationContext(), "开始播放");
-            final int p=position;
+            //XtomToastUtil.showLongToast(getApplicationContext(), "开始播放");
+            final int p = position;
             mPlayer.prepareAsync();
-            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            mPlayer.setOnPreparedListener(new IjkMediaPlayer.OnPreparedListener() {
                 @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
+                public void onPrepared(IMediaPlayer mp) {
                     start();
                     if (mListener != null)
                         mListener.onChange(p);
                 }
+
             });
-           // start();
 
         } catch (Exception e) {
             XtomToastUtil.showLongToast(getApplicationContext(), "网络异常");
@@ -271,7 +292,9 @@ public class PlayerService extends Service implements
     public int getDuration() {
         if (!isPlaying())
             return 0;
-        return mPlayer.getDuration();
+        Log.e("shichang==",mPlayer.getDuration()+"");
+        return  (int)mPlayer.getDuration();
+
     }
 
     /**
@@ -409,7 +432,7 @@ public class PlayerService extends Service implements
                         if (mQueueIndex == position) {
 //                            pause();
                             EventBus.getDefault().post(new EventBusModel(EventBusConfig.STATE_PLAY));
-                        }else {
+                        } else {
                             mQueueIndex = position;
                             play(mQueueIndex);
                         }
@@ -434,10 +457,10 @@ public class PlayerService extends Service implements
         }
     }
 
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        next();
-    }
+//    @Override
+//    public void onCompletion(MediaPlayer mediaPlayer) {
+//        next();
+//    }
 
     /**
      * 音乐播放回调接口
@@ -455,4 +478,63 @@ public class PlayerService extends Service implements
     public int getmQueueIndex() {
         return mQueueIndex;
     }
+
+    /**
+     * 解析m3u8格式地址
+     */
+    private String parsePlaylistFile(String url) {
+        String filePath = "";
+        // 为了从Web获取M3U文件，可以使用Apache软件基金会的HttpClient库，
+        // 首先创建一个HttpClient对象，其代表类似Web浏览器的事物；
+        HttpClient httpClient = new DefaultHttpClient();
+        // 然后创建一个HttpGet对象，其表示指向一个文件的具体请求。
+        HttpGet getRequest = new HttpGet(url);
+        // HttpClient将执行HttpGet，并返回一个HttpResponse
+        try {
+            HttpResponse httpResponse = httpClient.execute(getRequest);
+            if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                Log.v("HTTP ERROR", httpResponse.getStatusLine()
+                        .getReasonPhrase());
+                return "";
+            } else {
+                // 在发出请求之后，可以从HttpRequest中获取一个InputStream，
+                // 其包含了所请求文件的内容
+                InputStream inputStream = httpResponse.getEntity().getContent();
+                // 借助一个BufferedReader可以逐行得遍历该文件
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(inputStream));
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    Log.v("PLAYLISTLINE", "ORIG:" + line);
+                    if (line.startsWith("#")) {
+                        // 元数据，可以做更多的处理，但现在忽略它
+                        return "";
+                    } else if (line.length() > 0) {
+                        // 如果它的长度大于0，那么就假设它是一个播放列表条目
+
+                        if (line.startsWith("http://")) {
+                            // 如果行以“http://”开头那么就把它作为流的完整URL
+                            filePath = line;
+                            Log.d("1111", "parsePlaylistFile:-111111111111111111111111111111111111111111111111111111111111111111111 ");
+                        } else {
+                            // 否则把它作为一个相对的URL，
+                            // 同时把针对该M3U文件的原始请求的URL附加上去
+                            filePath = getRequest.getURI().resolve(line)
+                                    .toString();
+                        }
+                        return filePath;
+                    }
+
+                }
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
+    }
+
 }

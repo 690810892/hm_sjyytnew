@@ -21,6 +21,7 @@ public class Channel extends XtomObject implements Serializable {
 	private String dyflag;
 	private String lastdate;
 	private String regdate;
+	private String url;
 	private boolean check=false;//
 	public Channel(JSONObject jsonObject) throws DataParseException {
 		if (jsonObject != null) {
@@ -31,6 +32,7 @@ public class Channel extends XtomObject implements Serializable {
 				dyflag = get(jsonObject, "dyflag");
 				lastdate = get(jsonObject, "lastdate");
 				regdate = get(jsonObject, "regdate");
+				url= get(jsonObject, "url");
 				log_i(toString());
 			} catch (JSONException e) {
 				throw new DataParseException(e);
@@ -47,6 +49,8 @@ public class Channel extends XtomObject implements Serializable {
 				", dyflag='" + dyflag + '\'' +
 				", lastdate='" + lastdate + '\'' +
 				", regdate='" + regdate + '\'' +
+				", url='" + url + '\'' +
+				", check=" + check +
 				'}';
 	}
 
@@ -72,6 +76,14 @@ public class Channel extends XtomObject implements Serializable {
 
 	public String getDyflag() {
 		return dyflag;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public String getUrl() {
+		return url;
 	}
 
 	public String getLastdate() {

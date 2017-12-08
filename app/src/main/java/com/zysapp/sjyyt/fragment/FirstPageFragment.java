@@ -45,9 +45,11 @@ import com.zysapp.sjyyt.activity.MainActivity;
 import com.zysapp.sjyyt.activity.R;
 import com.zysapp.sjyyt.activity.ReplyAddActivity;
 import com.zysapp.sjyyt.activity.TypeListActivity;
+import com.zysapp.sjyyt.adapter.AuthorAdapter;
 import com.zysapp.sjyyt.adapter.ChannelAdapter;
 import com.zysapp.sjyyt.adapter.LiveAdapter;
 import com.zysapp.sjyyt.adapter.ReplyAdapter;
+import com.zysapp.sjyyt.model.Author;
 import com.zysapp.sjyyt.model.Channel;
 import com.zysapp.sjyyt.model.Count;
 import com.zysapp.sjyyt.model.Draw;
@@ -127,12 +129,12 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     ImageView ivPlay;
     @BindView(R.id.iv_next)
     ImageView ivNext;
-    @BindView(R.id.avatar)
-    RoundedImageView avatar;
-    @BindView(R.id.tv_player)
-    TextView tvPlayer;
-    @BindView(R.id.tv_tip)
-    TextView tvTip;
+    //    @BindView(R.id.avatar)
+//    RoundedImageView avatar;
+//    @BindView(R.id.tv_player)
+//    TextView tvPlayer;
+//    @BindView(R.id.tv_tip)
+//    TextView tvTip;
     @BindView(R.id.tv_center)
     TextView tvCenter;
     @BindView(R.id.iv_line1)
@@ -172,6 +174,10 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     FrameLayout fvTimeNow;
     @BindView(R.id.tv_zhuboshuo)
     TextView tvZhuboshuo;
+    @BindView(R.id.rv_author)
+    RecyclerView rvAuthor;
+    @BindView(R.id.lv_author_top)
+    LinearLayout lvAuthorTop;
     private User user;
     private String district = "", city;
     private String token;
@@ -202,6 +208,8 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     private String imageurl;
     private OnekeyShare oks;
     ArrayList<Draw> draws = new ArrayList<>();
+    private AuthorAdapter authorAdapter;
+    ArrayList<Author> authors = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -224,12 +232,28 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 currentPosition = event.getCode();
                 log_d("555--" + currentPosition);
                 tvName.setText(songs.get(currentPosition).getName());
-                tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
+                String Author_content = songs.get(currentPosition).getAuthor_content();
+                if (!isNull(Author_content)) {
+                    Author_content = Author_content.replace("\\n", "\n");
+                    tvZhuboshuo.setText(Author_content);
+                } else {
+                    tvZhuboshuo.setText("");
+                }
+//                tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
                 ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
                         .getOptions(R.mipmap.login_bg));
-                ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
-                        .getOptions(R.mipmap.default_avatar));
-                tvPlayer.setText(songs.get(currentPosition).getAuthor());
+                authors.clear();
+                log_e("hehehhehe="+songs.get(currentPosition).getAuthors().size());
+                authors.addAll(songs.get(currentPosition).getAuthors());
+                authorAdapter.setLive_id(songs.get(currentPosition).getId());
+                authorAdapter.notifyDataSetChanged();
+                if (authors.size() == 0) {
+                    lvAuthorTop.setVisibility(View.GONE);
+                    //lvCenter.setVisibility(View.GONE);
+                }else {
+                    lvAuthorTop.setVisibility(View.VISIBLE);
+                   // lvCenter.setVisibility(View.VISIBLE);
+                }
                 tvReply.setText(songs.get(currentPosition).getReplycount());
                 tvShare.setText(songs.get(currentPosition).getSharecount());
                 if (songs.get(currentPosition).getDyflag().equals("1")) {
@@ -242,6 +266,10 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 tvTime.setText(BaseUtil.formatTime(mainActivity.mPlayService.getDuration()));
                 tvTimeNow.setText(BaseUtil.formatTime(mainActivity.mPlayService.getPlayingPosition()));
                 currentPage = 0;
+                if (currentPosition > 0)
+                    sbPlayProgress.setVisibility(View.VISIBLE);
+                else
+                    sbPlayProgress.setVisibility(View.GONE);
                 sbPlayProgress.setMax(mainActivity.mPlayService.getDuration());
                 getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 break;
@@ -270,8 +298,10 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                     EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, event.getPlaytype(), event.getTypeid()));
                 break;
             case onPublish:
-                sbPlayProgress.setProgress(event.getCode());
-                tvTimeNow.setText(BaseUtil.formatTime(event.getCode()));
+                if (currentPosition > 0) {
+                    sbPlayProgress.setProgress(event.getCode());
+                    tvTimeNow.setText(BaseUtil.formatTime(event.getCode()));
+                }
                 break;
             case REFRESH_FIRST_CHANNEL:
                 channel = (Channel) event.getObject();
@@ -387,23 +417,43 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 if (songs != null && songs.size() > 0)
                     songs.clear();
                 songs.addAll(ss);
+                songs.add(0, new Song(channel.getName(), channel.getUrl(), channel.getImgurl()));
                 liveAdapter.notifyDataSetChanged();
                 if (songs.size() > 0) {
-                    for (int i = 0; i < songs.size(); i++) {
-                        if (BaseUtil.CompareTo_Date(songs.get(i).getStartdate(), songs.get(i).getEnddate())) {
-                            currentPosition = i;
-                        }
-                    }
+//                    for (int i = 0; i < songs.size(); i++) {
+//                        if (BaseUtil.CompareTo_Date(songs.get(i).getStartdate(), songs.get(i).getEnddate())) {
+//                            currentPosition = i;
+//                        }
+//                    }
+                    sbPlayProgress.setVisibility(View.GONE);
+                    currentPosition = 0;
                     EventBus.getDefault().post(new EventBusModel(EventBusConfig.PLAY, songs, currentPosition, 1, Integer.parseInt(channel.getId())));
                     tvName.setText(songs.get(currentPosition).getName());
                     ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
                             .getOptions(R.mipmap.login_bg));
-                    ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
-                            .getOptions(R.mipmap.default_avatar));
-                    tvPlayer.setText(songs.get(currentPosition).getAuthor());
+//                    ImageLoader.getInstance().displayImage(songs.get(currentPosition).getAuthor_imgurl(), avatar, BaseApplication.getInstance()
+//                            .getOptions(R.mipmap.default_avatar));
+//                    tvPlayer.setText(songs.get(currentPosition).getAuthor());
+                    authors.clear();
+                    authors.addAll(songs.get(currentPosition).getAuthors());
+                    authorAdapter.setLive_id(songs.get(currentPosition).getId());
+                    authorAdapter.notifyDataSetChanged();
+                    if (authors.size() == 0) {
+                        lvAuthorTop.setVisibility(View.GONE);
+                       // lvCenter.setVisibility(View.GONE);
+                    }else {
+                        lvAuthorTop.setVisibility(View.VISIBLE);
+                       // lvCenter.setVisibility(View.VISIBLE);
+                    }
                     tvReply.setText(songs.get(currentPosition).getReplycount());
                     tvShare.setText(songs.get(currentPosition).getSharecount());
-                    tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
+                    String Author_content = songs.get(currentPosition).getAuthor_content();
+                    if (!isNull(Author_content)) {
+                        Author_content = Author_content.replace("\\n", "\n");
+                        tvZhuboshuo.setText(Author_content);
+                    } else {
+                        tvZhuboshuo.setText("");
+                    }
                     if (songs.get(currentPosition).getDyflag().equals("1")) {
                         tvSave.setTextColor(0xffFFC80C);
                         tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
@@ -594,6 +644,9 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
         replyAdapter = new ReplyAdapter(getActivity(), replies, getNetWorker());
         RecycleUtils.initVerticalRecyleNoScrll(rvReply);
         rvReply.setAdapter(replyAdapter);
+        authorAdapter = new AuthorAdapter(getActivity(), authors, getNetWorker());
+        RecycleUtils.initVerticalRecyleNoScrll(rvAuthor);
+        rvAuthor.setAdapter(authorAdapter);
         refreshLoadmoreLayout.setOnStartListener(new XtomRefreshLoadmoreLayout.OnStartListener() {
 
             @Override
