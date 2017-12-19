@@ -1,1 +1,1 @@
-include ':app', ':pickerview', ':sharesdk', ':onekeyshare'
+include ':app', ':pickerview', ':sharesdk', ':onekeyshare', ':hm_framework'
