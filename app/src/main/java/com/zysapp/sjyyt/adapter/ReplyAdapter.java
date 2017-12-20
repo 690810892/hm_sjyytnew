@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.view.RoundedImageView;
@@ -16,9 +15,7 @@ import com.zysapp.sjyyt.BaseRecycleAdapter;
 import com.zysapp.sjyyt.ToLogin;
 import com.zysapp.sjyyt.activity.R;
 import com.zysapp.sjyyt.activity.ReplyAddActivity;
-import com.zysapp.sjyyt.model.Channel;
 import com.zysapp.sjyyt.model.Reply;
-import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.util.RecycleUtils;
 
@@ -32,7 +29,7 @@ import xtom.frame.util.XtomTimeUtil;
 public class ReplyAdapter extends BaseRecycleAdapter<Reply> {
     private Context mContext;
     private User user;
-    private String live_id = "0",keytype="1";
+    private String live_id = "0", keytype = "1";
     private BaseNetWorker netWorker;
 
     public ReplyAdapter(Context mContext, List<Reply> datas, BaseNetWorker netWorker) {
@@ -45,9 +42,11 @@ public class ReplyAdapter extends BaseRecycleAdapter<Reply> {
     public void setLive_id(String id) {
         live_id = id;
     }
+
     public void setKeytype(String keytype) {
         this.keytype = keytype;
     }
+
     @Override
     protected void bindData(final BaseViewHolder holder, final int position) {
         final Reply infor = datas.get(position);
@@ -104,6 +103,8 @@ public class ReplyAdapter extends BaseRecycleAdapter<Reply> {
                     return;
                 }
                 Intent it = new Intent(mContext, ReplyAddActivity.class);
+                if (keytype.equals("3"))
+                    it.putExtra("currentPosition", 0);
                 it.putExtra("live_id", live_id);
                 it.putExtra("comment_id", infor.getId());
                 mContext.startActivity(it);

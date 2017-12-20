@@ -69,10 +69,11 @@ public class Song extends XtomObject implements Serializable {
         }
     }
 
-    public Song(String name, String url, String imgurl) {
+    public Song(String id,String name, String url, String imgurl) {
         this.name = name;
         this.url = url;
         this.imgurl = imgurl;
+        this.id = id;
         authors.clear();
     }
     @Override

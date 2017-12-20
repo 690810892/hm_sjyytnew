@@ -1,19 +1,14 @@
 package com.zysapp.sjyyt.activity;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.HemaNetTask;
-import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.zysapp.sjyyt.BaseActivity;
 import com.zysapp.sjyyt.BaseApplication;
@@ -40,8 +35,9 @@ public class ReplyAddActivity extends BaseActivity {
     TextView titleText;
     @BindView(R.id.edittext)
     EditText edittext;
-    private String live_id  = "1",keytype="1";
-    private String comment_id,content;
+    private String live_id = "1", keytype = "1";
+    private String comment_id, content;
+    int currentPosition = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +45,11 @@ public class ReplyAddActivity extends BaseActivity {
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
         noHideInput.add(titleBtnRight);
+        if (currentPosition == 0) {
+            keytype = "2";
+        } else {
+            keytype = "1";
+        }
     }
 
     @Override
@@ -85,13 +86,13 @@ public class ReplyAddActivity extends BaseActivity {
         switch (information) {
             case REPLY_ADD:
                 showTextDialog(baseResult.getMsg());
-                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_REPLY,content));
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_REPLY, content));
                 titleText.postDelayed(new Runnable() {
 
                     @Override
                     public void run() {
-                        mIntent.putExtra("content",content);
-                        setResult(RESULT_OK,mIntent);
+                        mIntent.putExtra("content", content);
+                        setResult(RESULT_OK, mIntent);
                         finish();
                     }
                 }, 500);
@@ -145,8 +146,9 @@ public class ReplyAddActivity extends BaseActivity {
 
     @Override
     protected void getExras() {
-        live_id=mIntent.getStringExtra("live_id");
-        comment_id=mIntent.getStringExtra("comment_id");
+        live_id = mIntent.getStringExtra("live_id");
+        comment_id = mIntent.getStringExtra("comment_id");
+        currentPosition = mIntent.getIntExtra("currentPosition", 1);
     }
 
     @Override
@@ -165,13 +167,14 @@ public class ReplyAddActivity extends BaseActivity {
                 break;
             case R.id.title_btn_right:
                 BaseUtil.hideInput(mContext, titleBtnLeft);
-                 content = edittext.getText().toString();
+                content = edittext.getText().toString();
                 if (isNull(content)) {
                     showTextDialog("请输入评论内容");
                     return;
                 }
                 User user = BaseApplication.getInstance().getUser();
-                getNetWorker().replyAdd(user.getToken(),keytype,live_id,comment_id,content);
+
+                getNetWorker().replyAdd(user.getToken(), keytype, live_id, comment_id, content);
                 break;
         }
     }

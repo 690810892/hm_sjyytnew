@@ -641,6 +641,7 @@ public class PlayActivity extends BaseActivity implements PlatformActionListener
                 }
                 it = new Intent(mContext, ReplyAddActivity.class);
                 it.putExtra("live_id", songs.get(currentPosition).getId());
+
                 it.putExtra("comment_id", "0");
                 startActivityForResult(it, 1);
                 break;

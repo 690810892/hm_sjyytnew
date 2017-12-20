@@ -30,7 +30,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import xtom.frame.util.XtomBaseUtil;
 
 import static com.zysapp.sjyyt.util.EventBusConfig.CLIENT_ID;
 import static com.zysapp.sjyyt.util.EventBusConfig.NEW_MESSAGE;
@@ -86,7 +85,7 @@ public class GeTuiIntentService extends GTIntentService {
                 keyType = msgJson.getString("keyType");
                 keyId = msgJson.getString("keyId");
                 msg = msgJson.getString("msg");
-                if (keyType.equals("2")) {
+                if (keyType.equals("2")||keyType.equals("4")) {
                     msg_avatar = msgJson.getString("avatar");
                     msg_nickname = msgJson.getString("nickname");
                     msg_content = msgJson.getString("content");
@@ -102,6 +101,9 @@ public class GeTuiIntentService extends GTIntentService {
             }
             pushModel = new PushModel(keyType, keyId, msg, msg_nickname, msg_avatar,msg_content);
             if (keyType.equals("2")) {
+                EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_DANMU,pushModel));
+            }
+            if (keyType.equals("4")) {
                 EventBus.getDefault().post(new EventBusModel(EventBusConfig.REFRESH_DANMU,pushModel));
             }
             EventBus.getDefault().post(new EventBusModel(NEW_MESSAGE));

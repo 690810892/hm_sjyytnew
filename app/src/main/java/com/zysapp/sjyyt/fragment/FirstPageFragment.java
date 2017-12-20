@@ -186,7 +186,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     private Integer currentPage = 0;
     ArrayList<Song> songs = new ArrayList<>();
     private Integer currentPosition = 0;
-    private boolean showDanmaku;
+    private boolean showDanmaku, channelDanmu = false;
     private DanmakuContext danmakuContext;
     ArrayList<Channel> channels = new ArrayList<>();
     private Channel channel;
@@ -229,54 +229,77 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     public void onEventMainThread(EventBusModel event) {
         switch (event.getType()) {
             case REFRESH_SONG:
-                currentPosition = event.getCode();
-                log_d("555--" + currentPosition);
-                tvName.setText(songs.get(currentPosition).getName());
-                String Author_content = songs.get(currentPosition).getAuthor_content();
-                if (!isNull(Author_content)) {
-                    Author_content = Author_content.replace("\\n", "\n");
-                    tvZhuboshuo.setText(Author_content);
-                } else {
-                    tvZhuboshuo.setText("");
+                if (songs.size() > 0) {
+                    currentPosition = event.getCode();
+                    log_d("555--" + currentPosition);
+                    tvName.setText(songs.get(currentPosition).getName());
+                    String Author_content = songs.get(currentPosition).getAuthor_content();
+                    if (!isNull(Author_content)) {
+                        Author_content = Author_content.replace("\\n", "\n");
+                        tvZhuboshuo.setText(Author_content);
+                    } else {
+                        tvZhuboshuo.setText("");
+                    }
+                    ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
+                            .getOptions(R.mipmap.login_bg));
+                    authors.clear();
+                    log_e("hehehhehe=" + songs.get(currentPosition).getAuthors().size());
+                    authors.addAll(songs.get(currentPosition).getAuthors());
+                    authorAdapter.setLive_id(songs.get(currentPosition).getId());
+                    authorAdapter.notifyDataSetChanged();
+                    if (authors.size() == 0) {
+                        lvAuthorTop.setVisibility(View.GONE);
+                        //lvCenter.setVisibility(View.GONE);
+                    } else {
+                        lvAuthorTop.setVisibility(View.VISIBLE);
+                        // lvCenter.setVisibility(View.VISIBLE);
+                    }
+                    tvReply.setText(songs.get(currentPosition).getReplycount());
+                    tvShare.setText(songs.get(currentPosition).getSharecount());
+                    if (songs.get(currentPosition).getDyflag().equals("1")) {
+                        tvSave.setTextColor(0xffFFC80C);
+                        tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
+                    } else {
+                        tvSave.setTextColor(0xffffffff);
+                        tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n, 0, 0, 0);
+                    }
+                    tvTime.setText(BaseUtil.formatTime(mainActivity.mPlayService.getDuration()));
+                    tvTimeNow.setText(BaseUtil.formatTime(mainActivity.mPlayService.getPlayingPosition()));
+                    currentPage = 0;
+                    if (currentPosition > 0)
+                        sbPlayProgress.setVisibility(View.VISIBLE);
+                    else
+                        sbPlayProgress.setVisibility(View.GONE);
+                    sbPlayProgress.setMax(mainActivity.mPlayService.getDuration());
+                    if (currentPosition == 0)
+                        getNetWorker().replyList("3", songs.get(currentPosition).getId(), "0");
+                    else
+                        getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
+                    if (currentPosition==0){
+                        tvCenter.setTextColor(0xff212121);
+                        tvContent.setTextColor(0xff212121);
+                        tvReplylist.setTextColor(0xff000000);
+                        ivLine1.setVisibility(View.INVISIBLE);
+                        ivLine2.setVisibility(View.INVISIBLE);
+                        ivLine3.setVisibility(View.VISIBLE);
+                        rvContent.setVisibility(View.GONE);
+                        rvReply.setVisibility(View.VISIBLE);
+                        tvZhuboshuo.setVisibility(View.GONE);
+                        refreshLoadmoreLayout.setLoadmoreable(true);
+                        lvCenter.setVisibility(View.GONE);
+                    }else {
+                        lvCenter.setVisibility(View.VISIBLE);
+                    }
                 }
-//                tvZhuboshuo.setText(songs.get(currentPosition).getAuthor_content());
-                ImageLoader.getInstance().displayImage(songs.get(currentPosition).getImgurl(), ivMusic, BaseApplication.getInstance()
-                        .getOptions(R.mipmap.login_bg));
-                authors.clear();
-                log_e("hehehhehe="+songs.get(currentPosition).getAuthors().size());
-                authors.addAll(songs.get(currentPosition).getAuthors());
-                authorAdapter.setLive_id(songs.get(currentPosition).getId());
-                authorAdapter.notifyDataSetChanged();
-                if (authors.size() == 0) {
-                    lvAuthorTop.setVisibility(View.GONE);
-                    //lvCenter.setVisibility(View.GONE);
-                }else {
-                    lvAuthorTop.setVisibility(View.VISIBLE);
-                   // lvCenter.setVisibility(View.VISIBLE);
-                }
-                tvReply.setText(songs.get(currentPosition).getReplycount());
-                tvShare.setText(songs.get(currentPosition).getSharecount());
-                if (songs.get(currentPosition).getDyflag().equals("1")) {
-                    tvSave.setTextColor(0xffFFC80C);
-                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_p, 0, 0, 0);
-                } else {
-                    tvSave.setTextColor(0xffffffff);
-                    tvSave.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.save_n, 0, 0, 0);
-                }
-                tvTime.setText(BaseUtil.formatTime(mainActivity.mPlayService.getDuration()));
-                tvTimeNow.setText(BaseUtil.formatTime(mainActivity.mPlayService.getPlayingPosition()));
-                currentPage = 0;
-                if (currentPosition > 0)
-                    sbPlayProgress.setVisibility(View.VISIBLE);
-                else
-                    sbPlayProgress.setVisibility(View.GONE);
-                sbPlayProgress.setMax(mainActivity.mPlayService.getDuration());
-                getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 break;
             case STATE_PLAY:
                 ivPlay.setImageResource(R.mipmap.img_play);
-                if (!isNull(token))
-                    getNetWorker().dataOperate(token, "9", songs.get(currentPosition).getId());
+                if (!isNull(token)) {
+                    if (currentPosition == 0)
+                        getNetWorker().dataOperate(token, "11", songs.get(currentPosition).getId());
+                    else
+                        getNetWorker().dataOperate(token, "9", songs.get(currentPosition).getId());
+                }
                 break;
             case STATE_PAUSE:
                 ivPlay.setImageResource(R.mipmap.img_pause);
@@ -285,7 +308,10 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 String content = event.getContent();
 //                addDanmaKuShowTextAndImage(user.getAvatar(), user.getNickname(), content, true);
                 currentPage = 0;
-                getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
+                if (currentPosition == 0)
+                    getNetWorker().replyList("3", songs.get(currentPosition).getId(), "0");
+                else
+                    getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 getNetWorker().liveGet(songs.get(currentPosition).getId());
                 break;
             case REFRESH_FIRST_SONG:
@@ -417,7 +443,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 if (songs != null && songs.size() > 0)
                     songs.clear();
                 songs.addAll(ss);
-                songs.add(0, new Song(channel.getName(), channel.getUrl(), channel.getImgurl()));
+                songs.add(0, new Song(channel.getId(), channel.getName(), channel.getUrl(), channel.getImgurl()));
                 liveAdapter.notifyDataSetChanged();
                 if (songs.size() > 0) {
 //                    for (int i = 0; i < songs.size(); i++) {
@@ -440,10 +466,10 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                     authorAdapter.notifyDataSetChanged();
                     if (authors.size() == 0) {
                         lvAuthorTop.setVisibility(View.GONE);
-                       // lvCenter.setVisibility(View.GONE);
-                    }else {
+                        // lvCenter.setVisibility(View.GONE);
+                    } else {
                         lvAuthorTop.setVisibility(View.VISIBLE);
-                       // lvCenter.setVisibility(View.VISIBLE);
+                        // lvCenter.setVisibility(View.VISIBLE);
                     }
                     tvReply.setText(songs.get(currentPosition).getReplycount());
                     tvShare.setText(songs.get(currentPosition).getSharecount());
@@ -466,11 +492,15 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                     currentPage = 0;
                     sbPlayProgress.setMax(mainActivity.mPlayService.getDuration());
                 }
-                getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
+                if (currentPosition == 0)
+                    getNetWorker().replyList("3", songs.get(currentPosition).getId(), "0");
+                else
+                    getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 break;
             case REPLY_LIST:
                 String page = netTask.getParams().get("page");
                 String live_id = netTask.getParams().get("keyid");
+                String keytype1 = netTask.getParams().get("keytype");
                 @SuppressWarnings("unchecked")
                 HemaArrayParse<Reply> gResult = (HemaArrayParse<Reply>) baseResult;
                 ArrayList<Reply> goods = gResult.getObjects();
@@ -496,8 +526,15 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 refreshLoadmoreLayout.setRefreshable(false);
                 replyAdapter.notifyDataSetChanged();
                 replyAdapter.setLive_id(live_id);
+                replyAdapter.setKeytype(keytype1);
                 if (ivLine1.getVisibility() == View.VISIBLE)
                     refreshLoadmoreLayout.setLoadmoreable(false);
+                if (currentPosition == 0) {
+                    channelDanmu = true;
+                } else {
+                    channelDanmu = false;
+                }
+                generateSomeDanmaku();
                 break;
             case LIVE_GET:
                 HemaArrayParse<Count> cResult = (HemaArrayParse<Count>) baseResult;
@@ -509,7 +546,10 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 String keytype = netTask.getParams().get("keytype");
                 if (keytype.equals("6") || keytype.equals("8")) {
                     currentPage = 0;
-                    getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
+                    if (currentPosition == 0)
+                        getNetWorker().replyList("3", songs.get(currentPosition).getId(), "0");
+                    else
+                        getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
                 } else if (keytype.equals("5")) {
                     songs.get(currentPosition).setDyflag("1");
                     tvSave.setTextColor(0xffFFC80C);
@@ -532,6 +572,28 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             default:
                 break;
         }
+    }
+
+    /**
+     * 随机生成一些弹幕内容以供测试
+     */
+    private void generateSomeDanmaku() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (channelDanmu) {
+                    if (replies.size() > 0) {
+                        int i = new Random().nextInt(replies.size());
+                        addDanmaKuShowTextAndImage(replies.get(i).getAvatar(), replies.get(i).getNickname(), replies.get(i).getContent(), true);
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -656,8 +718,12 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             @Override
             public void onStartLoadmore(XtomRefreshLoadmoreLayout v) {
                 currentPage++;
-                if (rvReply.getVisibility() == View.VISIBLE)
-                    getNetWorker().replyList("1", songs.get(currentPosition).getId(), currentPage.toString());
+                if (rvReply.getVisibility() == View.VISIBLE) {
+                    if (currentPosition == 0)
+                        getNetWorker().replyList("3", songs.get(currentPosition).getId(), currentPage.toString());
+                    else
+                        getNetWorker().replyList("1", songs.get(currentPosition).getId(), currentPage.toString());
+                }
             }
         });
         danmakuContext = DanmakuContext.create();
@@ -716,9 +782,11 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 if (showDanmaku) {
                     danmakuView.hide();
                     showDanmaku = false;
+                    ivOpen.setImageResource(R.mipmap.img_danmu_close);
                 } else {
                     danmakuView.show();
                     showDanmaku = true;
+                    ivOpen.setImageResource(R.mipmap.img_danmu);
                 }
                 break;
             case R.id.tv_save:
@@ -742,6 +810,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 }
                 it = new Intent(getActivity(), ReplyAddActivity.class);
                 it.putExtra("live_id", songs.get(currentPosition).getId());
+                it.putExtra("currentPosition", currentPosition);
                 it.putExtra("comment_id", "0");
                 startActivity(it);
                 break;
@@ -896,25 +965,6 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
         }
     }
 
-    /**
-     * 随机生成一些弹幕内容以供测试
-     */
-    private void generateSomeDanmaku() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (showDanmaku) {
-                    int time = new Random().nextInt(300);
-                    String content = "" + time + time;
-                    try {
-                        Thread.sleep(time);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-    }
 
     /**
      * sp转px的方法。
