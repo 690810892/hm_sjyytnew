@@ -17,12 +17,12 @@ public class SysInfoDBHelper extends DBHelper {
 	String columns = "sys_web_service,sys_plugins,sys_show_iospay, android_must_update,android_last_version,"
 	        +"iphone_must_update, iphone_last_version, sys_chat_ip,sys_chat_port,sys_pagesize,"
 			+"sys_service_phone,android_update_url,iphone_update_url,apad_update_url,"
-			+ "ipad_update_url,iphone_comment_url,msg_invite, start_url ,sys_tousu_phone";
+			+ "ipad_update_url,iphone_comment_url,msg_invite, start_url ,sys_tousu_phone,start_img";
 
 	String updateColumns = "sys_web_service=?,sys_plugins=?,sys_show_iospay=?, android_must_update=?,android_last_version=?,"
 	        +"iphone_must_update=?, iphone_last_version=?, sys_chat_ip=?,sys_chat_port=?,sys_pagesize=?,"
 			+"sys_service_phone=?,android_update_url=?,iphone_update_url=?,apad_update_url=?,"
-			+ "ipad_update_url=?,iphone_comment_url=?,msg_invite=?, start_url=?, sys_tousu_phone=?";
+			+ "ipad_update_url=?,iphone_comment_url=?,msg_invite=?, start_url=?, sys_tousu_phone=?,start_img=?";
 
 	/**
 	 * 实例化系统初始化信息数据库帮助类
@@ -52,7 +52,7 @@ public class SysInfoDBHelper extends DBHelper {
 	 */
 	public boolean insert(SysInitInfo infor) {
 		String sql = "insert into " + tableName + " (" + columns
-				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ ") values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		Object[] bindArgs = new Object[] { 
 				infor.getSys_web_service(), infor.getSys_plugins(),
@@ -62,7 +62,7 @@ public class SysInfoDBHelper extends DBHelper {
 				infor.getSys_chat_port(), infor.getSys_pagesize(), infor.getSys_service_phone(),
 				infor.getAndroid_update_url(), infor.getIphone_update_url(), 
 				infor.getApad_update_url(), infor.getIpad_update_url(), 
-				infor.getIphone_comment_url(), infor.getMsg_invite(), infor.getStart_url(),infor.getSys_tousu_phone()};
+				infor.getIphone_comment_url(), infor.getMsg_invite(), infor.getStart_url(),infor.getSys_tousu_phone(),infor.getStart_img()};
 		SQLiteDatabase db = getWritableDatabase();
 		boolean success = true;
 		try {
@@ -93,7 +93,7 @@ public class SysInfoDBHelper extends DBHelper {
 				infor.getAndroid_update_url(), infor.getIphone_update_url(), 
 				infor.getApad_update_url(), infor.getIpad_update_url(), 
 				infor.getIphone_comment_url(), infor.getMsg_invite(),
-				infor.getStart_url(),infor.getSys_tousu_phone()};
+				infor.getStart_url(),infor.getSys_tousu_phone(),infor.getStart_img()};
 		SQLiteDatabase db = getWritableDatabase();
 		boolean success = true;
 		try {
@@ -160,7 +160,8 @@ public class SysInfoDBHelper extends DBHelper {
 					cursor.getString(11), cursor.getString(12),
 					cursor.getString(13), cursor.getString(14),
 					cursor.getString(15), cursor.getString(16),
-					cursor.getString(17),cursor.getString(18));
+					cursor.getString(17),cursor.getString(18),
+					cursor.getString(19));
 		}
 		cursor.close();
 		db.close();

@@ -15,11 +15,8 @@ import com.hemaapp.hm_FrameWork.view.RefreshLoadmoreLayout;
 import com.zysapp.sjyyt.BaseActivity;
 import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.BaseHttpInformation;
-import com.zysapp.sjyyt.BaseRecycleAdapter;
 import com.zysapp.sjyyt.adapter.ScoreAdapter;
-import com.zysapp.sjyyt.adapter.TypeLiveAdapter;
 import com.zysapp.sjyyt.model.Score;
-import com.zysapp.sjyyt.model.Song;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.util.EventBusModel;
@@ -67,10 +64,7 @@ public class ScoreActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         user = BaseApplication.getInstance().getUser();
-        if (user == null)
-            token = "";
-        else
-            token = user.getToken();
+        token = user.getToken();
         getNetWorker().accountGet(token);
         adapter = new ScoreAdapter(mContext, blogs);
         RecycleUtils.initVerticalRecyle(rvList);

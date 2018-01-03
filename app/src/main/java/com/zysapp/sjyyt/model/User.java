@@ -14,10 +14,6 @@ import xtom.frame.exception.DataParseException;
  */
 @TableName(table = "User")
 public class User extends HemaUser {
-    /**
-     *
-     */
-    static final long serialVersionUID = 1L;
     @PrimaryKey(column = "id")
     private String id;// 用户主键
     private String username; //登录名
@@ -39,7 +35,6 @@ public class User extends HemaUser {
     private String lastlogintime; //最后一次登录的时间
     private String lastloginversion; //lastloginversion
     private String regdate; //用户注册时间
-    private String token; //登陆令牌
     private String city; //	所在城市
     private String a_username; //	绑定用户账号
     private String a_nickname; //	绑定用户昵称
@@ -52,7 +47,6 @@ public class User extends HemaUser {
     private String district_3_id; //区ID
     private String district_name;
     public User() {
-        super("");
     }
 
     public User(JSONObject jsonObject) throws DataParseException {
@@ -85,7 +79,6 @@ public class User extends HemaUser {
                 lastlogintime = get(jsonObject, "lastlogintime");
                 lastloginversion = get(jsonObject, "lastloginversion");
                 regdate = get(jsonObject, "regdate");
-                token = get(jsonObject, "token");
                 city = get(jsonObject, "city");
                 a_username = get(jsonObject, "a_username");
                 a_nickname = get(jsonObject, "a_nickname");
@@ -129,7 +122,7 @@ public class User extends HemaUser {
                 ", lastlogintime='" + lastlogintime + '\'' +
                 ", lastloginversion='" + lastloginversion + '\'' +
                 ", regdate='" + regdate + '\'' +
-                ", token='" + token + '\'' +
+                ", token='" +  + '\'' +
                 ", city='" + city + '\'' +
                 ", a_username='" + a_username + '\'' +
                 ", a_nickname='" + a_nickname + '\'' +
@@ -142,10 +135,6 @@ public class User extends HemaUser {
                 ", district_3_id='" + district_3_id + '\'' +
                 ", district_name='" + district_name + '\'' +
                 '}';
-    }
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
     }
 
     public String getId() {
@@ -246,9 +235,6 @@ public class User extends HemaUser {
         return regdate;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
 
     public void setId(String id) {
         this.id = id;

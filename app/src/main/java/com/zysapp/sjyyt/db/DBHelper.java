@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * 
  */
 public class DBHelper extends SQLiteOpenHelper {
-	private static final String DBNAME = "hm_sjyyt00.db";
+	private static final String DBNAME = "hm_sjyyt01.db";
 	/**
 	 * 系统初始化信息
 	 */
@@ -55,7 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "sys_chat_ip text, sys_chat_port text,sys_pagesize text,"
 				+ "sys_service_phone text,android_update_url text,"
 				+ "iphone_update_url text,apad_update_url text,ipad_update_url text,"
-				+ "iphone_comment_url text,msg_invite text, start_url text, sys_tousu_phone text";
+				+ "iphone_comment_url text,msg_invite text, start_url text, sys_tousu_phone text, start_img text";
 		String sysSQL = "create table " + SYSINITINFO
 				+ " (id integer primary key," + sys + ")";
 		// 创建系统初始化信息缓存表

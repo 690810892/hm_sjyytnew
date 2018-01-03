@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -16,18 +15,13 @@ import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
-import com.igexin.sdk.PushManager;
-import com.igexin.sdk.PushService;
 import com.zysapp.sjyyt.BaseActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.BaseLocation;
 import com.zysapp.sjyyt.BaseNetWorker;
 import com.zysapp.sjyyt.model.SysInitInfo;
 import com.zysapp.sjyyt.model.User;
-import com.zysapp.sjyyt.newgetui.GeTuiIntentService;
-import com.zysapp.sjyyt.newgetui.PushUtils;
 
-import xtom.frame.util.XtomDeviceUuidFactory;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 
 /**
@@ -78,7 +72,7 @@ public class LogoActivity extends BaseActivity {
 	private boolean isShow() {
 		isShowed = "true".equals(XtomSharedPreferencesUtil.get(mContext,
 				"isShowed"));
-		return isShowed;
+		return true;
 	}
 
 
@@ -119,7 +113,15 @@ public class LogoActivity extends BaseActivity {
 			HemaArrayResult<User> uResult = (HemaArrayResult<User>) baseResult;
 			user = uResult.getObjects().get(0);
 			getApplicationContext().setUser(user);
-			toMain();
+			if (isNull(infor.getStart_img()))
+				toMain();
+			else {
+				Intent it = new Intent(mContext, AdvertiseActivity.class);
+				it.putExtra("imgurl",infor.getStart_img());
+				it.putExtra("url",infor.getStart_url());
+				startActivity(it);
+				finish();
+			}
 			break;
 		case THIRD_SAVE:
 			HemaArrayResult<User> mResult = (HemaArrayResult<User>) baseResult;
@@ -131,30 +133,45 @@ public class LogoActivity extends BaseActivity {
 			break;
 		}
 	}
-
 	private void toAdvertisement() {
-		//判断信息引导页是否展示过了
-		if(!isShow()){
-			Intent it = new Intent(mContext, ShowActivity.class);
-			startActivity(it);
-			finish();
-		}else{
-			//判断是否自动登录
-			if(isAutoLogin()){
+		if (!isNull(infor.getStart_img())){
+			if (isAutoLogin()) {
 				String username = XtomSharedPreferencesUtil.get(this, "username");
 				String password = XtomSharedPreferencesUtil.get(this, "password");
 				if (!isNull(username) && !isNull(password)) {
 					BaseNetWorker netWorker = getNetWorker();
 					netWorker.clientLogin(username, password);
-					//	XtomToastUtil.showShortToast(mContext, "登录");
-				}else if (HemaUtil.isThirdSave(mContext)) {// 如果是第三方登录
-					BaseNetWorker netWorker = getNetWorker();
-					netWorker.thirdSave();
-				}else {
+				}
+			} else {
+				Intent it = new Intent(mContext, AdvertiseActivity.class);
+				it.putExtra("imgurl",infor.getStart_img());
+				it.putExtra("url",infor.getStart_url());
+				startActivity(it);
+				finish();
+			}
+		}else {
+			if (!isShow()) {
+				Intent it = new Intent(mContext, ShowActivity.class);
+				startActivity(it);
+				finish();
+			} else {
+				//判断是否自动登录
+				if (isAutoLogin()) {
+					String username = XtomSharedPreferencesUtil.get(this, "username");
+					String password = XtomSharedPreferencesUtil.get(this, "password");
+					if (!isNull(username) && !isNull(password)) {
+						BaseNetWorker netWorker = getNetWorker();
+						netWorker.clientLogin(username, password);
+						//	XtomToastUtil.showShortToast(mContext, "登录");
+					} else if (HemaUtil.isThirdSave(mContext)) {// 如果是第三方登录
+						BaseNetWorker netWorker = getNetWorker();
+						netWorker.thirdSave();
+					} else {
+						toMain();
+					}
+				} else {
 					toMain();
 				}
-			}else {
-				toMain();
 			}
 		}
 	}

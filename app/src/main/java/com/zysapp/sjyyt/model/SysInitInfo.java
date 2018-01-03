@@ -46,6 +46,7 @@ public class SysInitInfo extends XtomObject {
 	private String msg_invite;// 邀请下载短信内容
 								// 我往你家扔了一个纸条，想知道内容吗？快来看看吧！下载地址：http://www.biaobiao.com/download/index_mobile.html
 	private String start_url; //广告业的地址
+	private String start_img;
 	
 	
 	public SysInitInfo(JSONObject jsonObject) throws DataParseException {
@@ -70,6 +71,7 @@ public class SysInitInfo extends XtomObject {
 				iphone_comment_url = get(jsonObject, "iphone_comment_url");
 				msg_invite = get(jsonObject, "msg_invite");
 				start_url = get(jsonObject, "start_url");
+				start_img = get(jsonObject, "start_img");
 				sys_service_email = get(jsonObject, "sys_service_email");
 				sys_company = get(jsonObject, "sys_company");
 				sys_tousu_phone = get(jsonObject, "sys_tousu_phone");
@@ -87,7 +89,7 @@ public class SysInitInfo extends XtomObject {
 			String sys_service_phone, String android_update_url,
 			String iphone_update_url, String apad_update_url,
 			String ipad_update_url, String iphone_comment_url,
-			String msg_invite, String start_url,String sys_tousu_phone) {
+			String msg_invite, String start_url,String sys_tousu_phone,String start_img) {
 		super();
 		this.sys_web_service = sys_web_service;
 		this.sys_plugins = sys_plugins;
@@ -108,28 +110,35 @@ public class SysInitInfo extends XtomObject {
 		this.msg_invite = msg_invite;
 		this.start_url = start_url;
 		this.sys_tousu_phone = sys_tousu_phone;
-		
+		this.start_img = start_img;
 	}
 
 	@Override
 	public String toString() {
-		return "SysInitInfo [sys_web_service=" + sys_web_service
-				+ ", sys_plugins=" + sys_plugins + ", sys_show_iospay="
-				+ sys_show_iospay + ", android_must_update="
-				+ android_must_update + ", android_last_version="
-				+ android_last_version + ", iphone_must_update="
-				+ iphone_must_update + ", iphone_last_version="
-				+ iphone_last_version + ", sys_chat_ip=" + sys_chat_ip
-				+ ", sys_chat_port=" + sys_chat_port + ", sys_pagesize="
-				+ sys_pagesize + ", sys_service_phone=" + sys_service_phone
-				+ ", sys_tousu_phone=" + sys_tousu_phone
-				+ ", sys_service_email=" + sys_service_email + ", sys_company="
-				+ sys_company + ", android_update_url=" + android_update_url
-				+ ", iphone_update_url=" + iphone_update_url
-				+ ", iphone_comment_url=" + iphone_comment_url
-				+ ", apad_update_url=" + apad_update_url + ", ipad_update_url="
-				+ ipad_update_url + ", msg_invite=" + msg_invite
-				+ ", start_url=" + start_url + "]";
+		return "SysInitInfo{" +
+				"sys_web_service='" + sys_web_service + '\'' +
+				", sys_plugins='" + sys_plugins + '\'' +
+				", sys_show_iospay='" + sys_show_iospay + '\'' +
+				", android_must_update='" + android_must_update + '\'' +
+				", android_last_version='" + android_last_version + '\'' +
+				", iphone_must_update='" + iphone_must_update + '\'' +
+				", iphone_last_version='" + iphone_last_version + '\'' +
+				", sys_chat_ip='" + sys_chat_ip + '\'' +
+				", sys_chat_port='" + sys_chat_port + '\'' +
+				", sys_pagesize=" + sys_pagesize +
+				", sys_service_phone='" + sys_service_phone + '\'' +
+				", sys_tousu_phone='" + sys_tousu_phone + '\'' +
+				", sys_service_email='" + sys_service_email + '\'' +
+				", sys_company='" + sys_company + '\'' +
+				", android_update_url='" + android_update_url + '\'' +
+				", iphone_update_url='" + iphone_update_url + '\'' +
+				", iphone_comment_url='" + iphone_comment_url + '\'' +
+				", apad_update_url='" + apad_update_url + '\'' +
+				", ipad_update_url='" + ipad_update_url + '\'' +
+				", msg_invite='" + msg_invite + '\'' +
+				", start_url='" + start_url + '\'' +
+				", start_img='" + start_img + '\'' +
+				'}';
 	}
 
 	public String getSys_web_service() {
@@ -216,7 +225,8 @@ public class SysInitInfo extends XtomObject {
 		return sys_tousu_phone;
 	}
 
-	
-
+	public String getStart_img() {
+		return start_img;
+	}
 }
 

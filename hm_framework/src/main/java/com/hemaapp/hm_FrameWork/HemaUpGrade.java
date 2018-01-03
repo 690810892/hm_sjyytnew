@@ -1,5 +1,12 @@
 package com.hemaapp.hm_FrameWork;
 
+import android.app.AlertDialog.Builder;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+
 import java.io.File;
 
 import xtom.frame.XtomActivityManager;
@@ -7,14 +14,7 @@ import xtom.frame.XtomObject;
 import xtom.frame.fileload.FileInfo;
 import xtom.frame.fileload.XtomFileDownLoader;
 import xtom.frame.fileload.XtomFileDownLoader.XtomDownLoadListener;
-import xtom.frame.util.XtomFileUtil;
 import xtom.frame.util.XtomToastUtil;
-import android.app.AlertDialog.Builder;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 
 /**
  * 软件升级
@@ -29,11 +29,11 @@ public class HemaUpGrade extends XtomObject {
 		this.mUser = user;
 	}
 
-	// 是否强制升级
-	private boolean isMust() {
-		boolean must = "1".equals(mUser.getAndroid_must_update());
-		return must;
-	}
+//	// 是否强制升级
+//	private boolean isMust() {
+////		boolean must = "1".equals(mUser.getAndroid_must_update());
+////		return must;
+//	}
 
 	public void alert(String curr, String server) {
 		Builder ab = new Builder(mContext);
@@ -52,8 +52,8 @@ public class HemaUpGrade extends XtomObject {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
-				if (isMust())
-					XtomActivityManager.finishAll();
+//				if (isMust())
+//					XtomActivityManager.finishAll();
 			}
 		});
 		ab.setCancelable(false);
@@ -61,14 +61,14 @@ public class HemaUpGrade extends XtomObject {
 	}
 
 	public void upGrade() {
-		String downPath = mUser.getAndroid_update_url();
-		savePath = XtomFileUtil.getFileDir(mContext) + "/apps/hemaapp_"
-				+ mUser.getAndroid_last_version() + ".apk";
-		XtomFileDownLoader downLoader = new XtomFileDownLoader(mContext,
-				downPath, savePath);
-		downLoader.setThreadCount(3);
-		downLoader.setXtomDownLoadListener(new DownLoadListener());
-		downLoader.start();
+//		String downPath = mUser.getAndroid_update_url();
+//		savePath = XtomFileUtil.getFileDir(mContext) + "/apps/hemaapp_"
+//				+ mUser.getAndroid_last_version() + ".apk";
+//		XtomFileDownLoader downLoader = new XtomFileDownLoader(mContext,
+//				downPath, savePath);
+//		downLoader.setThreadCount(3);
+//		downLoader.setXtomDownLoadListener(new DownLoadListener());
+//		downLoader.start();
 	}
 
 	private class DownLoadListener implements XtomDownLoadListener {
@@ -129,8 +129,8 @@ public class HemaUpGrade extends XtomObject {
 				pBar.cancel();
 			}
 			XtomToastUtil.showShortToast(mContext, "下载停止");
-			if (isMust())
-				XtomActivityManager.finishAll();
+//			if (isMust())
+//				XtomActivityManager.finishAll();
 		}
 	}
 

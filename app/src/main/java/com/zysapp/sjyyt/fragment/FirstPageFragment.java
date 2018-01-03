@@ -210,6 +210,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     ArrayList<Draw> draws = new ArrayList<>();
     private AuthorAdapter authorAdapter;
     ArrayList<Author> authors = new ArrayList<>();
+    Thread thread;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -275,7 +276,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                         getNetWorker().replyList("3", songs.get(currentPosition).getId(), "0");
                     else
                         getNetWorker().replyList("1", songs.get(currentPosition).getId(), "0");
-                    if (currentPosition==0){
+                    if (currentPosition == 0) {
                         tvCenter.setTextColor(0xff212121);
                         tvContent.setTextColor(0xff212121);
                         tvReplylist.setTextColor(0xff000000);
@@ -287,7 +288,9 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                         tvZhuboshuo.setVisibility(View.GONE);
                         refreshLoadmoreLayout.setLoadmoreable(true);
                         lvCenter.setVisibility(View.GONE);
-                    }else {
+                        lvContent.setVisibility(View.GONE);
+                    } else {
+                        lvContent.setVisibility(View.VISIBLE);
                         lvCenter.setVisibility(View.VISIBLE);
                     }
                 }
@@ -523,12 +526,12 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                         XtomToastUtil.showShortToast(getActivity(), "已经到最后啦");
                     }
                 }
-                refreshLoadmoreLayout.setRefreshable(false);
+                //refreshLoadmoreLayout.setRefreshable(false);
                 replyAdapter.notifyDataSetChanged();
                 replyAdapter.setLive_id(live_id);
                 replyAdapter.setKeytype(keytype1);
-                if (ivLine1.getVisibility() == View.VISIBLE)
-                    refreshLoadmoreLayout.setLoadmoreable(false);
+//                if (ivLine1.getVisibility() == View.VISIBLE)
+//                    refreshLoadmoreLayout.setLoadmoreable(false);
                 if (currentPosition == 0) {
                     channelDanmu = true;
                 } else {
@@ -578,22 +581,25 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
      * 随机生成一些弹幕内容以供测试
      */
     private void generateSomeDanmaku() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (channelDanmu) {
-                    if (replies.size() > 0) {
-                        int i = new Random().nextInt(replies.size());
-                        addDanmaKuShowTextAndImage(replies.get(i).getAvatar(), replies.get(i).getNickname(), replies.get(i).getContent(), true);
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+        if (thread == null) {
+            thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (channelDanmu) {
+                        if (replies.size() > 0) {
+                            int i = new Random().nextInt(replies.size());
+                            addDanmaKuShowTextAndImage(replies.get(i).getAvatar(), replies.get(i).getNickname(), replies.get(i).getContent(), true);
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
-            }
-        }).start();
+            });
+            thread.start();
+        }
     }
 
     @Override
@@ -664,7 +670,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     @Override
     public void onResume() {
         super.onResume();
-        if (danmakuView != null && danmakuView.isPrepared() && danmakuView.isPaused()) {
+        if (danmakuView != null ) {
             danmakuView.resume();
         }
     }
@@ -689,9 +695,10 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
         ivMusic.getLayoutParams().height = screenWide * 3 / 5;
         titleBtnLeft.setVisibility(View.GONE);
         titleBtnRight.setImageResource(R.mipmap.first_right);
+        titleBtnRight.setVisibility(View.GONE);
         titleText.setText("江阴主播电台");
         sbPlayProgress.setOnSeekBarChangeListener(mSeekBarChangeListener);
-        refreshLoadmoreLayout.setRefreshable(false);
+        refreshLoadmoreLayout.setRefreshable(true);
         liveAdapter = new LiveAdapter(getActivity(), songs);
         RecycleUtils.initVerticalRecyleNoScrll(rvContent);
         rvContent.setAdapter(liveAdapter);
@@ -713,6 +720,11 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
 
             @Override
             public void onStartRefresh(XtomRefreshLoadmoreLayout v) {
+                currentPage = 0;
+                if (currentPosition == 0)
+                    getNetWorker().replyList("3", songs.get(currentPosition).getId(), currentPage.toString());
+                else
+                    getNetWorker().replyList("1", songs.get(currentPosition).getId(), currentPage.toString());
             }
 
             @Override

@@ -1,19 +1,18 @@
 package com.hemaapp.hm_FrameWork;
 
-import java.util.ArrayList;
-
-import xtom.frame.XtomConfig;
-import xtom.frame.XtomObject;
-import xtom.frame.net.XtomNetTask;
-import xtom.frame.net.XtomNetWorker;
-import xtom.frame.net.XtomNetWorker.OnTaskExecuteListener;
-import xtom.frame.util.XtomToastUtil;
 import android.content.Context;
 import android.widget.Toast;
 
 import com.hemaapp.HemaConfig;
 import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
+
+import java.util.ArrayList;
+
+import xtom.frame.XtomObject;
+import xtom.frame.net.XtomNetTask;
+import xtom.frame.net.XtomNetWorker;
+import xtom.frame.net.XtomNetWorker.OnTaskExecuteListener;
 
 public abstract class HemaNetTaskExecuteListener extends XtomObject implements
 		OnTaskExecuteListener {
@@ -97,7 +96,7 @@ public abstract class HemaNetTaskExecuteListener extends XtomObject implements
 						netWorker.executeTask(failedTask);
 					}
 					failedTasks.clear();
-					checkUpdate(user);
+					//checkUpdate(user);
 					return;
 				}
 			}
@@ -133,13 +132,13 @@ public abstract class HemaNetTaskExecuteListener extends XtomObject implements
 		}
 	}
 
-	private void checkUpdate(HemaUser user) {
-		String sysVersion = user.getAndroid_last_version();
-		String version = HemaUtil.getAppVersionForSever(mContext);
-		if (HemaUtil.isNeedUpDate(version, sysVersion)) {
-			new HemaUpGrade(user).alert(version, sysVersion);
-		}
-	}
+//	private void checkUpdate(HemaUser user) {
+//		String sysVersion = user.getAndroid_last_version();
+//		String version = HemaUtil.getAppVersionForSever(mContext);
+//		if (HemaUtil.isNeedUpDate(version, sysVersion)) {
+//			new HemaUpGrade(user).alert(version, sysVersion);
+//		}
+//	}
 
 	/**
 	 * Runs on the UI thread before the task run.
