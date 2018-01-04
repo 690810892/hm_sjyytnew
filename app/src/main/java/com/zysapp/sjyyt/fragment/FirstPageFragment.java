@@ -56,11 +56,16 @@ import com.zysapp.sjyyt.model.Draw;
 import com.zysapp.sjyyt.model.Image;
 import com.zysapp.sjyyt.model.Reply;
 import com.zysapp.sjyyt.model.Song;
+import com.zysapp.sjyyt.model.Token;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.newgetui.PushModel;
 import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.util.RecycleUtils;
+import com.zysapp.sjyyt.view.PopDrawGet;
+import com.zysapp.sjyyt.view.PopDrawNoWin;
+import com.zysapp.sjyyt.view.PopDrawOne;
+import com.zysapp.sjyyt.view.PopDrawWin;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -211,6 +216,15 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     private AuthorAdapter authorAdapter;
     ArrayList<Author> authors = new ArrayList<>();
     Thread thread;
+    Draw drawInfor;//活动信息
+    PopDrawOne popDrawOne;
+    PopDrawWin popDrawWin;
+    PopDrawNoWin popDrawNoWin;
+    PopDrawGet popDrawGet;
+    int myscore;
+    int needscore;
+    Draw add;//抽奖
+    String drawTel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -394,6 +408,15 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             case CLOCK_ADD:
                 showProgressDialog("正在添加");
                 break;
+            case CODE_GET:
+                showProgressDialog("正在获取验证码");
+                break;
+            case CODE_VERIFY:
+                showProgressDialog("正在验证随机码");
+                break;
+            case DRAW_GET:
+                showProgressDialog("正在提交");
+                break;
             default:
                 break;
         }
@@ -414,6 +437,11 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             case BLOG_LIST:
 //                layout.setVisibility(View.VISIBLE);
 //                progressBar.setVisibility(View.GONE);
+                break;
+            case CODE_GET:
+            case CODE_VERIFY:
+            case DRAW_GET:
+                cancelProgressDialog();
                 break;
             default:
                 break;
@@ -571,6 +599,92 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 ArrayList<Draw> D = DResult.getObjects();
                 draws.clear();
                 draws.addAll(D);
+                if (D != null && D.size() > 0) {
+                    getNetWorker().drawInforGet(user.getToken());
+                }
+                break;
+            case DRAW_INFOR_GET:
+                HemaArrayParse<Draw> inResult = (HemaArrayParse<Draw>) baseResult;
+                drawInfor = inResult.getObjects().get(0);
+                if (popDrawOne == null) {
+                    popDrawOne = new PopDrawOne(getActivity()) {
+                        @Override
+                        public void ButtonSure() {
+                            myscore = Integer.parseInt(drawInfor.getScore());
+                            needscore = Integer.parseInt(drawInfor.getDraw_score());
+                            if (needscore > myscore) {
+                                showTextDialog("积分不足！");
+                                return;
+                            }
+                            getNetWorker().drawAdd(user.getToken(), draws.get(0).getId());
+                        }
+                    };
+                }
+                popDrawOne.setTitle("积分抽大奖");
+                popDrawOne.setContent("遇到你，很高兴");
+                popDrawOne.setImage(R.mipmap.img_choujiang);
+                popDrawOne.setScore(drawInfor.getDraw_score() + "积分");
+                popDrawOne.show();
+                break;
+            case DRAW_ADD:
+                myscore = myscore - needscore;
+                HemaArrayParse<Draw> addResult = (HemaArrayParse<Draw>) baseResult;
+                add = addResult.getObjects().get(0);
+                if (add.getWinflag().equals("1")) {
+                    popDrawOne.cancel();
+                    if (popDrawWin == null) {
+                        popDrawWin = new PopDrawWin(getActivity()) {
+                            @Override
+                            public void ButtonSure() {
+                                popDrawWin.cancel();
+                                if (popDrawGet == null) {
+                                    popDrawGet = new PopDrawGet(getActivity()) {
+                                        @Override
+                                        public void CodeGet(String tel) {
+                                            drawTel=tel;
+                                            getNetWorker().codeGet(tel);
+                                        }
+                                        @Override
+                                        public void ButtonSure(String code) {
+                                            getNetWorker().codeVerify(drawTel, code);
+                                        }
+                                    };
+                                }
+                                popDrawGet.show();
+                            }
+                        };
+                    }
+                    popDrawWin.show();
+                } else {
+                    if (popDrawNoWin == null) {
+                        popDrawNoWin = new PopDrawNoWin(getActivity()) {
+                            @Override
+                            public void ButtonSure() {
+                                popDrawNoWin.cancel();
+//                                if (needscore > myscore) {
+//                                    showTextDialog("积分不足！");
+//                                    return;
+//                                }
+//                                getNetWorker().drawAdd(user.getToken(), draws.get(0).getId());
+                            }
+                        };
+                    }
+                    popDrawNoWin.show();
+                }
+                break;
+            case CODE_GET:
+                timeThread = new PopDrawGet.TimeThread(new PopDrawGet.TimeHandler(popDrawGet));
+                timeThread.start();
+                break;
+            case CODE_VERIFY:
+                @SuppressWarnings("unchecked")
+                HemaArrayParse<Token> sResult = (HemaArrayParse<Token>) baseResult;
+                String tempToken = sResult.getObjects().get(0).getTemp_token();
+                getNetWorker().drawGet(user.getToken(), tempToken,drawTel,add.getDraw_record_id() );//
+                break;
+            case DRAW_GET:
+                showTextDialog("提交成功");
+                popDrawGet.cancel();
                 break;
             default:
                 break;
@@ -620,6 +734,18 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             case CLOCK_ADD:
                 showTextDialog(baseResult.getMsg());
                 break;
+            case DRAW_ADD:
+                showTextDialog(baseResult.getMsg());
+                break;
+            case CODE_GET:
+                showTextDialog(baseResult.getMsg());
+                break;
+            case CODE_VERIFY:
+                showTextDialog(baseResult.getMsg());
+                break;
+            case DRAW_GET:
+                showTextDialog(baseResult.getMsg());
+                break;
             default:
                 break;
         }
@@ -638,6 +764,18 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             case DATA_SAVEOPERATE:
                 showTextDialog("操作失败");
                 break;
+            case DRAW_ADD:
+                showTextDialog("操作失败");
+                break;
+            case CODE_GET:
+                showTextDialog("获取验证码失败");
+                break;
+            case CODE_VERIFY:
+                showTextDialog("验证随机码失败");
+                break;
+            case DRAW_GET:
+                showTextDialog("提交失败");
+                break;
             default:
                 break;
         }
@@ -655,6 +793,8 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        if (timeThread != null)
+            timeThread.cancel();
         showDanmaku = false;
         if (danmakuView != null) {
             danmakuView.release();
@@ -670,7 +810,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     @Override
     public void onResume() {
         super.onResume();
-        if (danmakuView != null ) {
+        if (danmakuView != null) {
             danmakuView.resume();
         }
     }
@@ -702,7 +842,8 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
         liveAdapter = new LiveAdapter(getActivity(), songs);
         RecycleUtils.initVerticalRecyleNoScrll(rvContent);
         rvContent.setAdapter(liveAdapter);
-        getNetWorker().drawList(token);
+        if (user != null)
+            getNetWorker().drawList(user.getToken());
         getNetWorker().channelList(0);
         liveAdapter.setOnItemClickListener(new BaseRecycleAdapter.OnItemClickListener() {
             @Override
@@ -1285,5 +1426,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
         log_i("imagePath:" + imagePath);
         return imagePath;
     }
+
+    private PopDrawGet.TimeThread timeThread;
 
 }

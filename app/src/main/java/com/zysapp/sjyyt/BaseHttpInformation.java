@@ -316,6 +316,9 @@ public enum BaseHttpInformation implements HemaHttpInfomation {
 	CLOCK_OPERATE(107, "clock_saveoperate", "叫早操作", false),
 	CLOCK_ADD(107, "clock_add", "叫早添加", false),
 	DRAW_LIST(107, "draw_list", "可抽奖列表接口", false),
+	DRAW_INFOR_GET(107, "draw_info_get", "抽奖信息接口", false),
+	DRAW_ADD(107, "draw_add", "积分抽奖接口", false),
+	DRAW_GET(107, "draw_get", "奖品领取接口", false),
 	;
 
 

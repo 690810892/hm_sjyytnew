@@ -14,8 +14,6 @@ import com.zysapp.sjyyt.model.Draw;
 import com.zysapp.sjyyt.model.FileUploadResult;
 import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.Image;
-import com.zysapp.sjyyt.model.JsonBean;
-import com.zysapp.sjyyt.model.Normal;
 import com.zysapp.sjyyt.model.Notice;
 import com.zysapp.sjyyt.model.PCD;
 import com.zysapp.sjyyt.model.Reply;
@@ -588,6 +586,31 @@ public class BaseNetWorker extends HemaNetWorker {
         BaseHttpInformation information = BaseHttpInformation.DRAW_LIST;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("token", token);// 登陆令牌
+        ExecuteNetTask<Draw> task = new ExecuteNetTask<>(information, params, Draw.class);
+        executeTask(task);
+    }
+    public void drawInforGet(String token) {
+        BaseHttpInformation information = BaseHttpInformation.DRAW_INFOR_GET;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        ExecuteNetTask<Draw> task = new ExecuteNetTask<>(information, params, Draw.class);
+        executeTask(task);
+    }
+    public void drawAdd(String token,String draw_id) {
+        BaseHttpInformation information = BaseHttpInformation.DRAW_ADD;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("draw_id", draw_id);
+        ExecuteNetTask<Draw> task = new ExecuteNetTask<>(information, params, Draw.class);
+        executeTask(task);
+    }
+    public void drawGet(String token,String temp_token,String mobile,String draw_record_id) {
+        BaseHttpInformation information = BaseHttpInformation.DRAW_GET;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("token", token);// 登陆令牌
+        params.put("temp_token", temp_token);
+        params.put("mobile", mobile);
+        params.put("draw_record_id", draw_record_id);
         ExecuteNetTask<Draw> task = new ExecuteNetTask<>(information, params, Draw.class);
         executeTask(task);
     }

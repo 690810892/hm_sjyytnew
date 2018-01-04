@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
-                android:text="积分抽大奖"
+                android:text="没中奖"
                 android:textColor="@color/word_black"
                 android:textSize="@dimen/textsize_8"
                 android:textStyle="bold" />
@@ -42,68 +42,29 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
                 android:paddingTop="2dp"
-                android:text="遇到你，很高兴"
+                android:text="再接再厉!"
                 android:textColor="@color/hui"
                 android:textSize="@dimen/textsize_7" />
 
             <ImageView
-                android:id="@+id/iv_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="25dp"
-                android:src="@mipmap/img_choujiang" />
-
-            <LinearLayout
-                android:id="@+id/lv_score"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingBottom="0dp"
-                android:paddingTop="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="消耗"
-                    android:textColor="@color/word_black"
-                    android:textSize="@dimen/textsize_6.5" />
-
-                <TextView
-                    android:id="@+id/tv_score"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="0积分"
-                    android:textColor="@color/red"
-                    android:textSize="@dimen/textsize_6.5" />
-
-            </LinearLayout>
+                android:src="@mipmap/img_meizhong" />
 
             <TextView
                 android:id="@+id/tv_join"
                 android:layout_width="80dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_redbutton"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_redwhitebutton"
                 android:gravity="center"
-                android:text="立即参与"
-                android:textColor="@color/white"
+                android:text="下次再来"
+                android:textColor="@color/red"
                 android:textSize="@dimen/textsize_6.5" />
 
-            <TextView
-                android:id="@+id/tv_aboutscore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:paddingTop="20dp"
-                android:text="@string/aboutscore"
-                android:textColor="@color/hui"
-                android:textSize="@dimen/textsize_6.5" />
         </LinearLayout>
 
         <ImageView

@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.hemaapp.hm_FrameWork.emoji.EmojiParser;
@@ -21,6 +22,7 @@ import com.hemaapp.hm_FrameWork.emoji.ParseEmojiMsgUtil;
 import com.zysapp.sjyyt.activity.LoginActivity;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -1047,6 +1049,19 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 				return false;
 		} catch (ParseException e) {
 			return false;
+		}
+	}
+	public static void fitPopupWindowOverStatusBar(PopupWindow pop, boolean needFullScreen) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			try {
+				Field mLayoutInScreen = PopupWindow.class.getDeclaredField("mLayoutInScreen");
+				mLayoutInScreen.setAccessible(true);
+				mLayoutInScreen.set(pop, needFullScreen);
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

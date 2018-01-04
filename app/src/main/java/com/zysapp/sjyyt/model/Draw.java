@@ -22,6 +22,12 @@ public class Draw extends XtomObject implements Serializable {
 	private String score;//	所需积分
 	private String startdate;//	开始时间
 	private String enddate;//	结束时间
+	private String draw_score;//	抽奖消耗积分
+	private String draw_tips;//	抽奖提示
+	private String winflag;//	中奖标志	1：是 0：否
+	private String draw_goods_id;//	对应奖品商品id
+	private String draw_record_id;//	对应中奖记录id
+	private String imgurl;//	奖品图片
 	public Draw(JSONObject jsonObject) throws DataParseException {
 		if (jsonObject != null) {
 			try {
@@ -32,6 +38,12 @@ public class Draw extends XtomObject implements Serializable {
 				score = get(jsonObject, "score");
 				startdate = get(jsonObject, "startdate");
 				enddate = get(jsonObject, "enddate");
+				draw_score = get(jsonObject, "draw_score");
+				draw_tips = get(jsonObject, "draw_tips");
+				winflag = get(jsonObject, "winflag");
+				draw_goods_id = get(jsonObject, "draw_goods_id");
+				draw_record_id = get(jsonObject, "draw_record_id");
+				imgurl = get(jsonObject, "imgurl");
 				log_i(toString());
 			} catch (JSONException e) {
 				throw new DataParseException(e);
@@ -49,6 +61,12 @@ public class Draw extends XtomObject implements Serializable {
 				", score='" + score + '\'' +
 				", startdate='" + startdate + '\'' +
 				", enddate='" + enddate + '\'' +
+				", draw_score='" + draw_score + '\'' +
+				", draw_tips='" + draw_tips + '\'' +
+				", winflag='" + winflag + '\'' +
+				", draw_goods_id='" + draw_goods_id + '\'' +
+				", draw_record_id='" + draw_record_id + '\'' +
+				", imgurl='" + imgurl + '\'' +
 				'}';
 	}
 
@@ -106,6 +124,30 @@ public class Draw extends XtomObject implements Serializable {
 
 	public String getEnddate() {
 		return enddate;
+	}
+
+	public String getDraw_score() {
+		return draw_score;
+	}
+
+	public String getDraw_tips() {
+		return draw_tips;
+	}
+
+	public String getWinflag() {
+		return winflag;
+	}
+
+	public String getDraw_goods_id() {
+		return draw_goods_id;
+	}
+
+	public String getDraw_record_id() {
+		return draw_record_id;
+	}
+
+	public String getImgurl() {
+		return imgurl;
 	}
 
 	public void setEnddate(String enddate) {
