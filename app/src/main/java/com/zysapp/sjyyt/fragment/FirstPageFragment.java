@@ -312,9 +312,12 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
             case STATE_PLAY:
                 ivPlay.setImageResource(R.mipmap.img_play);
                 if (!isNull(token)) {
-                    if (currentPosition == 0)
-                        getNetWorker().dataOperate(token, "11", songs.get(currentPosition).getId());
-                    else
+                    if (currentPosition == 0) {
+                        if (songs.get(currentPosition).getChannel().equals("1"))
+                            getNetWorker().dataOperate(token, "11", songs.get(currentPosition).getId());
+                        else
+                            getNetWorker().dataOperate(token, "9", songs.get(currentPosition).getId());
+                    } else
                         getNetWorker().dataOperate(token, "9", songs.get(currentPosition).getId());
                 }
                 break;
@@ -474,7 +477,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 if (songs != null && songs.size() > 0)
                     songs.clear();
                 songs.addAll(ss);
-                songs.add(0, new Song(channel.getId(), channel.getName(), channel.getUrl(), channel.getImgurl()));
+                songs.add(0, new Song(channel.getId(), channel.getName(), channel.getUrl(), channel.getImgurl(), "1"));
                 liveAdapter.notifyDataSetChanged();
                 if (songs.size() > 0) {
 //                    for (int i = 0; i < songs.size(); i++) {
@@ -641,9 +644,10 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                                     popDrawGet = new PopDrawGet(getActivity()) {
                                         @Override
                                         public void CodeGet(String tel) {
-                                            drawTel=tel;
+                                            drawTel = tel;
                                             getNetWorker().codeGet(tel);
                                         }
+
                                         @Override
                                         public void ButtonSure(String code) {
                                             getNetWorker().codeVerify(drawTel, code);
@@ -680,7 +684,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 @SuppressWarnings("unchecked")
                 HemaArrayParse<Token> sResult = (HemaArrayParse<Token>) baseResult;
                 String tempToken = sResult.getObjects().get(0).getTemp_token();
-                getNetWorker().drawGet(user.getToken(), tempToken,drawTel,add.getDraw_record_id() );//
+                getNetWorker().drawGet(user.getToken(), tempToken, drawTel, add.getDraw_record_id());//
                 break;
             case DRAW_GET:
                 showTextDialog("提交成功");

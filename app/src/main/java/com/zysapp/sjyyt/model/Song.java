@@ -33,6 +33,7 @@ public class Song extends XtomObject implements Serializable {
     private String dyflag;//
     private String loveflag;//
     private String state = "0";
+    private String channel = "0";
     private ArrayList<Author> authors=new ArrayList<>();
     public Song(JSONObject jsonObject) throws DataParseException {
         if (jsonObject != null) {
@@ -69,11 +70,12 @@ public class Song extends XtomObject implements Serializable {
         }
     }
 
-    public Song(String id,String name, String url, String imgurl) {
+    public Song(String id,String name, String url, String imgurl, String channel) {
         this.name = name;
         this.url = url;
         this.imgurl = imgurl;
         this.id = id;
+        this.channel = channel;
         authors.clear();
     }
     @Override
@@ -229,6 +231,10 @@ public class Song extends XtomObject implements Serializable {
         if (isNull(startdate))
             startdate="0";
         return startdate;
+    }
+
+    public String getChannel() {
+        return channel;
     }
 
     public void setStartdate(String startdate) {
