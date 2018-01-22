@@ -1,16 +1,9 @@
 package com.zysapp.sjyyt.activity;
 
-import android.*;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,16 +15,12 @@ import com.hemaapp.hm_FrameWork.HemaNetTask;
 import com.hemaapp.hm_FrameWork.HemaUtil;
 import com.hemaapp.hm_FrameWork.result.HemaArrayParse;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
-import com.igexin.sdk.PushManager;
-import com.igexin.sdk.PushService;
 import com.zysapp.sjyyt.BaseActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
 import com.zysapp.sjyyt.BaseNetWorker;
 import com.zysapp.sjyyt.BaseUtil;
 import com.zysapp.sjyyt.model.Token;
 import com.zysapp.sjyyt.model.User;
-import com.zysapp.sjyyt.newgetui.GeTuiIntentService;
-import com.zysapp.sjyyt.newgetui.PushUtils;
 import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 import com.zysapp.sjyyt.view.ClearEditText;
@@ -50,7 +39,6 @@ import de.greenrobot.event.EventBus;
 import xtom.frame.XtomActivityManager;
 import xtom.frame.XtomConfig;
 import xtom.frame.util.Md5Util;
-import xtom.frame.util.XtomDeviceUuidFactory;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 import xtom.frame.util.XtomToastUtil;
 
@@ -110,7 +98,6 @@ public class LoginActivity extends BaseActivity implements PlatformActionListene
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         super.onCreate(savedInstanceState);
-        ShareSDK.initSDK(this);
     }
 
     @Override
@@ -118,7 +105,6 @@ public class LoginActivity extends BaseActivity implements PlatformActionListene
         if (timeThread != null)
             timeThread.cancel();
         super.onDestroy();
-        ShareSDK.stopSDK(this);
     }
 
     @Override
@@ -417,14 +403,14 @@ public class LoginActivity extends BaseActivity implements PlatformActionListene
                 startActivity(it);
                 break;
             case R.id.iv_login_wechat:
-               Platform platform = ShareSDK.getPlatform(mContext, Wechat.NAME);
+               Platform platform = ShareSDK.getPlatform(Wechat.NAME);
                 //Platform platform = new Wechat(mContext);
                 platform.SSOSetting(false);
                 platform.setPlatformActionListener(LoginActivity.this);
                 platform.authorize();
                 break;
             case R.id.iv_login_qq:
-                Platform platformqq = new QQ(mContext);
+                Platform platformqq = ShareSDK.getPlatform(QQ.NAME);
                 platformqq.SSOSetting(false);
                 platformqq.setPlatformActionListener(LoginActivity.this);
                 platformqq.authorize();

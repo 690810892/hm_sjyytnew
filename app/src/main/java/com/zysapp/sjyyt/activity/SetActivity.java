@@ -502,15 +502,15 @@ public class SetActivity extends BaseActivity implements PlatformActionListener 
     }
 
     private void showShare(String platform) {
-        pathWX = sys_plugins + "share/sdk.php?id=0&keytype=0";
+        pathWX = BaseApplication.getInstance().getSysInitInfo() + "share/sdk.php?id=0&keytype=0";
         imageurl = initImagePath();
         if (oks == null) {
             oks = new OnekeyShare();
             oks.setTitle("手机音乐台");
             oks.setTitleUrl(pathWX); // 标题的超链接
             oks.setText("手机音乐台软件");
-            oks.setImageUrl(imageurl);
-            oks.setFilePath(imageurl);
+            //oks.setImageUrl(imageurl);
+            //oks.setFilePath(imageurl);
             oks.setImagePath(imageurl);
             oks.setUrl(pathWX);
             oks.setSiteUrl(pathWX);

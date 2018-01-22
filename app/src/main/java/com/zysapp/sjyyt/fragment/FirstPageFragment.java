@@ -208,7 +208,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     private PopupWindow mWindow_exit;
     private ViewGroup mViewGroup_exit;
     private String phone;
-    private String sys_plugins;
+//    private String sys_plugins;
     private String pathWX;
     private String imageurl;
     private OnekeyShare oks;
@@ -1058,17 +1058,18 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     }
 
     private void addDanmaKuShowTextAndImage(String avatar, String name, String content, boolean islive) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.listitem_danmu, null);
-        TextView tv_content = (TextView) view.findViewById(R.id.tv_content);
-        TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
-        RoundedImageView iv_avatar = (RoundedImageView) view.findViewById(R.id.iv_image);
-        iv_avatar.setCornerRadius(100);
-        tv_content.setText(content);
-        tv_name.setText(name);
-        ImageLoader.getInstance().loadImage(avatar, new imgload(iv_avatar, view));
+        if (getActivity() != null) {
+            View view = getActivity().getLayoutInflater().inflate(R.layout.listitem_danmu, null);
+            TextView tv_content = (TextView) view.findViewById(R.id.tv_content);
+            TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
+            RoundedImageView iv_avatar = (RoundedImageView) view.findViewById(R.id.iv_image);
+            iv_avatar.setCornerRadius(100);
+            tv_content.setText(content);
+            tv_name.setText(name);
+            ImageLoader.getInstance().loadImage(avatar, new imgload(iv_avatar, view));
 //        ImageLoader.getInstance().displayImage( avatar,iv_avatar, BaseApplication.getInstance()
 //                .getOptions(R.mipmap.default_avatar));
-
+        }
     }
 
 
@@ -1308,15 +1309,15 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     }
 
     private void showShare(String platform) {
-        pathWX = sys_plugins + "share/sdk.php?id=0&keytype=0";
+        pathWX = BaseApplication.getInstance().getSysInitInfo().getSys_plugins() + "share/sdk.php?id=0&keytype=0";
         imageurl = initImagePath();
         if (oks == null) {
             oks = new OnekeyShare();
             oks.setTitle("手机音乐台");
             oks.setTitleUrl(pathWX); // 标题的超链接
             oks.setText("手机音乐台软件");
-            oks.setImageUrl(imageurl);
-            oks.setFilePath(imageurl);
+            //oks.setImageUrl(imageurl);
+            //oks.setFilePath(imageurl);
             oks.setImagePath(imageurl);
             oks.setUrl(pathWX);
             oks.setSiteUrl(pathWX);

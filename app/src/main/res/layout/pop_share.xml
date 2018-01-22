@@ -80,7 +80,7 @@
                 android:drawablePadding="10dp"
                 android:drawableTop="@mipmap/share_qzone"
                 android:gravity="center"
-                android:text="QQ空间"
+                android:text=""
                 android:textColor="@color/hui"
                 android:textSize="@dimen/textsize_7" />
 

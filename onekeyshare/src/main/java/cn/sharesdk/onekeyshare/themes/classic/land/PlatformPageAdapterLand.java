@@ -8,13 +8,14 @@
 
 package cn.sharesdk.onekeyshare.themes.classic.land;
 
+import android.content.Context;
+
+import com.mob.tools.utils.ResHelper;
+
 import java.util.ArrayList;
 
-import android.content.Context;
 import cn.sharesdk.onekeyshare.themes.classic.PlatformPage;
 import cn.sharesdk.onekeyshare.themes.classic.PlatformPageAdapter;
-
-import com.mob.tools.utils.R;
 
 /** 横屏的九宫格页面适配器 */
 public class PlatformPageAdapterLand extends PlatformPageAdapter {
@@ -29,7 +30,7 @@ public class PlatformPageAdapterLand extends PlatformPageAdapter {
 	}
 
 	protected void calculateSize(Context context, ArrayList<Object> plats) {
-		int screenWidth = R.getScreenWidth(context);
+		int screenWidth = ResHelper.getScreenWidth(context);
 		float ratio = ((float) screenWidth) / DESIGN_SCREEN_WIDTH_L;
 		int cellWidth = (int) (DESIGN_CELL_WIDTH_L * ratio);
 		lineSize = screenWidth / cellWidth;

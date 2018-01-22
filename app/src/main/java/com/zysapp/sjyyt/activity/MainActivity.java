@@ -22,7 +22,6 @@ import com.hemaapp.hm_FrameWork.result.HemaArrayResult;
 import com.hemaapp.hm_FrameWork.result.HemaBaseResult;
 import com.igexin.sdk.PushManager;
 import com.igexin.sdk.PushService;
-import com.zysapp.sjyyt.BaseAppCompatActivity;
 import com.zysapp.sjyyt.BaseApplication;
 import com.zysapp.sjyyt.BaseFragmentActivity;
 import com.zysapp.sjyyt.BaseHttpInformation;
@@ -35,7 +34,6 @@ import com.zysapp.sjyyt.model.ID;
 import com.zysapp.sjyyt.model.User;
 import com.zysapp.sjyyt.newgetui.GeTuiIntentService;
 import com.zysapp.sjyyt.newgetui.PushUtils;
-import com.zysapp.sjyyt.service.PlayerService;
 import com.zysapp.sjyyt.util.EventBusConfig;
 import com.zysapp.sjyyt.util.EventBusModel;
 
@@ -44,7 +42,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.sharesdk.framework.ShareSDK;
 import de.greenrobot.event.EventBus;
 import xtom.frame.util.XtomDeviceUuidFactory;
 
@@ -105,7 +102,6 @@ public class MainActivity extends BaseFragmentActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         upGrade = new UpGrade(mContext);
-        ShareSDK.initSDK(this);
         user = BaseApplication.getInstance().getUser();
         if (user != null)
             getNetWorker().unreadGet(user.getToken());
@@ -142,7 +138,6 @@ public class MainActivity extends BaseFragmentActivity {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
         allowUnbindService();
-        ShareSDK.stopSDK(this);
     }
 
     @Override

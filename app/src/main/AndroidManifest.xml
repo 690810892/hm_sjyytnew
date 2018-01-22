@@ -76,13 +76,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="name,icon,label,theme,hardwareAccelerated">
+        tools:replace="android:name,icon,label,theme,hardwareAccelerated">
         <service android:name="com.zysapp.sjyyt.service.PlayerService"/>
+        <!-- 18:9屏幕适配 -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
         <!-- 高德地图ApiKey -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="05546b097ff8da86c59e8461dfc596cc" />
         <!-- shareSDK相关 -->
+        <activity
+            android:name="cn.sharesdk.tencent.qq.ReceiveActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent1105241049" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.mob.tools.MobUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -102,7 +119,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
+        <meta-data
+            android:name="Mob-AppKey"
+            android:value="22208d6b7ef70" />
+        <meta-data
+            android:name="Mob-AppSecret"
+            android:value="3153dc341931b39ed4e521aff81a54a4" />
         <!-- 微信分享回调 -->
         <activity
             android:name="com.zysapp.sjyyt.wxapi.WXEntryActivity"

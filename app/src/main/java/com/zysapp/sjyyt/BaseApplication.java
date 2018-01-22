@@ -11,8 +11,7 @@ import com.hemaapp.hm_FrameWork.HemaApplication;
 import com.hemaapp.hm_FrameWork.orm.SqliteUtility;
 import com.hemaapp.hm_FrameWork.orm.SqliteUtilityBuilder;
 import com.hemaapp.hm_FrameWork.orm.extra.Extra;
-import com.igexin.sdk.PushManager;
-import com.igexin.sdk.PushService;
+import com.mob.MobSDK;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -33,7 +32,6 @@ import com.zysapp.sjyyt.service.PlayerService;
 import java.io.File;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import xtom.frame.XtomConfig;
 import xtom.frame.util.XtomSharedPreferencesUtil;
 
@@ -68,6 +66,7 @@ public class BaseApplication extends HemaApplication {
         sScreenWidth = dm.widthPixels;
         sScreenHeight = dm.heightPixels;
         startService(new Intent(this, PlayerService.class));
+        MobSDK.init(this, "22208d6b7ef70", "3153dc341931b39ed4e521aff81a54a4");
     }
 
 
