@@ -141,6 +141,11 @@ public class LogoActivity extends BaseActivity {
 				if (!isNull(username) && !isNull(password)) {
 					BaseNetWorker netWorker = getNetWorker();
 					netWorker.clientLogin(username, password);
+				}else if (HemaUtil.isThirdSave(mContext)) {// 如果是第三方登录
+					BaseNetWorker netWorker = getNetWorker();
+					netWorker.thirdSave();
+				} else {
+					toMain();
 				}
 			} else {
 				Intent it = new Intent(mContext, AdvertiseActivity.class);
