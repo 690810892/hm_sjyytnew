@@ -39,7 +39,7 @@
                         android:drawablePadding="5dp"
                         android:drawableRight="@mipmap/first_more"
                         android:gravity="center"
-                        android:text="江阴城市主播"
+                        android:text="听橙"
                         android:textColor="@color/word_black"
                         android:textSize="@dimen/textsize_7" />
 
@@ -141,6 +141,11 @@
                     android:background="@color/white"
                     android:orientation="vertical"
                     android:paddingTop="15dp">
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:paddingRight="10dp">
 
                     <TextView
                         android:id="@+id/tv_name"
@@ -148,27 +153,28 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text=""
+                        android:layout_gravity="center"
                         android:textColor="@color/word_black"
                         android:textSize="@dimen/textsize_9"
                         android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_save"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/bg_save_n"
-                        android:drawableLeft="@mipmap/save_n"
-                        android:drawablePadding="5dp"
-                        android:gravity="center"
-                        android:paddingBottom="3dp"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:paddingTop="3dp"
-                        android:text="订阅"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/textsize_7" />
+                        <TextView
+                            android:id="@+id/tv_save"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:layout_marginTop="0dp"
+                            android:background="@drawable/bg_save_n"
+                            android:drawableLeft="@mipmap/save_n"
+                            android:drawablePadding="5dp"
+                            android:gravity="center"
+                            android:paddingBottom="3dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="8dp"
+                            android:paddingTop="3dp"
+                            android:text="订阅"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/textsize_7" />
+                    </FrameLayout>
 
                     <FrameLayout
                         android:layout_width="match_parent"

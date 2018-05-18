@@ -839,7 +839,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
         ivMusic.getLayoutParams().height = screenWide * 3 / 5;
         titleBtnLeft.setVisibility(View.GONE);
         titleBtnRight.setImageResource(R.mipmap.first_right);
-        titleBtnRight.setVisibility(View.GONE);
+        titleBtnRight.setVisibility(View.INVISIBLE);
         titleText.setText("江阴主播电台");
         sbPlayProgress.setOnSeekBarChangeListener(mSeekBarChangeListener);
         refreshLoadmoreLayout.setRefreshable(true);
