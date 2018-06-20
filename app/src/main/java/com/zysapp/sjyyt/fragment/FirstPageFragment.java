@@ -208,7 +208,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
     private PopupWindow mWindow_exit;
     private ViewGroup mViewGroup_exit;
     private String phone;
-//    private String sys_plugins;
+    //    private String sys_plugins;
     private String pathWX;
     private String imageurl;
     private OnekeyShare oks;
@@ -608,72 +608,76 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
                 break;
             case DRAW_INFOR_GET:
                 HemaArrayParse<Draw> inResult = (HemaArrayParse<Draw>) baseResult;
-                drawInfor = inResult.getObjects().get(0);
-                if (popDrawOne == null) {
-                    popDrawOne = new PopDrawOne(getActivity()) {
-                        @Override
-                        public void ButtonSure() {
-                            myscore = Integer.parseInt(drawInfor.getScore());
-                            needscore = Integer.parseInt(drawInfor.getDraw_score());
-                            if (needscore > myscore) {
-                                showTextDialog("积分不足！");
-                                return;
+                if (inResult.getObjects().size() > 0) {
+                    drawInfor = inResult.getObjects().get(0);
+                    if (popDrawOne == null) {
+                        popDrawOne = new PopDrawOne(getActivity()) {
+                            @Override
+                            public void ButtonSure() {
+                                myscore = Integer.parseInt(drawInfor.getScore());
+                                needscore = Integer.parseInt(drawInfor.getDraw_score());
+                                if (needscore > myscore) {
+                                    showTextDialog("积分不足！");
+                                    return;
+                                }
+                                getNetWorker().drawAdd(user.getToken(), draws.get(0).getId());
                             }
-                            getNetWorker().drawAdd(user.getToken(), draws.get(0).getId());
-                        }
-                    };
+                        };
+                    }
+                    popDrawOne.setTitle("积分抽大奖");
+                    popDrawOne.setContent("遇到你，很高兴");
+                    popDrawOne.setImage(R.mipmap.img_choujiang);
+                    popDrawOne.setScore(drawInfor.getDraw_score() + "积分");
+                    popDrawOne.show();
                 }
-                popDrawOne.setTitle("积分抽大奖");
-                popDrawOne.setContent("遇到你，很高兴");
-                popDrawOne.setImage(R.mipmap.img_choujiang);
-                popDrawOne.setScore(drawInfor.getDraw_score() + "积分");
-                popDrawOne.show();
                 break;
             case DRAW_ADD:
                 myscore = myscore - needscore;
                 HemaArrayParse<Draw> addResult = (HemaArrayParse<Draw>) baseResult;
-                add = addResult.getObjects().get(0);
-                if (add.getWinflag().equals("1")) {
-                    popDrawOne.cancel();
-                    if (popDrawWin == null) {
-                        popDrawWin = new PopDrawWin(getActivity()) {
-                            @Override
-                            public void ButtonSure() {
-                                popDrawWin.cancel();
-                                if (popDrawGet == null) {
-                                    popDrawGet = new PopDrawGet(getActivity()) {
-                                        @Override
-                                        public void CodeGet(String tel) {
-                                            drawTel = tel;
-                                            getNetWorker().codeGet(tel);
-                                        }
+                if (addResult.getObjects().size()>0) {
+                    add = addResult.getObjects().get(0);
+                    if (add.getWinflag().equals("1")) {
+                        popDrawOne.cancel();
+                        if (popDrawWin == null) {
+                            popDrawWin = new PopDrawWin(getActivity()) {
+                                @Override
+                                public void ButtonSure() {
+                                    popDrawWin.cancel();
+                                    if (popDrawGet == null) {
+                                        popDrawGet = new PopDrawGet(getActivity()) {
+                                            @Override
+                                            public void CodeGet(String tel) {
+                                                drawTel = tel;
+                                                getNetWorker().codeGet(tel);
+                                            }
 
-                                        @Override
-                                        public void ButtonSure(String code) {
-                                            getNetWorker().codeVerify(drawTel, code);
-                                        }
-                                    };
+                                            @Override
+                                            public void ButtonSure(String code) {
+                                                getNetWorker().codeVerify(drawTel, code);
+                                            }
+                                        };
+                                    }
+                                    popDrawGet.show();
                                 }
-                                popDrawGet.show();
-                            }
-                        };
-                    }
-                    popDrawWin.show();
-                } else {
-                    if (popDrawNoWin == null) {
-                        popDrawNoWin = new PopDrawNoWin(getActivity()) {
-                            @Override
-                            public void ButtonSure() {
-                                popDrawNoWin.cancel();
+                            };
+                        }
+                        popDrawWin.show();
+                    } else {
+                        if (popDrawNoWin == null) {
+                            popDrawNoWin = new PopDrawNoWin(getActivity()) {
+                                @Override
+                                public void ButtonSure() {
+                                    popDrawNoWin.cancel();
 //                                if (needscore > myscore) {
 //                                    showTextDialog("积分不足！");
 //                                    return;
 //                                }
 //                                getNetWorker().drawAdd(user.getToken(), draws.get(0).getId());
-                            }
-                        };
+                                }
+                            };
+                        }
+                        popDrawNoWin.show();
                     }
-                    popDrawNoWin.show();
                 }
                 break;
             case CODE_GET:
