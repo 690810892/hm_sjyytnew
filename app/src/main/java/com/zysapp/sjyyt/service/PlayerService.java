@@ -152,7 +152,7 @@ public class PlayerService extends Service implements
             Bitmap icon = MusicIconLoader.getInstance().load(
                     mQueue.get(mQueueIndex).getAuthor_imgurl());
             remoteViews.setImageViewBitmap(R.id.music_icon, icon == null
-                    ? ImageTools.scaleBitmap(R.drawable.ic_launcher)
+                    ? ImageTools.scaleBitmap(R.mipmap.ic_launcher)
                     : ImageTools.scaleBitmap(icon));
 
         }

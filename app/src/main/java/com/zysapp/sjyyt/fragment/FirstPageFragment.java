@@ -840,7 +840,7 @@ public class FirstPageFragment extends BaseFragment implements PlatformActionLis
         titleBtnLeft.setVisibility(View.GONE);
         titleBtnRight.setImageResource(R.mipmap.first_right);
         titleBtnRight.setVisibility(View.INVISIBLE);
-        titleText.setText("江阴主播电台");
+        titleText.setText("江阴人民广播电台");
         sbPlayProgress.setOnSeekBarChangeListener(mSeekBarChangeListener);
         refreshLoadmoreLayout.setRefreshable(true);
         liveAdapter = new LiveAdapter(getActivity(), songs);

@@ -33,6 +33,10 @@ android {
             storeFile file("hm_sjyyt.jks")
         }
     }
+    aaptOptions {
+        cruncherEnabled = false
+        useNewCruncher = false
+    }
     buildTypes {
         release {
             minifyEnabled false
